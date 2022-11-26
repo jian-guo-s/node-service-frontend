@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <!-- Default Layout -->
     <a-layout class="layout-default" id="layout-default" :class="layoutClass">
       <!-- Layout Header's Conditionally Fixed Wrapper -->
@@ -7,7 +7,7 @@
       <!-- / Layout Header's Conditionally Fixed Wrapper -->
 
       <!-- Layout Content -->
-      <a-layout class="pt-[64px]">
+      <a-layout class="pt-[64px] dark:!bg-[#000000]">
         <!-- Page Content -->
         <a-layout-content class="layout-default-content">
           <keep-alive>
@@ -33,13 +33,12 @@ const layoutClass = computed(() => {
 </script>
 <style lang="less" scoped>
 .ant-layout {
-  background: #f9f9f9;
+  background: #F6F6F6;
 }
 
 .layout-default-content {
   width: 100%;
   // padding: 24px;
-  background-color: #ffffff;
   max-width: 1440px;
   min-width: 1080px;
   margin: 24px auto;
