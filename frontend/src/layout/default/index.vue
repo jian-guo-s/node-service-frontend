@@ -5,6 +5,7 @@
       <!-- Layout Header's Conditionally Fixed Wrapper -->
       <DefaultHeader />
       <!-- / Layout Header's Conditionally Fixed Wrapper -->
+      <Support />
 
       <!-- Layout Content -->
       <a-layout class="pt-[64px] dark:!bg-[#000000]">
@@ -24,6 +25,7 @@
 </template>
 <script lang="ts" setup>
 import DefaultHeader from "../../components/DefaultHeader/index.vue";
+import Support from "../../components/support.vue";
 import { RouterView, useRoute } from "vue-router";
 import { computed } from "vue";
 const routes = useRoute();
