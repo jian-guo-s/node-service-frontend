@@ -20,10 +20,20 @@
         <template #overlay>
           <a-menu>
             <a-menu-item>
-              <a href="javascript:;">RPCs</a>
+              <a href="javascript:;">
+                <img
+                  src="@/assets/icons/RPCs.svg"
+                  class="h-[24px]"
+                />
+                RPCs</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;">Apps</a>
+              <a href="javascript:;">
+                <img
+                  src="@/assets/icons/Apps.svg"
+                  class="h-[24px]"
+                />
+                Apps</a>
             </a-menu-item>
           </a-menu>
         </template>
@@ -46,16 +56,80 @@
           />
         </div>
       </div>
-      <a-button class="ml-8" type="primary">Connect Wallet</a-button>
+      <a-button v-if="!isLogin" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
+      <a-dropdown v-if="isLogin">
+        <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
+          <img
+              src="@/assets/icons/metamask-icon.svg"
+              class="h-[20px] mr-2"
+            />
+          <div class="text-[#E2B578] dark:text-[#FFFFFF]">0xBb2…310a</div>
+        </div>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item>
+              <a href="javascript:;">
+                <img
+                  src="@/assets/icons/disconnect.svg"
+                  class="h-[24px]"
+                />
+                Disconnect</a>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
     </div>
   </div>
+  <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" width="600px">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="div-img">
+        <img
+          src="@/assets/images/metamask.png"
+          class="img-css"
+        />
+      </div>
+      <div class="div-img">
+        <img
+          src="@/assets/images/connect.png"
+          class="img-css"
+        />
+      </div>
+      <div class="div-img">
+        <img
+          src="@/assets/images/imToken.png"
+          class="img-css"
+        />
+      </div>
+      <div class="div-img">
+        <img
+          src="@/assets/images/math.png"
+          class="img-css"
+        />
+      </div>
+      <div class="div-img">
+        <img
+          src="@/assets/images/trust.png"
+          class="img-css"
+        />
+      </div>
+      <div class="div-img">
+        <img
+          src="@/assets/images/huobi.png"
+          class="img-css"
+        />
+      </div>
+    </div>
+  </a-modal>
 </template>
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted,ref } from "vue";
 
 const router = useRouter();
+const visibleWallet = ref(false);
+const isLogin = ref(false);
+
 const goHome = () => {
   router.push("/RPCs");
 };
@@ -71,6 +145,10 @@ const changeTheme = (val: string) => {
 onMounted(() => {
   changeTheme('dark');
 });
+
+const showWallet = () => {
+  visibleWallet.value = true;
+}
 </script>
 
 <style lang="less" scoped>
@@ -87,18 +165,25 @@ onMounted(() => {
 .ant-btn {
   border-radius: 8px;
   height: 40px;
-
-  &:hover,
-  &:focus {
-    color: @btnColor;
-    border-color: @btnColor;
-  }
 }
 :deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
   border-color: @btnColor;
   background: @btnColor;
 }
-.ant-dropdown-menu{
-  border-radius: 6px;
+.div-img{
+  width: 164px;
+  height: 164px;
+  border: 1px solid #EBEBEB;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.div-img:active{
+  border: 1px solid #E2B578;
+}
+.img-css{
+  height: 90px;
 }
 </style>
