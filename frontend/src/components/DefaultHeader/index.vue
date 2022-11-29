@@ -14,13 +14,17 @@
           NodeService
           <img
             src="@/assets/icons/up-b.svg"
-            class="h-[16px]"
+            class="h-[16px] hidden dark:inline-block"
+          />
+          <img
+            src="@/assets/icons/up.svg"
+            class="h-[16px] dark:hidden"
           />
         </div>
         <template #overlay>
           <a-menu>
             <a-menu-item>
-              <a href="javascript:;">
+              <a href="#RPCs">
                 <img
                   src="@/assets/icons/RPCs.svg"
                   class="h-[24px]"
@@ -28,7 +32,7 @@
                 RPCs</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="javascript:;">
+              <a href="#Apps">
                 <img
                   src="@/assets/icons/Apps.svg"
                   class="h-[24px]"
