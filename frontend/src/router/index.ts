@@ -21,7 +21,7 @@ const router = createRouter({
       component: RpcsIndex,
     },
     {
-      path: "/apps",
+      path: "/Apps",
       name: "AppsIndex",
       component: AppsIndex,
     },

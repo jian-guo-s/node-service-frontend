@@ -24,7 +24,7 @@
 <script setup lang="ts">
   import { toRefs, reactive, computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { apiAddApp } from "@/apis/rpcs";
+  import { apiAddApp } from "@/apis/apps";
   
   const router = useRouter();
   const props = defineProps({
@@ -69,7 +69,7 @@
       console.log("erro:",error)
     } finally {
       loading.value = false;
-      router.push({ path: '/apps' });
+      router.push({ path: '/Apps' });
     }
   }
 
