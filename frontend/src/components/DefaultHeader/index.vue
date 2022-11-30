@@ -84,7 +84,7 @@
       </a-dropdown>
     </div>
   </div>
-  <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" width="600px">
+  <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" :maskClosable="false" width="600px">
     <div class="grid grid-cols-3 gap-4">
       <div class="div-img">
         <img

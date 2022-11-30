@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-40 dark:bg-black dark:text-white text-[#121211]">
+  <div class="mx-40 dark:text-white text-[#121211]">
     <div class="flex justify-between items-center">
       <div class="text-[32px] font-bold mb-4">
         <img
@@ -12,34 +12,137 @@
     </div>
     <a-table
       :loading="loading"
-      class="my-4 white-css dark:dark-css"
-      :row-key="(record) => record.id"
+      class="my-4"
       :columns="tableColumns"
       :dataSource="appsList"
       :pagination="pagination"
     >
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'daylyRequests'">
-          <div>折现</div>
+          <div>折线</div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <a>View API Key</a>
+          <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
         </template>
       </template>
     </a-table>
   </div>  
-  <createApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
+  <CreateApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
+  <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px" :maskClosable="false">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
+    <a-form :model="appInfo" layout="vertical">
+      <a-form-item label="API KEY" name="api_key" >
+        <a-input disabled="true" v-model:value="appInfo.api_key">
+          <template #suffix>
+            <img @click="copyInfo(appInfo.api_key)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </template>
+        </a-input>
+      </a-form-item>
+      <a-form-item label="Description" name="description" >
+        <a-input disabled="true" v-model:value="appInfo.description">
+          <template #suffix>
+            <img @click="copyInfo(appInfo.description)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </template>
+        </a-input>
+      </a-form-item>
+      <a-form-item label="WEBSOCKETS" name="websocket_link" >
+        <a-input disabled="true" v-model:value="appInfo.websocket_link">
+          <template #suffix>
+            <img @click="copyInfo(appInfo.websocket_link)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </template>
+        </a-input>
+      </a-form-item>
+      <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="1" tab="JavaScript">
+          <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div>HTTPS Example</div>
+            <img @click="copyInfo(appInfo.code_examples.js)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </div>
+          <div class="codeScrollHeight">
+            <CodeEditor :readOnly="true" :value="appInfo.code_examples.js"></CodeEditor>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="CLI">
+          <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div>HTTPS Example</div>
+            <img @click="copyInfo(appInfo.code_examples.cli)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </div>
+          <div class="codeScrollHeight">
+            <CodeEditor :readOnly="true" :value="appInfo.code_examples.cli"></CodeEditor>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="Python">
+          <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div>HTTPS Example</div>
+            <img @click="copyInfo(appInfo.code_examples.python)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </div>
+          <div class="codeScrollHeight">
+            <CodeEditor :readOnly="true" :value="appInfo.code_examples.python"></CodeEditor>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="4" tab="Go">
+          <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div>HTTPS Example</div>
+            <img @click="copyInfo(appInfo.code_examples.go)"
+              src="@/assets/icons/copy.svg"
+              class="h-[19px] cursor-pointer"
+            />
+          </div>
+          <div class="codeScrollHeight">
+            <CodeEditor :readOnly="true" :value="appInfo.code_examples.go"></CodeEditor>
+          </div>
+        </a-tab-pane>
+      </a-tabs>
+    </a-form>
+    <div class="text-center mt-4">
+      <a-button type="primary" @click="visibleView=false" ghost>Learn More</a-button>
+      <a-button class="ml-4" type="primary" @click="visibleView=false">Close</a-button>
+    </div>
+  </a-modal>
 </template>
 <script lang="ts" setup>
   import { onMounted, reactive, ref, computed } from 'vue';
   import { apiGetApps } from "@/apis/apps";
-  import createApp from "../apps/createApp.vue"
+  import CreateApp from "./components/CreateApp.vue"
+  import CodeEditor from "./components/CodeEditor.vue"
   import useAssets from "@/stores/useAssets";
+  import { message } from 'ant-design-vue';
   const { getImageURL } = useAssets()
 
   const showCreate = ref(false);
   const appsList = reactive([]); //app列表
+  const appInfo = reactive({
+    api_key: '',
+    description: '',
+    websocket_link: '',
+    code_examples: {
+      js: '',
+      cli: '',
+      python: '',
+      go: '',
+    }
+  });
+  const visibleView = ref(false)
   const loading = ref(false);
+  const activeKey = ref("1");
 
   const tableColumns = computed<any[]>(() => [
     {
@@ -133,11 +236,68 @@
       loading.value = false;
     }
   };
+  const showView = async (_items: any) => {
+    visibleView.value = true;
+    Object.assign(appInfo, _items); //赋值
+  }
+  const copyInfo = async (_items: any) => {
+    // 存储传递过来的数据
+      let OrderNumber = _items;
+      // 创建一个input 元素
+      // createElement() 方法通过指定名称创建一个元素
+      let newInput = document.createElement("input");
+      // 讲存储的数据赋值给input的value值
+      newInput.value = OrderNumber;
+      // appendChild() 方法向节点添加最后一个子节点。
+      document.body.appendChild(newInput);
+      // 选中input元素中的文本
+      // select() 方法用于选择该元素中的文本。
+      newInput.select();
+      // 执行浏览器复制命令
+      try {
+        //  execCommand方法是执行一个对当前文档，当前选择或者给出范围的命令
+        await document.execCommand('Copy') // 执行浏览器复制命令
+        // 清空输入框
+        newInput.remove();
+        message.success("copy success");
+      } catch {
+        message.error("copy failed");
+      }
+  }
 </script>
 <style scoped lang="less">
-@btnColor: #E2B578;
-:deep(a){
-  color: #E2B578;
+@baseColor: #E2B578;
+:deep(.ant-tabs){
+  color: #BBBAB9;
+}
+.codeScrollHeight {
+  height: 200px;
+}
+:deep(.ant-tabs-nav-list){
+  width: 100%;
+}
+:deep(.ant-tabs-tab){
+  width: 25%;
+  display: flex;
+  justify-content: center;
+}
+:deep(.ant-tabs-tab-btn:hover),:deep(.ant-tabs-tab:hover){
+  color: @baseColor;
+}
+:deep(.ant-tabs-ink-bar) {
+  background: @baseColor;
+}
+:deep(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
+  color: @baseColor;
+}
+:deep(.ant-input-affix-wrapper){
+  border-radius: 8px;
+  padding: 8px 11px;
+}
+:deep(.ant-input-affix-wrapper-disabled){
+  background-color: transparent;
+  border-color: #EBEBEB;
+  color: #BBBAB9;
 }
 :deep(.ant-btn){
   border-radius: 8px;
@@ -147,15 +307,20 @@
   height: 40px;
 }
 :deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @btnColor;
-  background: @btnColor;
+  border-color: @baseColor;
+  background: @baseColor;
+}
+
+:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
+  border-color: @baseColor;
+  color: @baseColor;
 }
 :deep(.ant-table){
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   color: #BBBAB9;
 }
-:deep(.white-css .ant-table-thead > tr > th) {
+:deep(.ant-table-thead > tr > th) {
   background: #151210;
   color: #FFFFFF;
 }

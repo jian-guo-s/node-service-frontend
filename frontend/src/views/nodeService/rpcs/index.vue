@@ -42,12 +42,12 @@
       </div>
     </div>
   </div>
-  <createApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
+  <CreateApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
 </template>
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
 import { apiGetChains } from "@/apis/rpcs";
-import createApp from "../apps/createApp.vue"
+import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
 const { getImageURL } = useAssets()
 
