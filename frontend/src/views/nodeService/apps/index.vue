@@ -12,7 +12,23 @@
     </div>
     <a-table
       :loading="loading"
-      class="my-4"
+      class="my-4 white-table dark:hidden"
+      :columns="tableColumns"
+      :dataSource="appsList"
+      :pagination="pagination"
+    >
+      <template #bodyCell="{ column, record, index }">
+        <template v-if="column.dataIndex === 'daylyRequests'">
+          <div>折线</div>
+        </template>
+        <template v-if="column.dataIndex === 'action'">
+          <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
+        </template>
+      </template>
+    </a-table>
+    <a-table
+      :loading="loading"
+      class="my-4 dark-table hidden dark:inline-block"
       :columns="tableColumns"
       :dataSource="appsList"
       :pagination="pagination"
@@ -161,8 +177,8 @@
     },
     {
       title: 'Total Requests（24h）',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      dataIndex: 'created_at',
+      key: 'created_at',
       ellipsis: 'fixed',
       align: 'center',
     },
@@ -175,11 +191,11 @@
     },
     {
       title: 'Days on Hamster',
-      dataIndex: 'daysOnHamster',
+      dataIndex: 'created_at',
       align: 'center',
       ellipsis: 'fixed',
-      key: 'created_at',
-      // customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetimeWithoutSec),
+      key: 'DaysOnHamster',
+      customRender: ({ text }) => Math.floor((new Date()-new Date(text))/(60*60*24*1000))+' Days',
     },
     {
       title: 'Action',
@@ -188,7 +204,7 @@
       width: '150px',
     },
   ]);
-
+console.log("date:",new Date());
   const pagination = reactive({
     // 分页配置器
     pageSize: 2, // 一页的数据限制
@@ -227,8 +243,9 @@
         size: pagination.pageSize,
       }
       const data = await apiGetApps(params);
-      console.log(data)
+      console.log("data:",data)
       Object.assign(appsList, data.result); //赋值
+      pagination.total = data.pagination.total;
       
     } catch (error: any) {
       console.log("erro:",error)
@@ -321,20 +338,39 @@
   color: #BBBAB9;
 }
 :deep(.ant-table-thead > tr > th) {
+  color: #FFFFFF;
+  font-weight: 400;
+  border-bottom: none;
+}
+:deep(.white-table .ant-table-thead > tr > th) {
   background: #151210;
   color: #FFFFFF;
 }
-:deep(.dark-css .ant-table-thead > tr > th){
-  background: #4E4841 !important;
+:deep(.dark-table .ant-table-thead > tr > th) {
+  background: #4E4841;
+  color: #FFFFFF;
 }
-:deep(.ant-table-tbody > tr > td){
+:deep(.white-table .ant-table-tbody > tr > td){
   border-bottom: 1px solid #F4F4F4;
+  color: #BBBAB9;
+}
+:deep(.dark-table .ant-table-tbody > tr > td){
+  border-bottom: 1px solid #302D2D;
+  color: #8A8A8A;
+  background-color: #1D1C1A;
+}
+:deep(.dark-table .ant-table-tbody > tr.ant-table-row:hover > td),
+:deep(.dark-table .ant-table-tbody > tr >td.ant-table-cell-row-hover){
+  background-color: #1D1C1A ;
 }
 :deep(.ant-table-container table > thead > tr:first-child th:first-child){
   border-top-left-radius: 12px;
 }
 :deep(.ant-table-container table > thead > tr:first-child th:last-child){
   border-top-right-radius: 12px;
+}
+:deep(.ant-pagination-prev button),:deep(.ant-pagination-next button){
+  color: #8A8A8A;
 }
 :deep(.ant-table-pagination.ant-pagination){
   margin: 0 0;
@@ -343,12 +379,18 @@
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+:deep(.white-table .ant-table-pagination.ant-pagination){
+  background: #fff;
+}
+:deep(.dark-table .ant-table-pagination.ant-pagination){
+  background: #1D1C1A;
+}
 :deep(.ant-pagination-item a){
   color: #8A8A8A;
 }
 
 :deep(.ant-pagination-disabled .ant-pagination-item-link), :deep(.ant-pagination-disabled:hover .ant-pagination-item-link) {
-  color: rgba(0, 0, 0, 0.25) !important;
+  color: #8A8A8A !important;
   cursor: not-allowed !important;
 }
 :deep(.ant-pagination-item a:hover), :deep(.ant-pagination-item-link:hover){

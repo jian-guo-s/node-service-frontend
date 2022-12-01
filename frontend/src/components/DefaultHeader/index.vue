@@ -124,11 +124,13 @@
       </div>
     </div>
   </a-modal>
+  <!-- <ConnectButton /> -->
 </template>
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { onMounted,ref } from "vue";
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const router = useRouter();
 const visibleWallet = ref(false);
