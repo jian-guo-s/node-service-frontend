@@ -86,55 +86,24 @@
   </div>
   <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" :maskClosable="false" width="600px">
     <div class="grid grid-cols-3 gap-4">
-      <div class="div-img">
-        <img
-          src="@/assets/images/metamask.png"
-          class="img-css"
-        />
-      </div>
-      <div class="div-img">
-        <img
-          src="@/assets/images/connect.png"
-          class="img-css"
-        />
-      </div>
-      <div class="div-img">
-        <img
-          src="@/assets/images/imToken.png"
-          class="img-css"
-        />
-      </div>
-      <div class="div-img">
-        <img
-          src="@/assets/images/math.png"
-          class="img-css"
-        />
-      </div>
-      <div class="div-img">
-        <img
-          src="@/assets/images/trust.png"
-          class="img-css"
-        />
-      </div>
-      <div class="div-img">
-        <img
-          src="@/assets/images/huobi.png"
-          class="img-css"
-        />
+      <div class="div-img" v-for="(item, index) in imgList" :key="index" :class="{ 'check-border': imgVal === item }" @click="checkWallet(item)">
+        <img :src="getImageURL(`${item}.png`)" class="img-css" />
       </div>
     </div>
   </a-modal>
-  <!-- <ConnectButton /> -->
 </template>
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-import { onMounted,ref } from "vue";
-// import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { onMounted,reactive,ref } from "vue";
+import useAssets from "@/stores/useAssets";
+const { getImageURL } = useAssets();
 
 const router = useRouter();
 const visibleWallet = ref(false);
 const isLogin = ref(false);
+const imgVal = ref("");
+const imgList = reactive(["metamask","connect","imToken","math","trust","huobi"])
 
 const goHome = () => {
   router.push("/RPCs");
@@ -145,6 +114,18 @@ const changeTheme = (val: string) => {
     document.documentElement.classList.remove('dark')
   } else {
     document.documentElement.classList.add('dark')
+  }
+}
+
+const checkWallet = async (val: string) => {
+  imgVal.value = val;
+  console.log("win:", window.ethereum)
+  if (typeof window.ethereum != 'undefined') {
+    console.log("MetaMask is installed!");
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+  } else {
+    console.log("未安装");
   }
 }
 
@@ -186,7 +167,7 @@ const showWallet = () => {
   align-items: center;
   cursor: pointer;
 }
-.div-img:active{
+.check-border{
   border: 1px solid #E2B578;
 }
 .img-css{

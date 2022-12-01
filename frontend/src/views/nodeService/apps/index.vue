@@ -19,7 +19,7 @@
     >
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'daylyRequests'">
-          <div>折线</div>
+          <Echarts :echartsId="`echarts${record.id}`" :echartsData="record.dayly_requests_7days" />
         </template>
         <template v-if="column.dataIndex === 'action'">
           <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
@@ -35,7 +35,7 @@
     >
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'daylyRequests'">
-          <div>折线</div>
+          <Echarts :echartsId="`darkcharts${record.id}`" :echartsData="record.dayly_requests_7days" />
         </template>
         <template v-if="column.dataIndex === 'action'">
           <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
@@ -137,11 +137,10 @@
 <script lang="ts" setup>
   import { onMounted, reactive, ref, computed } from 'vue';
   import { apiGetApps } from "@/apis/apps";
+  import Echarts from "@/components/Echarts.vue";
   import CreateApp from "./components/CreateApp.vue"
   import CodeEditor from "./components/CodeEditor.vue"
-  import useAssets from "@/stores/useAssets";
   import { message } from 'ant-design-vue';
-  const { getImageURL } = useAssets()
 
   const showCreate = ref(false);
   const appsList = reactive([]); //app列表
@@ -177,8 +176,8 @@
     },
     {
       title: 'Total Requests（24h）',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'total_requests_today',
+      key: 'total_requests_today',
       ellipsis: 'fixed',
       align: 'center',
     },
@@ -188,6 +187,7 @@
       align: 'center',
       ellipsis: 'fixed',
       key: 'daylyRequests',
+      width: '200px'
     },
     {
       title: 'Days on Hamster',
@@ -204,10 +204,10 @@
       width: '150px',
     },
   ]);
-console.log("date:",new Date());
+  
   const pagination = reactive({
     // 分页配置器
-    pageSize: 2, // 一页的数据限制
+    pageSize: 10, // 一页的数据限制
     current: 1, // 当前页
     total: 10, // 总数
     size: 'small',

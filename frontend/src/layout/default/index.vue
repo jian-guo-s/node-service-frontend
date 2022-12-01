@@ -25,7 +25,7 @@
 </template>
 <script lang="ts" setup>
 import DefaultHeader from "../../components/DefaultHeader/index.vue";
-import Support from "../../components/support.vue";
+import Support from "../../components/Support.vue";
 import { RouterView, useRoute } from "vue-router";
 import { computed } from "vue";
 const routes = useRoute();
