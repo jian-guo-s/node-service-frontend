@@ -38,7 +38,7 @@ const onClickConnect = () => {
 defineExpose({onClickConnect})
 </script>
 
-<style>
+<!-- <style>
 main {
   display: flex;
   align-items: center;
@@ -57,4 +57,4 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
-</style>
+</style> -->

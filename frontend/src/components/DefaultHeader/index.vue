@@ -171,7 +171,4 @@ const showWallet = () => {
 .img-css{
   height: 90px;
 }
-:deep(button){
-  margin-top: 0px !important;
-}
 </style>
