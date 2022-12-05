@@ -84,6 +84,7 @@
       </a-dropdown>
     </div>
   </div>
+  <Wallets ref="showWallets" />
   <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" :maskClosable="false" width="600px">
     <div class="grid grid-cols-3 gap-4">
       <div class="div-img" v-for="(item, index) in imgList" :key="index" :class="{ 'check-border': imgVal === item }" @click="checkWallet(item)">
@@ -92,14 +93,16 @@
     </div>
   </a-modal>
 </template>
-
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { onMounted,reactive,ref } from "vue";
 import useAssets from "@/stores/useAssets";
+// import Wallets from "../Wallets.vue";
+
 const { getImageURL } = useAssets();
 
 const router = useRouter();
+const showWallets = ref(null);
 const visibleWallet = ref(false);
 const isLogin = ref(false);
 const imgVal = ref("");
@@ -119,14 +122,6 @@ const changeTheme = (val: string) => {
 
 const checkWallet = async (val: string) => {
   imgVal.value = val;
-  console.log("win:", window.ethereum)
-  if (typeof window.ethereum != 'undefined') {
-    console.log("MetaMask is installed!");
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-  } else {
-    console.log("未安装");
-  }
 }
 
 onMounted(() => {
@@ -134,7 +129,8 @@ onMounted(() => {
 });
 
 const showWallet = () => {
-  visibleWallet.value = true;
+  // visibleWallet.value = true;
+  showWallets.value.onClickConnect();
 }
 </script>
 
@@ -167,7 +163,7 @@ const showWallet = () => {
   align-items: center;
   cursor: pointer;
 }
-.check-border{
+.check-border, .div-img:active{
   border: 1px solid #E2B578;
 }
 .img-css{
