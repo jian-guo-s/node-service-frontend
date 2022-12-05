@@ -60,28 +60,30 @@
           />
         </div>
       </div>
-      <a-button v-if="!isLogin" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
-      <a-dropdown v-if="isLogin">
-        <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
-          <img
-              src="@/assets/icons/metamask-icon.svg"
-              class="h-[20px] mr-2"
-            />
-          <div class="text-[#E2B578] dark:text-[#FFFFFF]">0xBb2…310a</div>
-        </div>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item>
-              <a href="javascript:;">
-                <img
-                  src="@/assets/icons/disconnect.svg"
-                  class="h-[24px]"
-                />
-                Disconnect</a>
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
+      <div>
+        <a-button v-if="!isLogin" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
+        <a-dropdown v-if="isLogin">
+          <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
+            <img
+                src="@/assets/icons/metamask-icon.svg"
+                class="h-[20px] mr-2"
+              />
+            <div class="text-[#E2B578] dark:text-[#FFFFFF]">0xBb2…310a</div>
+          </div>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <a href="javascript:;">
+                  <img
+                    src="@/assets/icons/disconnect.svg"
+                    class="h-[24px]"
+                  />
+                  Disconnect</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </div>
     </div>
   </div>
   <Wallets ref="showWallets" />
@@ -97,7 +99,7 @@
 import { useRouter } from "vue-router";
 import { onMounted,reactive,ref } from "vue";
 import useAssets from "@/stores/useAssets";
-// import Wallets from "../Wallets.vue";
+import Wallets from "../Wallets.vue";
 
 const { getImageURL } = useAssets();
 
@@ -168,5 +170,8 @@ const showWallet = () => {
 }
 .img-css{
   height: 90px;
+}
+:deep(button){
+  margin-top: 0px !important;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-40 dark:text-white text-[#121211]">
+  <div class="mx-40 w-full dark:text-white text-[#121211]">
     <div class="flex justify-between items-center">
       <div class="text-[32px] font-bold mb-4">
         <img

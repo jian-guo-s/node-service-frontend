@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <main>
     <button @click="onClickConnect">
       {{
@@ -10,7 +10,7 @@
       }}
     </button>
   </main>
-</template>
+</template> -->
 <script setup>
 import { useOnboard } from '@web3-onboard/vue'
 
