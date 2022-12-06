@@ -44,7 +44,7 @@
     </a-table>
   </div>  
   <CreateApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
-  <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px" :maskClosable="false">
+  <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
     <a-form :model="appInfo" layout="vertical">
       <a-form-item label="API KEY" name="api_key" >
@@ -57,10 +57,10 @@
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item label="Description" name="description" >
-        <a-input disabled="true" v-model:value="appInfo.description">
+      <a-form-item label="HTTPS" name="http_link" >
+        <a-input disabled="true" v-model:value="appInfo.http_link">
           <template #suffix>
-            <img @click="copyInfo(appInfo.description)"
+            <img @click="copyInfo(appInfo.http_link)"
               src="@/assets/icons/copy.svg"
               class="h-[19px] cursor-pointer"
             />
@@ -146,7 +146,7 @@
   const appsList = reactive([]); //app列表
   const appInfo = reactive({
     api_key: '',
-    description: '',
+    http_link: '',
     websocket_link: '',
     code_examples: {
       js: '',
