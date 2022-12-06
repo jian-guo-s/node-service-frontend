@@ -220,21 +220,21 @@
       // 改变 pageSize时的回调
       pagination.current = current;
       pagination.pageSize = pagesize;
-      getChains();
+      getApps();
     },
     onChange: (current: number) => {
       // 切换分页时的回调，
       pagination.current = current;
-      getChains();
+      getApps();
     },
     // showTotal: total => `总数：${total}人`, // 可以展示总数
   });
 
   onMounted(async () => {
-    getChains();
+    getApps();
   });
 
-  const getChains = async () => {
+  const getApps = async () => {
     loading.value = true;
     try {
       const params = {
