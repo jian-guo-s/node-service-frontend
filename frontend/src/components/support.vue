@@ -1,11 +1,13 @@
 <template>
-  <div class="fixed right-0 top-[50%] -mt-[57px] z-10 mr-4">
-    <img
-      src="@/assets/images/support.png"
-      class="w-[114px]"
-      @click="getSupport"
-    />
-  </div>
+  <a target="_blank" href="https://discord.gg/rs9BmXtQah">
+    <div class="fixed right-0 top-[50%] -mt-[57px] z-10 mr-4">
+      <img
+        src="@/assets/images/support.png"
+        class="w-[114px]"
+        @click="getSupport"
+      />
+    </div>
+  </a>
 </template>
 <script lang="ts" setup>
 

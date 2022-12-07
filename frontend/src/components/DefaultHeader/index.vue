@@ -1,10 +1,9 @@
 <template>
   <div class="default-header bg-[#FFFFFF] dark:bg-[#1D1C1A] flex justify-between">
-    <div class="flex items-center cursor-pointer">
+    <div class="flex items-center cursor-pointer" @click="goHome">
       <img
         src="@/assets/images/logo.png"
         class="h-[46px]"
-        @click="goHome"
       />
       <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
     </div>

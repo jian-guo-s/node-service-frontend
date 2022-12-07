@@ -90,4 +90,13 @@ export default {
 :deep(.overflow-guard) {
   border-radius: 14px;
 }
+:deep(.monaco-editor .line-numbers.active-line-number){
+  color: #E2B578;
+}
+:deep(.monaco-editor .line-numbers){
+  color: #BBBAB9;
+}
+:deep(.mtk5){
+  color: #E2B578;
+}
 </style>

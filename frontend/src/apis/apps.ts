@@ -10,17 +10,17 @@ interface AddAppParams {
 }
 
 interface GetAppsParams {
-  account: string;
+  // account: string;
   page: number;
   size: number;
 }
 
 //获取app列表
-export function apiGetApps(params: GetAppsParams) {
+export function apiGetApps(account: string, params: GetAppsParams) {
   return httpRequest({
-    url: `/apps/${params.account}`,
+    url: `/apps/${account}`,
     method: "get",
-    data: params,
+    params: params,
   });
 }
 // 创建app
