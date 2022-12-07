@@ -237,12 +237,12 @@
   const getApps = async () => {
     loading.value = true;
     try {
+      const account = 'jlvihv';
       const params = {
-        account: 'jlvihv',
         page: pagination.current,
         size: pagination.pageSize,
       }
-      const data = await apiGetApps(params);
+      const data = await apiGetApps(account, params);
       Object.assign(appsList, data.result); //赋值
       pagination.total = data.pagination.total;
       
