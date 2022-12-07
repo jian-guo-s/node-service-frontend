@@ -243,7 +243,6 @@
         size: pagination.pageSize,
       }
       const data = await apiGetApps(params);
-      console.log("data:",data)
       Object.assign(appsList, data.result); //赋值
       pagination.total = data.pagination.total;
       

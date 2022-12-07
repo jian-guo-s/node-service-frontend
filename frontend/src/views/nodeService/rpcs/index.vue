@@ -37,26 +37,29 @@
           </div>
         </div>
         <div class="text-center">
-          <a-button type="primary" @click="userNow">Use Now</a-button>
+          <a-button type="primary" @click="userNow( item.name, item.networks)">Use Now</a-button>
         </div>
       </div>
     </div>
   </div>
-  <CreateApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
+  <CreateApp :isRPCs="isRPCs" :showCreate="showCreate" :defaultChain="defaultChain" :defaultNetwork="defaultNetwork" @setShowCreate="showCreate=false" />
 </template>
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
-// import { useOnboard } from'@web3-onboard/vue';
 import { apiGetChains } from "@/apis/rpcs";
 import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
 const { getImageURL } = useAssets()
-// const { connectingWallet, alreadyConnectedWallets, disconnectWallet } = useOnboard();
-// console.log("connectingwallet index:",connectingWallet.value);
-// console.log("alreadyConnectedWallets index:",alreadyConnectedWallets.value);
-// console.log("disconnectWallet index:",disconnectWallet);
 const showCreate = ref(false);
-const chainList = reactive([]); //链列表
+const isRPCs = ref(true);
+const defaultChain = ref('');
+const defaultNetwork = ref('');
+const chainList = reactive([{
+  websocket_address: "",
+  http_address: "",
+  name: "",
+  networks: [],
+}]); //链列表
 
 onMounted(async () => {
   getChains();
@@ -72,8 +75,10 @@ const getChains = async () => {
   }
 };
 
-const userNow = async () => {
+const userNow = async (chain: any, networks: any) => {
   showCreate.value = true;
+  defaultChain.value = chain;
+  defaultNetwork.value = networks[0];
 }
 </script>
 <style scoped lang="less">
