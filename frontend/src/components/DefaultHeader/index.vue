@@ -85,7 +85,7 @@
       </div>
     </div>
   </div>
-  <Wallets ref="showWallets" />
+  <Wallets ref="showWallets"></Wallets>
   <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" :maskClosable="false" width="600px">
     <div class="grid grid-cols-3 gap-4">
       <div class="div-img" v-for="(item, index) in imgList" :key="index" :class="{ 'check-border': imgVal === item }" @click="checkWallet(item)">
@@ -130,7 +130,8 @@ onMounted(() => {
 });
 
 const showWallet = () => {
-  showWallets.value.onClickConnect();
+  console.log("showWallets.value:",showWallets.value);
+  showWallets.value?.onClickConnect();
 }
 </script>
 

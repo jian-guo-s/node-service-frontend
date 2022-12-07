@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { defineExpose } from 'vue';
 import { useOnboard } from '@web3-onboard/vue'
 import Onboard, { type WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
@@ -109,7 +110,7 @@ const getAccountAddress = (): string => {
 }
 
 //暴露子组件的方法或者数据
-defineExpose({ onClickConnect })
+defineExpose({onClickConnect})
 </script>
 
 <style>
