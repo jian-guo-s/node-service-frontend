@@ -237,7 +237,7 @@
   const getApps = async () => {
     loading.value = true;
     try {
-      const account = 'jlvihv';
+      const account = window.localStorage.getItem("walletAccount");
       const params = {
         page: pagination.current,
         size: pagination.pageSize,

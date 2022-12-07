@@ -16,12 +16,10 @@ import injectedModule from '@web3-onboard/injected-wallets'
 
 const routes = useRoute();
 const layout = computed(() => {
-  return "layout-" + (routes.meta.layout || "default").toLowerCase();
+  return "layout-" + ((routes.meta.layout || "default") as string).toLowerCase();
 });
 
 const injected = injectedModule()
-const infuraKey = '<INFURA_KEY>'
-const rpcUrl = `https://rpc.moonbeam.hamster-test.newtouch.com/${infuraKey}`
 
 init({
   wallets: [injected],
@@ -30,12 +28,8 @@ init({
       id: '0x1',
       token: 'ETH',
       label: 'Ethereum Mainnet',
-      rpcUrl
+      rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
     }
   ]
 })
 </script>
-
-<!-- <template>
-  <RouterView />
-</template> -->
