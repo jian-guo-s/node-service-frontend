@@ -27,17 +27,29 @@
 </template>
 
 <script setup lang="ts">
-  import { toRefs, reactive, computed, ref, onMounted } from 'vue';
+  import { toRefs, reactive, computed, ref, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiAddApp } from "@/apis/apps";
   import { apiGetChains } from "@/apis/rpcs";
   
   const router = useRouter();
   const props = defineProps({
+    isRPCs: Boolean,
     showCreate: Boolean,
+    defaultNetwork: String,
+    defaultChain: String,
   });
-  const { showCreate } = toRefs(props);
+  const { isRPCs, showCreate, defaultNetwork, defaultChain } = toRefs(props);
   const emit = defineEmits(["setShowCreate"]);
+
+  //监听父组件值得修改
+  watch(props, () => {
+    if (isRPCs.value === true) {
+      formData.chain = props.defaultChain;
+      formData.network = props.defaultNetwork;
+      currNetworkList.value = networkList.value[formData.chain];
+    }
+  })
 
   const chainList = ref([]); //记录链name的值
   const networkList = ref([]); //记录所有的值
@@ -66,7 +78,6 @@
   });
 
   const createApp = async () => {
-    console.log("create...");
     await formRef.value.validate();
 
     loading.value = true;
@@ -93,7 +104,7 @@
   const getChains = async () => {
     try {
       const data = await apiGetChains();
-      data.result.forEach((item: { networks: any[]; name: string | number; }) => {
+      data.result.forEach((item: { networks: any[]; name: string; }, key: any) => {
         const networkInfo: string[] = [];
         item.networks.forEach((ele: any, index: any) => {
           if (index > 0) {
@@ -101,10 +112,17 @@
           } else {
             networkInfo.push(ele);
           }
+          if (key === 0 && index === 0) {
+            formData.network = ele;
+          }
         })
+        if (key === 0) {
+          formData.chain = item.name;
+        }
         networkList.value[item.name] = networkInfo;
         chainList.value.push(item.name);
       });
+      currNetworkList.value = networkList.value[formData.chain];
     } catch (error: any) {
       console.log("erro:",error)
     }
