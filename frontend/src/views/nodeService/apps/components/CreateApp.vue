@@ -31,16 +31,18 @@
   import { useRouter } from 'vue-router';
   import { apiAddApp } from "@/apis/apps";
   import { apiGetChains } from "@/apis/rpcs";
+import { boolean } from 'joi';
   
   const router = useRouter();
   const props = defineProps({
     isRPCs: Boolean,
+    isApps: Boolean,
     showCreate: Boolean,
     defaultNetwork: String,
     defaultChain: String,
   });
-  const { isRPCs, showCreate, defaultNetwork, defaultChain } = toRefs(props);
-  const emit = defineEmits(["setShowCreate"]);
+  const { isRPCs, showCreate, isApps } = toRefs(props);
+  const emit = defineEmits(["setShowCreate", "getApps", "setPage"]);
 
   //监听父组件值得修改
   watch(props, () => {
@@ -88,9 +90,14 @@
     } catch (error: any) {
       console.log("erro:",error)
     } finally {
-      emit("setShowCreate");
       loading.value = false;
-      router.push({ path: '/Apps' });
+      if (isApps.value === true) {
+        emit("setShowCreate");
+        emit("setPage", 1);
+        emit("getApps");
+      } else {
+        router.push({ path: '/Apps' });
+      }
     }
   }
 

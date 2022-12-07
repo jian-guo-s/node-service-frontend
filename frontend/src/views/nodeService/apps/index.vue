@@ -43,7 +43,7 @@
       </template>
     </a-table>
   </div>  
-  <CreateApp :showCreate="showCreate" @setShowCreate="showCreate=false" />
+  <CreateApp :isApps="true" :showCreate="showCreate" @setShowCreate="showCreate=false" @getApps="getApps" @setPage="setPage" />
   <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
     <a-form :model="appInfo" layout="vertical">
@@ -143,7 +143,7 @@
   import { message } from 'ant-design-vue';
 
   const showCreate = ref(false);
-  const appsList = reactive([]); //app列表
+  const appsList = ref([]); //app列表
   const appInfo = reactive({
     api_key: '',
     http_link: '',
@@ -207,7 +207,7 @@
   
   const pagination = reactive({
     // 分页配置器
-    pageSize: 10, // 一页的数据限制
+    pageSize: 3, // 一页的数据限制
     current: 1, // 当前页
     total: 10, // 总数
     size: 'small',
@@ -234,6 +234,10 @@
     getApps();
   });
 
+  const setPage = async (val: number) => {
+    pagination.current = val;
+  }
+
   const getApps = async () => {
     loading.value = true;
     try {
@@ -243,7 +247,7 @@
         size: pagination.pageSize,
       }
       const data = await apiGetApps(account, params);
-      Object.assign(appsList, data.result); //赋值
+      appsList.value = data.result;
       pagination.total = data.pagination.total;
       
     } catch (error: any) {
