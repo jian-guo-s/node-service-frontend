@@ -88,6 +88,8 @@ if (walletStatesOrNull == null) {
 } else {
   walletStates = walletStatesOrNull
 }
+const { accounts } = walletStates[0];
+window.localStorage.setItem("walletAccount", accounts[0].address);
 
 const onClickConnect = () => {
   const { provider, label } = connectedWallet.value || {}
@@ -101,6 +103,8 @@ const onClickConnect = () => {
 // 实现获取用户钱包地址的方法，把此方法暴露出去，方便外面调用
 const getAccountAddress = (): string => {
   const { accounts } = walletStates[0]
+  console.log("accounts[0].address:",accounts[0].address);
+  window.localStorage.setItem("walletAccount", accounts[0].address);
   return accounts[0].address
 }
 

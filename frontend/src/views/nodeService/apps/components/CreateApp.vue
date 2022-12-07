@@ -61,7 +61,7 @@
     description: '',
     chain: '',
     network: '',
-    account: 'jlvihv',
+    account: window.localStorage.getItem("walletAccount"),
   });
 
   // Form rules
@@ -88,6 +88,7 @@
     } catch (error: any) {
       console.log("erro:",error)
     } finally {
+      emit("setShowCreate");
       loading.value = false;
       router.push({ path: '/Apps' });
     }

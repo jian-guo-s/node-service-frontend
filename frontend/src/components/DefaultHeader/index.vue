@@ -129,7 +129,7 @@ onMounted(() => {
   changeTheme('dark');
 });
 
-const showWallet = async () => {
+const showWallet = () => {
   showWallets.value.onClickConnect();
 }
 </script>
