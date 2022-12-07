@@ -104,7 +104,7 @@ import Wallets from "../Wallets.vue";
 const { getImageURL } = useAssets();
 
 const router = useRouter();
-const showWallets = ref(null);
+const showWallets = ref();
 const visibleWallet = ref(false);
 const isLogin = ref(false);
 const imgVal = ref("");
@@ -130,8 +130,7 @@ onMounted(() => {
   changeTheme('dark');
 });
 
-const showWallet = () => {
-  // visibleWallet.value = true;
+const showWallet = async () => {
   showWallets.value.onClickConnect();
 }
 </script>

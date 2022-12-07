@@ -46,11 +46,15 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
+// import { useOnboard } from'@web3-onboard/vue';
 import { apiGetChains } from "@/apis/rpcs";
 import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
 const { getImageURL } = useAssets()
-
+// const { connectingWallet, alreadyConnectedWallets, disconnectWallet } = useOnboard();
+// console.log("connectingwallet index:",connectingWallet.value);
+// console.log("alreadyConnectedWallets index:",alreadyConnectedWallets.value);
+// console.log("disconnectWallet index:",disconnectWallet);
 const showCreate = ref(false);
 const chainList = reactive([]); //链列表
 

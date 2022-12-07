@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="showCreate" :footer="null" :closable="false" width="600px" :maskClosable="false">
+  <a-modal v-model:visible="showCreate" :footer="null" :closable="false" width="600px" @cancel="cancel">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Create App</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Name" name="name" >
@@ -9,10 +9,14 @@
         <a-input v-model:value="formData.description" placeholder="Please enter Description" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="Chain" name="chain" >
-        <a-input v-model:value="formData.chain" placeholder="Please enter Chain" allow-clear autocomplete="off" />
+        <a-select @change="setNetwork" v-model:value="formData.chain" placeholder="Please enter Chain" allow-clear autocomplete="off"
+        :options="chainList.map(item => ({ value: item }))" >
+        </a-select>
       </a-form-item>
       <a-form-item label="Network" name="network" >
-        <a-input v-model:value="formData.network" placeholder="Please enter Network" allow-clear autocomplete="off" />
+        <a-select v-model:value="formData.network" placeholder="Please enter Network" allow-clear autocomplete="off"
+        :options="currNetworkList.map(item => ({ value: item }))">
+        </a-select>
       </a-form-item>
     </a-form>
     <div class="text-center">
@@ -23,9 +27,10 @@
 </template>
 
 <script setup lang="ts">
-  import { toRefs, reactive, computed, ref } from 'vue';
+  import { toRefs, reactive, computed, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { apiAddApp } from "@/apis/apps";
+  import { apiGetChains } from "@/apis/rpcs";
   
   const router = useRouter();
   const props = defineProps({
@@ -34,6 +39,9 @@
   const { showCreate } = toRefs(props);
   const emit = defineEmits(["setShowCreate"]);
 
+  const chainList = ref([]); //记录链name的值
+  const networkList = ref([]); //记录所有的值
+  const currNetworkList = ref([]); //记录根据chain的值联动的值
   const loading = ref(false);
   const formRef = ref();
   const formData = reactive({
@@ -77,20 +85,58 @@
   const cancel = async () => {
     emit("setShowCreate");
   }
+
+  onMounted(async () => {
+    getChains();
+  });
+
+  const getChains = async () => {
+    try {
+      const data = await apiGetChains();
+      data.result.forEach((item: { networks: any[]; name: string | number; }) => {
+        const networkInfo: string[] = [];
+        item.networks.forEach((ele: any, index: any) => {
+          if (index > 0) {
+            networkInfo.push("Testnet - " + ele.Testnet);
+          } else {
+            networkInfo.push(ele);
+          }
+        })
+        networkList.value[item.name] = networkInfo;
+        chainList.value.push(item.name);
+      });
+    } catch (error: any) {
+      console.log("erro:",error)
+    }
+};
+  const setNetwork = async (val: any) => {
+    formData.network = "";
+    if (val === undefined) {
+      currNetworkList.value = [];
+    } else {
+      currNetworkList.value = networkList.value[val];
+    }
+  }
 </script>
 <style scoped lang="less">
-@btnColor: #E2B578;
-:deep(.ant-input){
+@baseColor: #E2B578;
+:deep(.ant-input), :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
   background-color: transparent;
   border-radius: 8px;
-  color: #BBBAB9;
+  // color: #BBBAB9;
   border-color: #EBEBEB;
+}
+:deep(.ant-input){
   padding: 4px 11px !important;
+}
+:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector){
+  padding: 4px 11px !important;
+  height: 40px;
 }
 :deep(.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover), 
 :deep(.ant-input-affix-wrapper-focused),
 :deep(.ant-input-affix-wrapper:focus) {
-  border-color: @btnColor;
+  border-color: @baseColor;
 }
 :deep(.ant-input-affix-wrapper-focused),
 :deep(.ant-input-affix-wrapper:focus){
@@ -109,12 +155,12 @@
   height: 40px;
 }
 :deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @btnColor;
-  background: @btnColor;
+  border-color: @baseColor;
+  background: @baseColor;
 }
 
 :deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
-  border-color: @btnColor;
-  color: @btnColor;
+  border-color: @baseColor;
+  color: @baseColor;
 }
 </style>
