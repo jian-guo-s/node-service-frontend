@@ -31,7 +31,6 @@
   import { useRouter } from 'vue-router';
   import { apiAddApp } from "@/apis/apps";
   import { apiGetChains } from "@/apis/rpcs";
-import { boolean } from 'joi';
   
   const router = useRouter();
   const props = defineProps({
@@ -86,7 +85,6 @@ import { boolean } from 'joi';
 
     try {
       const data = await apiAddApp(formData);
-      console.log(data)
     } catch (error: any) {
       console.log("erro:",error)
     } finally {

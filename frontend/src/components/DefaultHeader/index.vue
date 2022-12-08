@@ -31,7 +31,7 @@
                 RPCs</a>
             </a-menu-item>
             <a-menu-item>
-              <a href="#Apps">
+              <a  @click="goApps">
                 <img
                   src="@/assets/icons/Apps.svg"
                   class="h-[24px]"
@@ -60,24 +60,25 @@
         </div>
       </div>
       <div>
-        <a-button v-if="!isLogin" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
-        <a-dropdown v-if="isLogin">
+        <a-button v-if="!isConnectedWallet" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
+        <a-dropdown v-if="isConnectedWallet">
           <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
             <img
                 src="@/assets/icons/metamask-icon.svg"
                 class="h-[20px] mr-2"
               />
-            <div class="text-[#E2B578] dark:text-[#FFFFFF]">0xBb2…310a</div>
+            <div class="text-[#E2B578] dark:text-[#FFFFFF]">{{ walletAccount }}</div>
           </div>
           <template #overlay>
             <a-menu>
               <a-menu-item>
-                <a href="javascript:;">
+                <a href="javascript:;" @click="visibleDisconnect = true">
                   <img
                     src="@/assets/icons/disconnect.svg"
                     class="h-[24px]"
                   />
-                  Disconnect</a>
+                  Disconnect
+                </a>
               </a-menu-item>
             </a-menu>
           </template>
@@ -85,12 +86,19 @@
       </div>
     </div>
   </div>
-  <Wallets ref="showWallets"></Wallets>
+  <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
   <a-modal v-model:visible="visibleWallet" title="Connect wallet to continue" :footer="null" :maskClosable="false" width="600px">
     <div class="grid grid-cols-3 gap-4">
       <div class="div-img" v-for="(item, index) in imgList" :key="index" :class="{ 'check-border': imgVal === item }" @click="checkWallet(item)">
         <img :src="getImageURL(`${item}.png`)" class="img-css" />
       </div>
+    </div>
+  </a-modal>
+  <a-modal v-model:visible="visibleDisconnect" :footer="null" :closable="false">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Confirm disconnect wallets?</div>
+    <div class="text-center">
+      <a-button type="primary" @click="(visibleDisconnect=false)" ghost>No</a-button>
+      <a-button class="ml-4" type="primary" @click="disconnect">Yes</a-button>
     </div>
   </a-modal>
 </template>
@@ -105,13 +113,25 @@ const { getImageURL } = useAssets();
 const router = useRouter();
 const showWallets = ref();
 const visibleWallet = ref(false);
-const isLogin = ref(false);
+const visibleDisconnect = ref(false);
+const isConnectedWallet = ref(false);
+const walletAccount = ref("");
 const imgVal = ref("");
 const imgList = reactive(["metamask","connect","imToken","math","trust","huobi"])
 
 const goHome = () => {
   router.push("/RPCs");
 };
+
+const goApps = () => {
+  const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
+  // 如果 local storage 里没有保存的钱包，直接返回
+  if (connectedWallets == null || connectedWallets === '[]') {
+    showWallet();
+  } else {
+    router.push("/Apps");
+  }
+}
 
 const changeTheme = (val: string) => {
   if (val === 'white') {
@@ -128,10 +148,17 @@ const checkWallet = async (val: string) => {
 onMounted(() => {
   changeTheme('dark');
 });
-
+const disconnect = () => {
+  showWallets.value?.onClickDisconnect();
+  visibleDisconnect.value = false;
+}
 const showWallet = () => {
-  console.log("showWallets.value:",showWallets.value);
   showWallets.value?.onClickConnect();
+}
+const setWalletBtn = (val: boolean) => {
+  isConnectedWallet.value = val;
+  const account = window.localStorage.getItem("walletAccount");
+  walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length-4);
 }
 </script>
 
@@ -146,14 +173,6 @@ const showWallet = () => {
   z-index: 1;
 }
 
-.ant-btn {
-  border-radius: 8px;
-  height: 40px;
-}
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @btnColor;
-  background: @btnColor;
-}
 .div-img{
   width: 164px;
   height: 164px;
@@ -169,5 +188,24 @@ const showWallet = () => {
 }
 .img-css{
   height: 90px;
+}
+:deep(.ant-btn){
+  border-radius: 8px;
+}
+:deep(.ant-btn-primary){
+  width: 120px;
+  height: 40px;
+}
+:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
+  border-color: @btnColor;
+  background: @btnColor;
+}
+
+:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
+  border-color: @btnColor;
+  color: @btnColor;
+}
+:deep(.ant-btn.ant-btn-background-ghost), :deep(.ant-btn.ant-btn-background-ghost:hover), :deep(.ant-btn.ant-btn-background-ghost:active), :deep(.ant-btn.ant-btn-background-ghost:focus){
+  background: transparent;
 }
 </style>
