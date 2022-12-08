@@ -49,6 +49,8 @@ import { onMounted, reactive, ref } from 'vue';
 import { apiGetChains } from "@/apis/rpcs";
 import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
+import { message } from 'ant-design-vue';
+
 const { getImageURL } = useAssets()
 const showCreate = ref(false);
 const isRPCs = ref(true);
@@ -76,9 +78,15 @@ const getChains = async () => {
 };
 
 const userNow = async (chain: any, networks: any) => {
-  showCreate.value = true;
-  defaultChain.value = chain;
-  defaultNetwork.value = networks[0];
+  const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
+  // 如果 local storage 里没有保存的钱包，直接返回
+  if (connectedWallets == null || connectedWallets === '[]') {
+    message.info("Please operate Connect Wallet");
+  } else {
+    showCreate.value = true;
+    defaultChain.value = chain;
+    defaultNetwork.value = networks[0];
+  }
 }
 </script>
 <style scoped lang="less">

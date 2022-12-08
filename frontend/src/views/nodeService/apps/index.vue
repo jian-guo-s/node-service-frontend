@@ -135,13 +135,15 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref, computed } from 'vue';
+  import { onMounted, reactive, ref, computed, onBeforeMount } from 'vue';
+  import { useRouter } from "vue-router";
   import { apiGetApps } from "@/apis/apps";
   import Echarts from "@/components/Echarts.vue";
   import CreateApp from "./components/CreateApp.vue"
   import CodeEditor from "./components/CodeEditor.vue"
   import { message } from 'ant-design-vue';
 
+  const router = useRouter();
   const showCreate = ref(false);
   const appsList = ref([]); //app列表
   const appInfo = reactive({
@@ -207,7 +209,7 @@
   
   const pagination = reactive({
     // 分页配置器
-    pageSize: 3, // 一页的数据限制
+    pageSize: 10, // 一页的数据限制
     current: 1, // 当前页
     total: 10, // 总数
     size: 'small',
@@ -228,6 +230,14 @@
       getApps();
     },
     // showTotal: total => `总数：${total}人`, // 可以展示总数
+  });
+
+  onBeforeMount(() => {
+    const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
+    // 如果 local storage 里没有保存的钱包，直接返回
+    if (connectedWallets == null || connectedWallets === '[]') {
+      router.push("/RPCs");
+    } 
   });
 
   onMounted(async () => {

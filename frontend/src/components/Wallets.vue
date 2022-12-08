@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { defineExpose } from 'vue';
-import { useOnboard } from '@web3-onboard/vue'
+import { defineExpose, onBeforeMount, onMounted, watch } from 'vue';
 import Onboard, { type WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
+import { useOnboard } from '@web3-onboard/vue'
 
-const { connectedWallet, connectWallet, disconnectWallet } = useOnboard()
+const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
+const emit = defineEmits(["setWalletBtn"]);
+  
 const injected = injectedModule()
 let walletStates: WalletState[]
 
@@ -22,7 +24,6 @@ const onboard = Onboard({
     desktop: {
       enabled: true,
       transactionHandler: transaction => {
-        console.log({ transaction })
         if (transaction.eventCode === 'txPool') {
           return {
             type: 'success',
@@ -35,7 +36,6 @@ const onboard = Onboard({
     mobile: {
       enabled: true,
       transactionHandler: transaction => {
-        console.log({ transaction })
         if (transaction.eventCode === 'txPool') {
           return {
             type: 'success',
@@ -49,12 +49,12 @@ const onboard = Onboard({
   accountCenter: {
     desktop: {
       position: 'bottomRight',
-      enabled: true,
+      enabled: false,
       minimal: true
     },
     mobile: {
       position: 'topRight',
-      enabled: true,
+      enabled: false,
       minimal: true
     }
   },
@@ -81,36 +81,40 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
     return null
   }
 }
+ 
+onBeforeMount(async () => {
+  onClickConnect();
+});
 
-// 进入页面即要求连接钱包
-const walletStatesOrNull = await autoConnectSavedWallet()
-if (walletStatesOrNull == null) {
-  walletStates = await onboard.connectWallet()
-} else {
-  walletStates = walletStatesOrNull
+const onClickConnect = async () => {
+  // 进入页面即要求连接钱包
+  const walletStatesOrNull = await autoConnectSavedWallet()
+  if (walletStatesOrNull == null) {
+    walletStates = await onboard.connectWallet()
+  } else {
+    walletStates = walletStatesOrNull
+  }
+  
+  if (walletStates[0]) {
+    //记录钱包地址
+    const { accounts } = walletStates[0];
+    window.localStorage.setItem("walletAccount", accounts[0].address);
+    emit("setWalletBtn", true);
+  } else {
+    emit("setWalletBtn", false);
+  }
 }
-const { accounts } = walletStates[0];
-window.localStorage.setItem("walletAccount", accounts[0].address);
-
-const onClickConnect = () => {
+const onClickDisconnect = async () => {
   const { provider, label } = connectedWallet.value || {}
   if (provider && label) {
     disconnectWallet({ label })
-  } else {
-    connectWallet()
+    emit("setWalletBtn", false);
   }
 }
 
-// 实现获取用户钱包地址的方法，把此方法暴露出去，方便外面调用
-const getAccountAddress = (): string => {
-  const { accounts } = walletStates[0]
-  console.log("accounts[0].address:",accounts[0].address);
-  window.localStorage.setItem("walletAccount", accounts[0].address);
-  return accounts[0].address
-}
 
 //暴露子组件的方法或者数据
-defineExpose({onClickConnect})
+defineExpose({ onClickConnect, onClickDisconnect })
 </script>
 
 <style>
