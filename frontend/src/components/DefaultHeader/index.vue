@@ -8,6 +8,7 @@
       <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
     </div>
     <div class="flex items-center">
+      <div @click="goPrjects" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer mr-8">Projects</div>
       <a-dropdown>
         <div class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
           NodeService
@@ -122,6 +123,10 @@ const imgList = reactive(["metamask","connect","imToken","math","trust","huobi"]
 const goHome = () => {
   router.push("/RPCs");
 };
+
+const goPrjects = () => {
+  router.push("/projects");
+}
 
 const goApps = () => {
   const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
