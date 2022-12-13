@@ -3,11 +3,13 @@ import HomeView from "../views/home/HomeView.vue";
 import RpcsIndex from "../views/nodeService/rpcs/index.vue";
 import AppsIndex from "../views/nodeService/apps/index.vue";
 import ProjectsList from "../views/projects/projectsList/index.vue";
+import ProjectsListDetails from "../views/projects/projectsListDetails/index.vue";
 import ProjectsCreat from "../views/projects/projectsCreat/index.vue";
 import ProjectsTemplate from "../views/projects/projectsTemplate/index.vue";
 import ProjectsTemplateDetail from "../views/projects/projectsTemplateDetail/index.vue";
 import ContractDetails from "../views/projects/contractDetails/index.vue";
 import ContractDeploy from "../views/projects/contractDeploy/index.vue";
+import ContractExplorer from "../views/projects/contractExplorer/index.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -36,8 +38,19 @@ const router = createRouter({
       children: [
         {
           path: "/projects",
-          name: "ProjectsList",
-          component: ProjectsList,
+          redirect: "/projects",
+          children: [
+            {
+              path: "/projects",
+              name: "ProjectsList",
+              component: ProjectsList,
+            },
+            {
+              path: "/projects/details",
+              name: "ProjectsListDetails",
+              component: ProjectsListDetails,
+            }
+          ],
         },
         {
           path: "/projects/creat",
@@ -46,7 +59,7 @@ const router = createRouter({
         },
         {
           path: "/projects/template",
-          redirect: "/ProjectsList",
+          redirect: "/projects/template",
           children: [
             {
               path: "/projects/template",
@@ -69,6 +82,11 @@ const router = createRouter({
           path: "/projects/contract-deploy",
           name: "ContractDeploy",
           component: ContractDeploy,
+        },
+        {
+          path: "/projects/contract-explorer",
+          name: "ContractExplorer",
+          component: ContractExplorer,
         }
       ]
     },
