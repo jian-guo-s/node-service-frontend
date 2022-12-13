@@ -117,7 +117,6 @@ const router = createRouter({
           name: "AppsIndex",
           component: AppsIndex,
         }
-       
       ],
     },
   ],
