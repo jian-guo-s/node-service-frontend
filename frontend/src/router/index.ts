@@ -6,10 +6,11 @@ import ProjectsList from "../views/projects/projectsList/index.vue";
 import ProjectsListDetails from "../views/projects/projectsListDetails/index.vue";
 import ProjectsCreat from "../views/projects/projectsCreat/index.vue";
 import ProjectsTemplate from "../views/projects/projectsTemplate/index.vue";
-import ProjectsTemplateDetail from "../views/projects/projectsTemplateDetail/index.vue";
-import ContractDetails from "../views/projects/contractDetails/index.vue";
-import ContractDeploy from "../views/projects/contractDeploy/index.vue";
-import ContractExplorer from "../views/projects/contractExplorer/index.vue";
+import ProjectsTemplatesDetails from "../views/projects/projectsTemplatesDetails/index.vue";
+import ProjectsWorkflows from "../views/projects/projectsWorkflows/index.vue";
+import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs/index.vue";
+import ProjectsArtifactscontractDeploy from "../views/projects/projectsArtifactscontractDeploy/index.vue";
+import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -18,22 +19,22 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
+    // {
+    //   path: "/",
+    //   redirect: "/RPCs",
+    // },
+    // {
+    //   path: "/RPCs",
+    //   name: "RPCs",
+    //   component: RpcsIndex,
+    // },
+    // {
+    //   path: "/Apps",
+    //   name: "AppsIndex",
+    //   component: AppsIndex,
+    // },
     {
       path: "/",
-      redirect: "/RPCs",
-    },
-    {
-      path: "/RPCs",
-      name: "RPCs",
-      component: RpcsIndex,
-    },
-    {
-      path: "/Apps",
-      name: "AppsIndex",
-      component: AppsIndex,
-    },
-    {
-      path: "/projects",
       redirect: "/projects",
       children: [
         {
@@ -46,7 +47,7 @@ const router = createRouter({
               component: ProjectsList,
             },
             {
-              path: "/projects/details",
+              path: "/projects/:id/details",
               name: "ProjectsListDetails",
               component: ProjectsListDetails,
             }
@@ -56,7 +57,7 @@ const router = createRouter({
           path: "/projects/creat",
           name: "ProjectsCreat",
           component: ProjectsCreat,
-        },
+        }, 
         {
           path: "/projects/template",
           redirect: "/projects/template",
@@ -67,31 +68,58 @@ const router = createRouter({
               component: ProjectsTemplate,
             },
             {
-              path: "/projects/template/deail",
-              name: "ProjectsTemplateDetail",
-              component: ProjectsTemplateDetail,
+              path: "/projects/templates/:templateId/details",
+              name: "ProjectsTemplatesDetails",
+              component: ProjectsTemplatesDetails,
             }
           ]
         },
         {
-          path: "/projects/contract-details",
-          name: "ContractDetails",
-          component: ContractDetails,
+          path: "/projects/:id/workflows/:workflowId",
+          redirect: "/projects/:id/workflows/:workflowId",
+          children: [
+            {
+              path: "/projects/:id/workflows/:workflowId",
+              name: "ProjectsWorkflows",
+              component: ProjectsWorkflows,
+            },
+            {
+              path: "/projects/:id/workflows/:workflowId/allLogs",
+              name: "ProjectsWorkflowsAllLogs",
+              component: ProjectsWorkflowsAllLogs,
+            }
+            
+          ],
         },
         {
-          path: "/projects/contract-deploy",
-          name: "ContractDeploy",
-          component: ContractDeploy,
+          path: "/projects/:id/artifacts-contract/:version/deploy",
+          name: "ProjectsArtifactscontractDeploy",
+          component: ProjectsArtifactscontractDeploy,
         },
         {
-          path: "/projects/contract-explorer",
-          name: "ContractExplorer",
-          component: ContractExplorer,
+          path: "/projects/:id/contracts-details/:version",
+          name: "ProjectsContractsDetails",
+          component: ProjectsContractsDetails,
         }
       ]
     },
-    
-
+    {
+      path: "/nodeService",
+      redirect: "/nodeService/RPCs",
+      children: [
+        {
+          path: "/nodeService/RPCs",
+          name: "RPCs",
+          component: RpcsIndex,
+        },
+        {
+          path: "/nodeService/Apps",
+          name: "AppsIndex",
+          component: AppsIndex,
+        }
+       
+      ],
+    },
   ],
 });
 
