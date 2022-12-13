@@ -9,7 +9,7 @@ import ProjectsTemplate from "../views/projects/projectsTemplate/index.vue";
 import ProjectsTemplatesDetails from "../views/projects/projectsTemplatesDetails/index.vue";
 import ProjectsWorkflows from "../views/projects/projectsWorkflows/index.vue";
 import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs/index.vue";
-import ProjectsArtifactscontractDeploy from "../views/projects/projectsArtifactscontractDeploy/index.vue";
+import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 const router = createRouter({
   history: createWebHashHistory(),
@@ -93,8 +93,8 @@ const router = createRouter({
         },
         {
           path: "/projects/:id/artifacts-contract/:version/deploy",
-          name: "ProjectsArtifactscontractDeploy",
-          component: ProjectsArtifactscontractDeploy,
+          name: "projectsArtifactsContractDeploy",
+          component: projectsArtifactsContractDeploy,
         },
         {
           path: "/projects/:id/contracts-details/:version",
