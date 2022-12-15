@@ -49,12 +49,12 @@ const onboard = Onboard({
   accountCenter: {
     desktop: {
       position: 'bottomRight',
-      enabled: false,
+      enabled: true,
       minimal: true
     },
     mobile: {
       position: 'topRight',
-      enabled: false,
+      enabled: true,
       minimal: true
     }
   },
@@ -83,7 +83,15 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
 }
  
 onBeforeMount(async () => {
-  onClickConnect();
+  // 进入页面即要求连接钱包
+  const walletStatesOrNull = await autoConnectSavedWallet()
+  if (walletStatesOrNull !== null) {
+    walletStates = walletStatesOrNull
+  } 
+  if (walletStates[0]) {
+    setWalletAccount(walletStates[0]);
+  }
+
 });
 
 const onClickConnect = async () => {
@@ -94,10 +102,15 @@ const onClickConnect = async () => {
   } else {
     walletStates = walletStatesOrNull
   }
-  
   if (walletStates[0]) {
+    setWalletAccount(walletStates[0]);
+  }
+}
+
+const setWalletAccount = async (walletState: { accounts: any; }) => {
+  if (walletState) {
     //记录钱包地址
-    const { accounts } = walletStates[0];
+    const { accounts } = walletState;
     window.localStorage.setItem("walletAccount", accounts[0].address);
     emit("setWalletBtn", true);
   } else {
