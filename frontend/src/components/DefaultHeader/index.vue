@@ -119,6 +119,7 @@ const changeTheme = (val: string) => {
   } else {
     document.documentElement.classList.add('dark')
   }
+  window.localStorage.setItem("themeValue",val);
 }
 
 const checkWallet = async (val: string) => {

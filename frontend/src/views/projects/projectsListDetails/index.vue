@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-40 dark:bg-black dark:text-white text-[#121211]">
+  <div>
     <div class="flex justify-between">
       <div class="mb-[32px] flex items-center">
         <div class="text-[24px]">back</div>

@@ -2,7 +2,6 @@
 import { onBeforeMount, onMounted, watch } from 'vue';
 import Onboard, { type WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
-import walletConnectModule from '@web3-onboard/walletconnect'
 import { useOnboard } from '@web3-onboard/vue'
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
@@ -11,16 +10,8 @@ const emit = defineEmits(["setWalletBtn"]);
 const injected = injectedModule()
 let walletStates: WalletState[]
 
-const walletConnect = walletConnectModule({
-  bridge: 'YOUR_CUSTOM_BRIDGE_SERVER',
-  qrcodeModalOptions: {
-    mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar']
-  },
-  connectFirstChainId: true
-})
-
 const onboard = Onboard({
-  wallets: [injected, walletConnect],
+  wallets: [injected],
   chains: [
     {
       id: '0x1',
