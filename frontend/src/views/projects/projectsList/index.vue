@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-40 dark:bg-black dark:text-white text-[#121211]">
+  <div>
     <div class="flex justify-between">
       <div>
         <div class="dark-input hidden dark:inline-block w-full">
@@ -9,18 +9,25 @@
           <a-input v-model:value="search" placeholder="Search here..." />
         </div>
       </div>
-      <a-button type="primary">Creat Project</a-button>
+      <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
     </div>
     <Overview :viewType="viewType" />
   </div>
 </template>
 <script lang='ts' setup>
 import { ref } from 'vue';
+import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 
 
+const router = useRouter();
 const search = ref('');
 const viewType = ref("list");
+
+
+const goCreateProject = () => {
+  router.push("/projects/creat");
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
