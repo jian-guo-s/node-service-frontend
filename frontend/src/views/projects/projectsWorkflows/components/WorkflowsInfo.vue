@@ -1,8 +1,8 @@
 <template>
-  <div class="dark:text-white text-[#121211]">
+  <div class="workFlows dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px]">
     <a-row>
       <a-col :span="8">
-        <div class="process-detail-item">
+        <div class="">
           <div class="process-detail-title">Code Repository</div>
           <div class="process-detail-info">https://github.com/hamster-shared/hamster.git</div>
           <div class="process-detail-info">master</div>
@@ -27,30 +27,43 @@
 </template>
 <script lang='ts' setup>
 const props = defineProps({
-  workflowsInfoData: {type: Object }
+  workflowsInfoData: { type: Object }
 });
 </script>
 <style lang='less' scoped>
+@backGroundCOlor: #1D1C1A;
+
+.workFlows {
+  font-size: 14px;
+  padding: 32px;
+}
+
 .process-detail-item {
   position: relative;
+  padding-left: 32px;
 
-  &::before {
+  &::after {
     content: "";
     position: absolute;
     top: 0px;
-    right: -2px;
+    left: 0;
     width: 1px;
-    height: 44px;
-    border: 1px dashed #3f4641;
+    height: 99px;
+    border: 1px solid #302D2D;
   }
+}
 
-  .process-detail-title {
-    color: #ffffff;
-    font-weight: 600;
-  }
+.process-detail-title {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
 
-  .process-detail-info {
-    color: #bcbebc;
-  }
+.process-detail-info {
+  color: #bcbebc;
+  margin-bottom: 16px;
+}
+
+.process-detail-info:last-child {
+  margin-bottom: 0px;
 }
 </style>

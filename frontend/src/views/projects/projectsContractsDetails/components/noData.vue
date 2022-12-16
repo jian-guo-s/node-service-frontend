@@ -1,7 +1,8 @@
 <template>
-  <div class="w-full dark:text-white text-[#121211] text-center" v-if="hasData">
-    <div>no Data</div>
-    <a-button @click="deployNow">Deploy Now</a-button>
+  <div class="noData w-full dark:text-white text-[#121211] text-center" v-if="hasData">
+    <img src="@/assets/images/cl-noData-block.png" class="w-[128px]" />
+    <div class="text-[#E0DBD2] mb-[6px]">no Data</div>
+    <div class="text-[#E2B578] cursor-pointer" @click="deployNow">Deploy Now</div>
   </div>
 </template>
 <script lang='ts' setup>
@@ -16,5 +17,7 @@ const deployNow = () => {
 }
 </script>
 <style lang='less' scoped>
-
+.noData {
+  font-size: 16px;
+}
 </style>

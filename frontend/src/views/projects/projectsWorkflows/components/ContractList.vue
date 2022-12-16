@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <div class="flex justify-between mb-[24px]">
-      <span>Contract List</span>
+  <div
+    class="contracyList p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
+    <div class="flex justify-between mb-[32px]">
+      <span class="text-[24px] font-bold">Contract List</span>
       <a-button>Deploy</a-button>
     </div>
     <a-table :dataSource="dataSource" :columns="columns">
