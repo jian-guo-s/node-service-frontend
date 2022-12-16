@@ -1,6 +1,6 @@
 <template>
-  <div class="mx-40 dark:bg-black dark:text-white text-[#121211]">
-    <div class="flex justify-between mb-4">
+  <div>
+    <div class="flex justify-between">
       <div>
         <div class="dark-input hidden dark:inline-block w-full">
           <a-input v-model:value="search" placeholder="Search here..." />
@@ -9,54 +9,25 @@
           <a-input v-model:value="search" placeholder="Search here..." />
         </div>
       </div>
-      <a-button type="primary">Creat Project</a-button>
+      <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
     </div>
-    <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
-      <div class="flex justify-between">
-        <div class="mb-[32px] flex items-center">
-          <div class="text-[24px] dark:font-bold font-normal">Hamster</div>
-          <div class="ml-4 rounded-[18px] px-2 border border-solid border-[#434343]">Contract</div>
-        </div>
-        <div>
-          <a-button type="primary">Check</a-button>
-          <a-button type="primary" class="ml-4">Build</a-button>
-          <a-button type="primary" class="ml-4">Deploy</a-button>
-          <a-button type="primary" class="ml-4">Ops</a-button>
-        </div>
-      </div>  
-      <div class="py-[24px] px-[32px] border border-solid border-[#434343]">
-        <div class="grid grid-cols-5 gap-4">
-          <div class="col-span-2">
-            <div>代码仓库</div>
-            <div>https://github.com/hamster-shared/hamster.git</div>
-            <div>master</div>
-          </div>
-          <div class="text-center">
-            <div>Recent Check</div>
-            <div>No Data</div>
-            <div>Check Now</div>
-          </div>
-          <div class="text-center">
-            <div>Recent Build</div>
-            <div>No Data</div>
-            <div>Build Now</div>
-          </div>
-          <div class="text-center">
-            <div>Recent Deploy</div>
-            <div>No Data</div>
-            <div>Explorer</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Overview :viewType="viewType" />
   </div>
 </template>
 <script lang='ts' setup>
 import { ref } from 'vue';
+import { useRouter } from "vue-router";
+import Overview from "./components/Overview.vue";
 
 
-
+const router = useRouter();
 const search = ref('');
+const viewType = ref("list");
+
+
+const goCreateProject = () => {
+  router.push("/projects/creat");
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;

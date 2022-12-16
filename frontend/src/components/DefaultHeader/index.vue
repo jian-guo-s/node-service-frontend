@@ -119,10 +119,19 @@ const changeTheme = (val: string) => {
   } else {
     document.documentElement.classList.add('dark')
   }
+  window.localStorage.setItem("themeValue",val);
 }
 
 const checkWallet = async (val: string) => {
   imgVal.value = val;
+  // console.log("window.ethereum:",window.ethereum);
+  // if (typeof window.ethereum !== 'undefined') {
+  //   console.log('MetaMask is installed!');
+  //   const accounts = await ethereum.request( {method: 'eth_requestAccounts'} );
+  //   const account = accounts[0];
+  //   console.log("accounts:",accounts);
+  // }
+  // console.log("wallet end..");
 }
 
 onMounted(() => {

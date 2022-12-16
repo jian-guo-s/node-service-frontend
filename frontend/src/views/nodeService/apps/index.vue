@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-40 dark:text-white text-[#121211]">
+  <div>
     <div class="flex justify-between items-center">
       <div class="text-[32px] font-bold mb-4">
         <img
@@ -12,23 +12,7 @@
     </div>
     <a-table
       :loading="loading"
-      class="my-4 white-table dark:hidden"
-      :columns="tableColumns"
-      :dataSource="appsList"
-      :pagination="pagination"
-    >
-      <template #bodyCell="{ column, record, index }">
-        <template v-if="column.dataIndex === 'daylyRequests'">
-          <Echarts :echartsId="`echarts${record.id}`" :echartsData="record.dayly_requests_7days" />
-        </template>
-        <template v-if="column.dataIndex === 'action'">
-          <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
-        </template>
-      </template>
-    </a-table>
-    <a-table
-      :loading="loading"
-      class="my-4 dark-table hidden dark:inline-block"
+      :class="[ isWhite ? 'white-table' : 'dark-table']"
       :columns="tableColumns"
       :dataSource="appsList"
       :pagination="pagination"
@@ -144,6 +128,7 @@
   import { message } from 'ant-design-vue';
 
   const router = useRouter();
+  const isWhite = ref(false);
   const showCreate = ref(false);
   const appsList = ref([]); //app列表
   const appInfo = reactive({
@@ -242,6 +227,16 @@
 
   onMounted(async () => {
     getApps();
+
+    window.addEventListener('setItemEvent', event => {
+    if (event.key === 'themeValue') {
+      if (event.newValue === 'white') {
+        isWhite.value = true;
+      } else {
+        isWhite.value = false;
+      }
+    }
+  })
   });
 
   const setPage = async (val: number) => {

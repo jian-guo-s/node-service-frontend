@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import Antd from "ant-design-vue";
 import i18n from "./lang/index";
+import tool from './utils/tool.js'
 
 import App from "./App.vue";
 import router from "./router";
@@ -18,6 +19,7 @@ app.use(createPinia());
 app.use(router);
 app.use(Antd);
 app.use(i18n);
+app.use(tool)
 
 app.component("layout-default", DefaultLayout);
 app.component("layout-null", Null);
