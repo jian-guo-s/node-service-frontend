@@ -3,11 +3,9 @@
     <div class="flex items-center cursor-pointer" @click="goHome">
       <img src="@/assets/images/logo.png" class="h-[46px]" />
       <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
-    </div>
-    <div class="flex items-center">
-      <div @click="goPrjects" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer mr-8">Projects</div>
+      <div @click="goPrjects" :class="{'!text-[#E2B578]': isProject}" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
-        <div class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
+        <div :class="{'!text-[#E2B578]': !isProject}" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
           NodeService
           <img src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
           <img src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
@@ -15,7 +13,7 @@
         <template #overlay>
           <a-menu>
             <a-menu-item>
-              <a href="#nodeService/RPCs">
+              <a @click="goRPCs">
                 <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
                 RPCs</a>
             </a-menu-item>
@@ -27,7 +25,9 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div class="cursor-pointer flex h-[36px] ml-8">
+    </div>
+    <div class="flex items-center">
+      <div class="cursor-pointer flex h-[36px]">
         <div @click="changeTheme('dark')"
           class="w-[36px] border border-solid border-[#E2B578] dark:border-[#FFFFFF] flex items-center justify-center rounded-tl-[6px] rounded-bl-[6px]">
           <img src="@/assets/icons/dark.svg" class="h-[20px]" />
@@ -57,6 +57,10 @@
           </template>
         </a-dropdown>
       </div>
+      <div class="ml-8">
+        <img src="@/assets/icons/Frame-dark.svg" class="h-[40px] hidden dark:inline-block" />
+        <img src="@/assets/icons/Frame-white.svg" class="h-[40px] dark:hidden" />
+      </div>
     </div>
   </div>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
@@ -84,23 +88,26 @@ import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 
 const { getImageURL } = useAssets();
-
 const router = useRouter();
+
 const showWallets = ref();
 const visibleWallet = ref(false);
 const visibleDisconnect = ref(false);
 const isConnectedWallet = ref(false);
 const walletAccount = ref("");
+const isProject = ref(true)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"])
 
 const goHome = () => {
   // router.push("/nodeService/RPCs");
   router.push("/projects");
+  isProject.value = true;
 };
 
 const goPrjects = () => {
   router.push("/projects");
+  isProject.value = true;
 }
 
 const goApps = () => {
@@ -110,7 +117,14 @@ const goApps = () => {
     showWallet();
   } else {
     router.push("/nodeService/Apps");
+  
+    isProject.value = false;
   }
+}
+const goRPCs = () => {
+  router.push("/nodeService/RPCs");
+  
+  isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
