@@ -57,6 +57,10 @@
           </template>
         </a-dropdown>
       </div>
+      <div class="ml-8">
+        <img src="@/assets/icons/Frame-dark.svg" class="h-[40px] hidden dark:inline-block" />
+        <img src="@/assets/icons/Frame-white.svg" class="h-[40px] dark:hidden" />
+      </div>
     </div>
   </div>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>

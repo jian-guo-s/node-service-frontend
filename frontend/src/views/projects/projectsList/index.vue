@@ -1,6 +1,6 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']">
-    <div class="flex justify-between">
+  <div>
+    <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="flex justify-between">
         <div>
           <a-input v-model:value="search" placeholder="Search here..." allow-clear autocomplete="off">
             <template #prefix>
