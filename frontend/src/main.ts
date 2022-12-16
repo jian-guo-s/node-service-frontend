@@ -6,7 +6,8 @@ import i18n from "./lang/index";
 import App from "./App.vue";
 import router from "./router";
 import "./design/main.css";
-import "ant-design-vue/dist/antd.css";
+// import "ant-design-vue/dist/antd.css";
+import 'ant-design-vue/dist/antd.variable.min.css';
 
 import DefaultLayout from "./layout/default/index.vue";
 import Null from "./layout/null/index.vue";

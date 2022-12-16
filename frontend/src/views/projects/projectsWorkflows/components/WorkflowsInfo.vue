@@ -26,7 +26,9 @@
   </div>
 </template>
 <script lang='ts' setup>
-const props = defineProps({});
+const props = defineProps({
+  workflowsInfoData: {type: Object }
+});
 </script>
 <style lang='less' scoped>
 .process-detail-item {
