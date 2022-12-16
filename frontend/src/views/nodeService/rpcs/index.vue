@@ -19,20 +19,20 @@
           {{ item.name }}
         </div>
         <div class="flex items-center mb-[32px]">
-          <div class="w-1/3 dark:font-normal font-bold">HTTPS</div>
-          <div class="dark-input hidden dark:inline-block w-full">
+          <div class="w-1/3 font-bold dark:font-normal">HTTPS</div>
+          <div class="hidden w-full dark-input dark:inline-block">
             <a-input v-model:value="item.http_address" placeholder="HTTPS" />
           </div>
-          <div class="white-input dark:hidden w-full">
+          <div class="w-full white-input dark:hidden">
             <a-input v-model:value="item.http_address" placeholder="HTTPS" />
           </div>
         </div>
         <div class="flex items-center mb-[32px]">
-          <div class="w-1/3 dark:font-normal font-bold">WEBSOCKETS</div>
-          <div class="dark-input hidden dark:inline-block w-full">
+          <div class="w-1/3 font-bold dark:font-normal">WEBSOCKETS</div>
+          <div class="hidden w-full dark-input dark:inline-block">
             <a-input v-model:value="item.websocket_address" placeholder="WEBSOCKETS" />
           </div>
-          <div class="white-input dark:hidden w-full">
+          <div class="w-full white-input dark:hidden">
             <a-input v-model:value="item.websocket_address" placeholder="WEBSOCKETS" />
           </div>
         </div>

@@ -87,12 +87,14 @@ const router = createRouter({
               path: "/projects/:id/workflows/:workflowId/allLogs",
               name: "ProjectsWorkflowsAllLogs",
               component: ProjectsWorkflowsAllLogs,
+              meta: {
+                layout: null,
+              }
             }
-            
           ],
         },
         {
-          path: "/projects/:id/artifacts-contract/:version/deploy",
+          path: "/projects/:id/artifacts-contract/:version/deploy/:contract",
           name: "projectsArtifactsContractDeploy",
           component: projectsArtifactsContractDeploy,
         },
