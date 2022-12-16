@@ -156,6 +156,7 @@ const disconnect = () => {
   visibleDisconnect.value = false;
 }
 const showWallet = () => {
+  // visibleWallet.value = true;
   showWallets.value?.onClickConnect();
 }
 const setWalletBtn = (val: boolean) => {

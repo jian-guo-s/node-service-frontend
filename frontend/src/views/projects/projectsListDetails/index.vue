@@ -2,7 +2,7 @@
   <div :class="[ isWhite ? 'white-css' : 'dark-css']">
     <div class="flex justify-between">
       <div class="flex items-center">
-        <div class="text-[24px] font-bold">
+        <div class="text-[24px] font-bold cursor-pointer" @click="goBack">
           <img
             src="@/assets/icons/back-white.svg"
             class="h-[24px] dark:hidden"
@@ -22,7 +22,7 @@
             class="h-[16px] hidden dark:inline-block"
           />
         </div>
-        <div class="ml-4 text-[24px] font-bold cursor-pointer">Hamster</div>
+        <div class="ml-4 text-[24px] font-bold">Hamster</div>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
       </div>
       <div>
@@ -114,8 +114,10 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import Overview from "../projectsList/components/Overview.vue";
 
+const router = useRouter();
 const viewType = ref("detail");
 const isWhite = ref(false);
 const activeKey = ref("1");
@@ -350,6 +352,10 @@ onMounted(() => {
     }
   })
 })
+
+const goBack = () => {
+   router.back();
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
