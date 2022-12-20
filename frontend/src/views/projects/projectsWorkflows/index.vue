@@ -1,8 +1,8 @@
 <template>
   <div class="dark:text-white text-[#121211]">
-    <div class="flex justify-between">
-      <div>导航</div>
-      <a-button>Stop</a-button>
+    <div class="flex justify-between mb-[24px]">
+      <Breadcrumb :currentName="'Contract Check_#1'"></Breadcrumb>
+      <a-button class="btn">Stop</a-button>
     </div>
     <WorkflowsInfo :workflowsInfoData="workflowsInfoData"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData"></WorkflowsProcess>
@@ -15,6 +15,7 @@
 </template>
 <script lang='ts' setup>
 import { reactive } from 'vue';
+import Breadcrumb from '../components/Breadcrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
@@ -28,5 +29,19 @@ const processData = reactive([
 ])
 </script>
 <style lang='less' scoped>
+@baseColor: #E2B578;
 
+.btn {
+  width: 150px;
+  height: 43px;
+  background-color: @baseColor;
+  color: #fff;
+  border-color: @baseColor;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: @baseColor;
+  color: #fff;
+}
 </style>

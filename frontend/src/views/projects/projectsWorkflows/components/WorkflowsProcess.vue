@@ -7,8 +7,9 @@
       </div>
       <div class="process-scroll-box wrapper" ref="wrapper">
         <div v-for="item in processData" :key="item.name">
-          <div class="inline-block border border-solid border-[#EFEFEF] p-[12px] rounded-[5px]"
+          <div class="inline-block border border-solid border-[#EFEFEF] p-[11px] rounded-[5px]"
             :class="item.status === 0 ? '' : 'cursorP'" @click="checkProcess(item, $event)">
+            <img src="@/assets/icons/start.svg" class="mr-[24px]" />
             <!-- <img :src="getImageUrl(item.status)" class="w-[28px] mr-[24px] align-middle" v-if="item.status !== 1" /> -->
             <!-- <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle" v-else /> -->
             <span class="align-middle">

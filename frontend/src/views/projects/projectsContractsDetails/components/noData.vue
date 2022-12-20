@@ -6,15 +6,24 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { toRefs } from "vue";
+import { ref, toRefs, computed, onMounted } from "vue";
+
 const props = defineProps<{
   hasData: Boolean;
 }>();
 const { hasData } = toRefs(props);
 
+// const themeValue = ref('');
+
 const deployNow = () => {
   // 创建
 }
+onMounted(() => {
+
+})
+const themeValue = computed(() => { return localStorage.getItem('themeValue') })
+
+console.log(themeValue.value, 'themeValue')
 </script>
 <style lang='less' scoped>
 .noData {

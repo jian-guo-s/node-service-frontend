@@ -5,7 +5,10 @@
         <div class="">
           <div class="process-detail-title">Code Repository</div>
           <div class="process-detail-info">https://github.com/hamster-shared/hamster.git</div>
-          <div class="process-detail-info">master</div>
+          <div class="process-detail-info">
+            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px]" />
+            <span class="align-middle">master</span>
+          </div>
         </div>
       </a-col>
       <a-col :span="8">
@@ -48,7 +51,8 @@ const props = defineProps({
     top: 0px;
     left: 0;
     width: 1px;
-    height: 99px;
+    // height: 99px;
+    height: calc(100% + 1px);
     border: 1px solid #302D2D;
   }
 }

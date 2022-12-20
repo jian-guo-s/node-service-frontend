@@ -1,6 +1,7 @@
 <template>
+  <Breadcrumb :currentName="'Contract Deploy'"></Breadcrumb>
   <div
-    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px]">
+    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px] mt-[24px]">
     <a-form class="dark:text-white text-[#121211] col-span-3" :model="formState" name="basic" :label-col="{ span: 0 }"
       :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" noStyle>
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
@@ -10,7 +11,7 @@
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="Name">
+      <a-form-item name="Name" class="mb-[32px]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" v-model:value="contractValue" name="checkboxgroup"
           :options="nameOptions" @change="changeContractValue" />
@@ -28,7 +29,7 @@
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-button @click="deployClick">Deploy</a-button>
+      <a-button class="btn" @click="deployClick">Deploy</a-button>
     </a-form>
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
@@ -39,6 +40,7 @@ import { useRouter } from "vue-router";
 import * as ethers from "ethers";
 // import MathTest from "../../json/MathTest.json";
 // import SimpleStorage from "../../json/SimpleStorage.json";
+import Breadcrumb from "../components/Breadcrumb.vue";
 import MathTest from "../json/MathTest.json";
 import SimpleStorage from "../json/SimpleStorage.json";
 import SelectWallet from "./components/SelectWallet.vue";
@@ -93,6 +95,7 @@ const cancelModal = (val: boolean) => {
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
+@baseColor: #E2B578;
 
 .artifactsDeploy {
   font-size: 14px;
@@ -100,5 +103,37 @@ const cancelModal = (val: boolean) => {
 
 :deep(.ant-form label) {
   color: #fff !important;
+}
+
+.btn {
+  width: 131px;
+  height: 43px;
+  background-color: @baseColor;
+  color: #fff;
+  border-color: @baseColor;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: @baseColor;
+  color: #fff;
+}
+
+:deep(.ant-checkbox-wrapper-checked:hover) {
+  border-radius: 4px;
+}
+
+:deep(.ant-checkbox-checked:hover) {
+  border-radius: 4px;
+}
+
+:deep(.ant-checkbox-inner) {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+:deep(.ant-checkbox-wrapper:hover) {
+  border-radius: 4px;
 }
 </style>
