@@ -20,7 +20,9 @@
             </span>
           </div>
           <!-- <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px]" /> -->
-          <img src="@/assets/icons/arrow-white.svg" class="w-[28px] space-mark ml-[20px] mr-[20px]" />
+          <img src="@/assets/icons/arrow-white.svg"
+            class="w-[28px] space-mark ml-[20px] mr-[20px]  hidden dark:inline-block" />
+          <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" />
         </div>
       </div>
     </div>

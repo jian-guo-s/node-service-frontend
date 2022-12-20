@@ -1,8 +1,16 @@
 
 html[data-theme='dark'] {
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    background-color: #000;
-    border: 1px solid #E2B578;
+    background-color: transparent;
+    border: 1px solid #434343;
+  }
+  .ant-select-arrow {
+    svg {
+      color: #6B6B6B;
+    }
+  }
+  .ant-select-selection-item {
+    color: #FFFFFF;
   }
 }
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
@@ -10,5 +18,8 @@ html[data-theme='dark'] {
   border-radius: 8px;
 }
 .ant-select-single .ant-select-selector .ant-select-selection-item {
+  line-height: 38px;
+}
+.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
   line-height: 38px;
 }

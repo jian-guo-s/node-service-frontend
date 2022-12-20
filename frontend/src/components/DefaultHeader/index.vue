@@ -87,7 +87,8 @@ import { useRouter } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
-
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 const { getImageURL } = useAssets();
 const router = useRouter();
 
@@ -129,12 +130,13 @@ const goRPCs = () => {
 }
 
 const changeTheme = (val: string) => {
-  let htmlRoot = document.getElementById('htmlRoot');
+  theme.setTheme(val)
+  let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
-    htmlRoot.setAttribute('data-theme', 'light');
+    htmlRoot?.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark')
   } else {
-    htmlRoot.setAttribute('data-theme', 'dark');
+    htmlRoot?.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark')
   }
   window.localStorage.setItem("themeValue", val);

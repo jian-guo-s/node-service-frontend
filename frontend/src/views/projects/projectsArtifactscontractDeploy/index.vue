@@ -5,27 +5,27 @@
     <a-form class="dark:text-white text-[#121211] col-span-3" :model="formState" name="basic" :label-col="{ span: 0 }"
       :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" noStyle>
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
-      <a-form-item class="" name="Version">
+      <a-form-item class="">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="versionValue" style="width: 100%" @change="handleChange">
+        <a-select v-model:value="versionValue" style="width: 100%" @change="handleChange" placeholder="请选择">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="Name" class="mb-[32px]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-        <a-checkbox-group class="dark:text-white text-[#121211]" v-model:value="contractValue" name="checkboxgroup"
-          :options="nameOptions" @change="changeContractValue" />
+        <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+          v-model:value="contractValue" name="checkboxgroup" :options="nameOptions" @change="changeContractValue" />
       </a-form-item>
       <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
-      <a-form-item name="Chain">
+      <a-form-item>
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select ref="select" v-model:value="chainValue" style="width: 100%" @change="handleChange">
+        <a-select v-model:value="chainValue" style="width: 100%" @change="handleChange" placeholder="请选择">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="Network">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select ref="select" v-model:value="networkValue" style="width: 100%" @change="handleChange">
+        <a-select v-model:value="networkValue" style="width: 100%" @change="handleChange" placeholder="请选择">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -44,15 +44,16 @@ import Breadcrumb from "../components/Breadcrumb.vue";
 import MathTest from "../json/MathTest.json";
 import SimpleStorage from "../json/SimpleStorage.json";
 import SelectWallet from "./components/SelectWallet.vue";
+import { useThemeStore } from "@/stores/useTheme";
 
-
+const theme = useThemeStore()
 const router = useRouter()
 const id = router.currentRoute.value.params.id;
 const versionValue = ref(router.currentRoute.value.params.version);
 // const contractValue = router.currentRoute.value.params.contract;
 const contractValue = ref('SimpleStorageA');
-const chainValue = ref('');
-const networkValue = ref('');
+const chainValue = ref(undefined);
+const networkValue = ref(undefined);
 const isContractWallets = ref(false);
 const visible = ref(false)
 const versionData = reactive(['3.1.1', '2.1.1', '1.1.1', '0.1.1']);
@@ -97,26 +98,23 @@ const cancelModal = (val: boolean) => {
 @backGroundCOlor: #1D1C1A;
 @baseColor: #E2B578;
 
+.dark-css {
+  :deep(label) {
+    color: #ffffff !important;
+  }
+}
+
 .artifactsDeploy {
   font-size: 14px;
 }
 
 :deep(.ant-form label) {
-  color: #fff !important;
+  color: #121211;
 }
 
 .btn {
   width: 131px;
   height: 43px;
-  background-color: @baseColor;
-  color: #fff;
-  border-color: @baseColor;
-}
-
-.btn:hover,
-.btn:focus {
-  background-color: @baseColor;
-  color: #fff;
 }
 
 :deep(.ant-checkbox-wrapper-checked:hover) {
@@ -135,5 +133,21 @@ const cancelModal = (val: boolean) => {
 
 :deep(.ant-checkbox-wrapper:hover) {
   border-radius: 4px;
+}
+
+:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+  // background-color: #000000 !important;
+  // border: 1px solid @baseColor !important;
+}
+
+
+
+
+
+input::-webkit-input-placeholder,
+input:-moz-placeholder,
+input::-moz-placeholder,
+input:-ms-input-placeholder {
+  color: #bcbebc;
 }
 </style>

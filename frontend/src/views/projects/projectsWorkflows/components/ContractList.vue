@@ -21,25 +21,30 @@ import { ref } from "vue";
 const columns = [{
   title: 'Contract',
   dataIndex: 'name',
+  align: "center",
   key: 'name',
 },
 {
   title: 'Version',
   dataIndex: 'age',
+  align: "center",
   key: 'age',
 },
 {
   title: 'Network',
   dataIndex: 'address',
+  align: "center",
   key: 'address',
 },
 {
   title: 'Build Time',
   dataIndex: 'address',
+  align: "center",
   key: 'address'
 },
 {
   title: 'Action',
+  align: "center",
   key: 'action',
 }];
 

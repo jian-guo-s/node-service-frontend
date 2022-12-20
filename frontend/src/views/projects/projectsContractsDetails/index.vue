@@ -16,7 +16,7 @@
           </template>
         </a-table>
         <div class="">
-          <div class="text-[24px] font-blod mb-[32px]">Contract List</div>
+          <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
           <ContractList></ContractList>
         </div>
 
@@ -44,15 +44,18 @@ const columns = [
   {
     title: 'Network',
     dataIndex: 'name',
+    align: "center",
     key: 'Network',
   },
   {
-    title: 'Network',
+    title: 'Address',
     dataIndex: 'name',
-    key: 'Network',
+    align: "center",
+    key: 'Address',
   },
   {
     title: 'Action',
+    align: "center",
     key: 'action',
   }];
 
@@ -68,12 +71,6 @@ const themeValue = computed(() => { localStorage.getItem('themeValue') })
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
-
-:deep(.ant-table-thead>tr>th) {
-  background-color: @baseColor;
-  border-bottom: 1px solid @baseColor;
-  color: #ffffff;
-}
 
 :deep(.ant-select-selection-item) {
   color: @baseColor;

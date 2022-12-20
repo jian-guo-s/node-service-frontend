@@ -1,10 +1,10 @@
 <template>
   <div class="dark:text-white text-[#121211] text-[24px]">
     <span @click="backRoute" class="cursor-pointer backInfo">
-      <img src="@/assets/icons/back-dark.svg" class="svg-img w-[24px] mr-[8px]" />
+      <img src="@/assets/icons/back-dark.svg" class="svg-img w-[24px] mr-[8px] hidden dark:inline-block" />
+      <img src="@/assets/icons/back-white.svg" class="svg-img w-[24px] mr-[8px] dark:hidden" />
       <span class="font-bold align-middle">back</span>
     </span>
-    <!-- <span> | </span> -->
     <span class="font-bold align-middle">{{ currentName }}</span>
   </div>
 </template>
