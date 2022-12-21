@@ -86,9 +86,3 @@ body {
   border-radius: 16px 16px 0 0 !important;
   /* border-bottom: none !important; */
 }
-.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  background-color: #E2B578 !important;
-}
-.ant-select:not(.ant-select-disabled):hover .ant-select-selector{
-  border-color: #E2B578 !important;
-}

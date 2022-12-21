@@ -10,7 +10,7 @@
       <!-- Layout Content -->
       <a-layout class="pt-[64px] dark:!bg-[#000000]">
         <!-- Page Content -->
-        <a-layout-content class="layout-default-content px-40 dark:text-white text-[#121211]">
+        <a-layout-content class="layout-default-content px-40 dark:text-white text-[#151210]">
           <keep-alive>
             <router-view v-if="$route.meta.keepAlive" />
           </keep-alive>
