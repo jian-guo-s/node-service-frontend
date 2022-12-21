@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="mb-[32px] flex items-center">
-      <div class="text-[24px] font-bold cursor-pointer" @click="goBack">
+      <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
         <img
           src="@/assets/icons/back-white.svg"
-          class="h-[24px] dark:hidden"
+          class="h-[24px] dark:hidden mr-2"
         />
         <img
           src="@/assets/icons/back-dark.svg"
-          class="h-[24px] hidden dark:inline-block"
+          class="h-[24px] hidden dark:inline-block mr-2"
         />
         back</div>
       <div class="ml-4">

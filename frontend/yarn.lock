@@ -111,14 +111,14 @@
 
 "@better-scroll/core@^2.5.0":
   version "2.5.0"
-  resolved "https://registry.npmmirror.com/@better-scroll/core/-/core-2.5.0.tgz"
+  resolved "https://registry.npmmirror.com/@better-scroll/core/-/core-2.5.0.tgz#5ba0318b8bcfb61fc9f33ee99ce33593620d6097"
   integrity sha512-+3aKf8T3kUl4Gj1M7NKV3fNFhsrBpTWwHoDClkXVmQ8S3TxMMHf6Kyw6l1zKsg4r+9ukW5lDDkyif7/gY76qXQ==
   dependencies:
     "@better-scroll/shared-utils" "^2.5.0"
 
 "@better-scroll/scroll-bar@^2.5.0":
   version "2.5.0"
-  resolved "https://registry.npmjs.org/@better-scroll/scroll-bar/-/scroll-bar-2.5.0.tgz"
+  resolved "https://registry.npmmirror.com/@better-scroll/scroll-bar/-/scroll-bar-2.5.0.tgz#c2c1daa607ffc8f81ee8a511f92b613595b3a953"
   integrity sha512-eHfVy6mr0Pj1wwmsdHeRgHssxTSOtdytNbAmFq37tvB0StKtPwgm9OFce8cDNM1XpmBfSH/R99PhKW7Qvid5RQ==
   dependencies:
     "@better-scroll/core" "^2.5.0"
