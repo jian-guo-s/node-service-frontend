@@ -6,7 +6,7 @@
         <span class="text-[24px] text-[#000000] font-semibold mb-[28px]">{{
             stagesData.title
         }}</span>
-        <span class="text-[#28C57C] cursor-pointer pt-[6px]" @click="toggle">
+        <span class="text-[#E2B578] cursor-pointer pt-[6px]" @click="toggle">
           <img src="@/assets/icons/full.svg" class="w-[18px] mr-[10px]" />
           <span class="align-middle"> {{ $t("log.full") }}</span>
         </span>

@@ -1,10 +1,10 @@
 <template>
   <a-modal v-model:visible="visible" :footer="null" @cancel="cancelModal" width="760px">
     <div class="text-[#151210] text-[24px] font-bold  mb-[32px]">Connect wallet to continue</div>
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-3 gap-16">
       <div class="chainListItem text-[#000000] text-center cursor-pointer mx-[8px]" v-for="item in chainList"
         :key="item" @click="selectConnectWallet(item)">
-        <img :src="getImageURL(`${item}.png`)" class="img-css" />
+        <img :src="getImageURL(`${item}.png`)" />
       </div>
     </div>
   </a-modal>
@@ -46,10 +46,6 @@ const selectConnectWallet = (val: string) => {
 
   &:hover {
     border-color: #E2B578;
-  }
-
-  .img-css {
-    height: 90px;
   }
 }
 </style>

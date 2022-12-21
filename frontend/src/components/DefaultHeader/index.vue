@@ -3,9 +3,10 @@
     <div class="flex items-center cursor-pointer" @click="goHome">
       <img src="@/assets/images/logo.png" class="h-[46px]" />
       <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
-      <div @click="goPrjects" :class="{'!text-[#E2B578]': isProject}" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
+      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
-        <div :class="{'!text-[#E2B578]': !isProject}" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
           NodeService
           <img src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
           <img src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
@@ -86,7 +87,8 @@ import { useRouter } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
-
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 const { getImageURL } = useAssets();
 const router = useRouter();
 
@@ -117,23 +119,27 @@ const goApps = () => {
     showWallet();
   } else {
     router.push("/nodeService/Apps");
-  
+
     isProject.value = false;
   }
 }
 const goRPCs = () => {
   router.push("/nodeService/RPCs");
-  
+
   isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
+  theme.setTheme(val)
+  let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
+    htmlRoot?.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark')
   } else {
+    htmlRoot?.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark')
   }
-  window.localStorage.setItem("themeValue",val);
+  window.localStorage.setItem("themeValue", val);
 }
 
 const checkWallet = async (val: string) => {

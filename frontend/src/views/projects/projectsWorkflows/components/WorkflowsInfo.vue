@@ -5,7 +5,11 @@
         <div class="">
           <div class="process-detail-title">Code Repository</div>
           <div class="process-detail-info">https://github.com/hamster-shared/hamster.git</div>
-          <div class="process-detail-info">master</div>
+          <div class="process-detail-info">
+            <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
+            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
+            <span class="align-middle">master</span>
+          </div>
         </div>
       </a-col>
       <a-col :span="8">
@@ -33,6 +37,12 @@ const props = defineProps({
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
 
+html[data-theme='dark'] {
+  .process-detail-item::after {
+    border: 1px solid #302D2D;
+  }
+}
+
 .workFlows {
   font-size: 14px;
   padding: 32px;
@@ -48,8 +58,8 @@ const props = defineProps({
     top: 0px;
     left: 0;
     width: 1px;
-    height: 99px;
-    border: 1px solid #302D2D;
+    height: calc(100% + 1px);
+    border: 1px solid #F4F4F4;
   }
 }
 
@@ -59,11 +69,18 @@ const props = defineProps({
 }
 
 .process-detail-info {
-  color: #bcbebc;
+  color: #151210;
   margin-bottom: 16px;
 }
 
 .process-detail-info:last-child {
   margin-bottom: 0px;
+}
+
+html[data-theme='dark'] {
+  .process-detail-info {
+    color: #FFFFFF;
+
+  }
 }
 </style>
