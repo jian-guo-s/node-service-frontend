@@ -2,14 +2,14 @@
   <div :class="[ isWhite ? 'white-css' : 'dark-css']">
     <div class="flex justify-between">
       <div class="flex items-center">
-        <div class="text-[24px] font-bold cursor-pointer" @click="goBack">
+        <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
           <img
             src="@/assets/icons/back-white.svg"
-            class="h-[24px] dark:hidden"
+            class="h-[24px] dark:hidden mr-2"
           />
           <img
             src="@/assets/icons/back-dark.svg"
-            class="h-[24px] hidden dark:inline-block"
+            class="h-[24px] hidden dark:inline-block mr-2"
           />
           back</div>
         <div class="ml-4">
@@ -359,156 +359,8 @@ const goBack = () => {
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
-:deep(.ant-btn){
-  border-radius: 8px;
-}
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
-}
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @baseColor;
-  background: @baseColor;
-}
-
-:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
-  border-color: @baseColor;
-  color: @baseColor;
-}
-:deep(.white-css .ant-tabs){
-  color: #73706E;
-}
-:deep(.dark-css .ant-tabs){
-  color: #E0DBD2;
-}
-:deep(.ant-tabs-nav-list){
-  width: 100%;
-}
-:deep(.ant-tabs-tab){
-  width: 25%;
-  display: flex;
-  justify-content: center;
-}
-:deep(.ant-tabs-tab-btn:hover),:deep(.ant-tabs-tab:hover){
-  color: @baseColor;
-}
-:deep(.ant-tabs-ink-bar) {
-  background: @baseColor;
-}
-:deep(.white-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
-  color: @baseColor;
-  font-weight: bold;
-}
-:deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
-  color: #FFFFFF;
-  font-weight: bold;
-}
-:deep(.ant-select){
-  width: 150px;
-}
-:deep(.dark-css .ant-select), :deep(.dark-css .ant-select-arrow){
-  color: #E0DBD2 !important;
-}
-:deep(.white-css .ant-select), :deep(.white-css .ant-select-arrow){
-  color: #73706E !important;
-}
-:deep(.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  border-color: @baseColor;
-  box-shadow: 0 0 0 2px rgb(226 181 120 / 20%);
-}
-:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  background-color: transparent;
-  border-radius: 8px;
-}
-:deep(.dark-css .ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  border-color: #434343;
-}
-:deep(.white-css .ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  border-color: #EBEBEB;
-}
-:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector){
-  padding: 4px 11px !important;
-  height: 40px;
-}
-
-:deep(.ant-table){
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-}
-:deep(.white-css .ant-spin-container){
-  box-shadow: 3px 3px 12px rgba(203, 217, 207, 0.2);
-}
-:deep(.dark-css .ant-table){
-  color: #E0DBD2;
-}
-:deep(.white-css .ant-table){
-  color: #73706E;
-}
-:deep(.ant-table-thead > tr > th) {
-  color: #FFFFFF;
-  font-weight: 400;
-  border-bottom: none;
-  background: @baseColor;
-}
-:deep(.white-css .ant-table-tbody > tr > td){
-  border-bottom: 1px solid #F8F8F8;
-  color: #BBBAB9;
-}
-:deep(.dark-css .ant-table-tbody > tr > td){
-  border-bottom: 1px solid #302D2D;
-  color: #8A8A8A;
-  background-color: #36322D;
-}
-:deep(.dark-css .ant-table-tbody > tr.ant-table-row:hover > td),
-:deep(.dark-css .ant-table-tbody > tr >td.ant-table-cell-row-hover){
-  background-color: #1D1C1A ;
-}
-:deep(.ant-table-container table > thead > tr:first-child th:first-child){
-  border-top-left-radius: 12px;
-}
-:deep(.ant-table-container table > thead > tr:first-child th:last-child){
-  border-top-right-radius: 12px;
-}
-
-:deep(.ant-pagination-prev button),:deep(.ant-pagination-next button){
-  color: #8A8A8A;
-}
-:deep(.ant-table-pagination.ant-pagination){
-  margin: 0 0;
-  padding: 16px 0;
-  background: #fff;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-:deep(.white-css .ant-table-pagination.ant-pagination){
-  background: #fff;
-}
-:deep(.dark-css .ant-table-pagination.ant-pagination){
-  background: #36322D;;
-}
-:deep(.ant-pagination-item a){
-  color: #8A8A8A;
-}
-
-:deep(.ant-pagination-disabled .ant-pagination-item-link), :deep(.ant-pagination-disabled:hover .ant-pagination-item-link) {
-  color: #8A8A8A !important;
-  cursor: not-allowed !important;
-}
-:deep(.ant-pagination-item a:hover), :deep(.ant-pagination-item-link:hover){
-  color: #E2B578 !important;
-}
-:deep(.ant-pagination-item-active a){
-  color: #fff;
-}
-:deep(.ant-pagination-item-active:hover){
-  border-color: #E2B578 !important;
-}
-:deep(.ant-pagination-item-active a:hover){
-  color: #fff !important;
-}
-:deep(.ant-pagination-item-active){
-  border-radius: 4px;
-  background: #E2B578;
-  border-color: #E2B578;
 }
 </style>

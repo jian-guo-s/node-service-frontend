@@ -4,7 +4,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] dark:font-bold font-normal cursor-pointer">
+          <div class="text-[24px] font-bold cursor-pointer">
             <a href="#/projects/1/details">Hamster</a>
           </div>
           <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
