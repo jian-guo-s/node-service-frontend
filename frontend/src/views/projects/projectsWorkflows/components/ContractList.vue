@@ -2,13 +2,13 @@
   <div
     class="contracyList p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
     <div class="flex justify-between mb-[32px]">
-      <span class="text-[24px] font-bold">Contract List</span>
-      <a-button class="btn">Deploy</a-button>
+      <span class="text-[24px] font-bold">{{ $t("workFlows.contractList") }}</span>
+      <a-button class="btn">{{ $t('common.deploy') }}</a-button>
     </div>
-    <a-table :dataSource="dataSource" :columns="columns">
+    <a-table :dataSource="contractListData" :columns="columns" :pagination="false">
       <template #bodyCell="{ column }">
         <template v-if="column.key === 'action'">
-          <a>Deploy</a>
+          <a class="dark:text-[#E0DBD2] text-[#151210]">{{ $t('common.detail') }}</a>
         </template>
       </template>
     </a-table>
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 
 const columns = [{
   title: 'Contract',
@@ -26,21 +26,21 @@ const columns = [{
 },
 {
   title: 'Version',
-  dataIndex: 'age',
+  dataIndex: 'version',
   align: "center",
-  key: 'age',
+  key: 'version',
 },
 {
   title: 'Network',
-  dataIndex: 'address',
+  dataIndex: 'network',
   align: "center",
-  key: 'address',
+  key: 'network',
 },
 {
   title: 'Build Time',
-  dataIndex: 'address',
+  dataIndex: 'buildTime',
   align: "center",
-  key: 'address'
+  key: 'buildTime'
 },
 {
   title: 'Action',
@@ -48,26 +48,29 @@ const columns = [{
   key: 'action',
 }];
 
-const dataSource = ref(
+const props = defineProps({
+  contractListData: Array,
+})
+const { contractListData } = toRefs(props)
 
-)
+// const dataSource = ref(
+
+// )
 
 </script>
 
 <style lang="less" scoped>
-@baseColor: #E2B578;
-
 .btn {
   width: 131px;
   height: 43px;
-  background-color: @baseColor;
-  color: #fff;
-  border-color: @baseColor;
+  // background-color: @baseColor;
+  // color: #fff;
+  // border-color: @baseColor;
 }
 
-.btn:hover,
-.btn:focus {
-  background-color: @baseColor;
-  color: #fff;
-}
+// .btn:hover,
+// .btn:focus {
+//   background-color: @baseColor;
+//   color: #fff;
+// }
 </style>

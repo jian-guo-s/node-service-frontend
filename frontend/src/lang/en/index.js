@@ -1,3 +1,5 @@
 import home from "./home.js";
-
-export default { home };
+import common from "./common.js";
+import datetime from "./datetime";
+import workFlows from "./workFlows";
+export default { home, common, datetime, workFlows };

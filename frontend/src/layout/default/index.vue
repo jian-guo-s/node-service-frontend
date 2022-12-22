@@ -8,7 +8,7 @@
       <Support />
 
       <!-- Layout Content -->
-      <a-layout class="pt-[64px] dark:!bg-[#000000]">
+      <a-layout class="layout-default-page pt-[64px] dark:!bg-[#000000]">
         <!-- Page Content -->
         <a-layout-content class="layout-default-content px-40 dark:text-white text-[#121211]">
           <keep-alive>
@@ -36,6 +36,10 @@ const layoutClass = computed(() => {
 <style lang="less" scoped>
 .ant-layout {
   background: #F6F6F6;
+}
+
+.layout-default-page {
+  min-height: 100vh;
 }
 
 .layout-default-content {

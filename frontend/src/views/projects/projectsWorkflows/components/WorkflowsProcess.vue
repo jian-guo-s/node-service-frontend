@@ -2,8 +2,8 @@
   <div class="process rounded-[12px] mt-[24px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211]">
     <div class="process-content">
       <div class="flex justify-between">
-        <span class="process-content-title">Execution Process</span>
-        <span class="text-[14px] cursor-pointer" @click="checkAllLogs">全部日志</span>
+        <span class="process-content-title">{{ $t('workFlows.executionProcess') }}</span>
+        <span class="text-[14px] cursor-pointer" @click="checkAllLogs">{{ $t('workFlows.viewFullLogs') }}</span>
       </div>
       <div class="process-scroll-box wrapper" ref="wrapper">
         <div v-for="item in processData" :key="item.name">

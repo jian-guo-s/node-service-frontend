@@ -8,7 +8,7 @@
         }}</span>
         <span class="text-[#E2B578] cursor-pointer pt-[6px]" @click="toggle">
           <img src="@/assets/icons/full.svg" class="w-[18px] mr-[10px]" />
-          <span class="align-middle"> {{ $t("log.full") }}</span>
+          <span class="align-middle"> {{ $t("workFlows.full") }}</span>
         </span>
       </div>
       <div ref="root">
@@ -18,7 +18,7 @@
             :class="fullscreen ? 'resetoreFixed' : ''">
             <img src="@/assets/icons/flod.svg" class="w-[18px] mr-[10px]" />
             <span class="text-[#ffffff] align-middle">{{
-                $t("log.restore")
+                $t("workFlows.restore")
             }}</span>
           </div>
 

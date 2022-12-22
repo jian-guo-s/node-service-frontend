@@ -13,8 +13,9 @@
       </a-form-item>
       <a-form-item name="Name" class="mb-[32px]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-        <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="contractValue" name="checkboxgroup" :options="nameOptions" @change="changeContractValue" />
+        <!-- <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+          v-model:value="contractValue" name="checkboxgroup" :options="nameOptions" @change="changeContractValue" /> -->
+        <Checkbox></Checkbox>
       </a-form-item>
       <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
       <a-form-item>
@@ -38,9 +39,8 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
-// import MathTest from "../../json/MathTest.json";
-// import SimpleStorage from "../../json/SimpleStorage.json";
 import Breadcrumb from "../components/Breadcrumb.vue";
+import Checkbox from "./components/Checkbox.vue";
 import MathTest from "../json/MathTest.json";
 import SimpleStorage from "../json/SimpleStorage.json";
 import SelectWallet from "./components/SelectWallet.vue";

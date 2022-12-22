@@ -1,6 +1,9 @@
 <template>
   <a-modal v-model:visible="visible" :footer="null" @cancel="cancelModal" width="760px">
-    <div class="text-[#151210] text-[24px] font-bold  mb-[32px]">Connect wallet to continue</div>
+    <template #closeIcon>
+      <img class="mt-[22px]" src="@/assets/icons/closeIcon.svg" />
+    </template>
+    <div class="text-[#151210] text-[24px] font-bold mb-[32px]">Connect wallet to continue</div>
     <div class="grid grid-cols-3 gap-16">
       <div class="chainListItem text-[#000000] text-center cursor-pointer mx-[8px]" v-for="item in chainList"
         :key="item" @click="selectConnectWallet(item)">

@@ -3,7 +3,7 @@
     <a-row>
       <a-col :span="8">
         <div class="">
-          <div class="process-detail-title">Code Repository</div>
+          <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
           <div class="process-detail-info">https://github.com/hamster-shared/hamster.git</div>
           <div class="process-detail-info">
             <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
@@ -14,14 +14,14 @@
       </a-col>
       <a-col :span="8">
         <div class="process-detail-item">
-          <div class="process-detail-title">Check Result</div>
+          <div class="process-detail-title">{{ $t('workFlows.checkResult') }}</div>
           <div class="process-detail-info">Action succeed</div>
           <div class="process-detail-info">Action succeed</div>
         </div>
       </a-col>
       <a-col :span="8">
         <div class="process-detail-item">
-          <div class="process-detail-title">Time</div>
+          <div class="process-detail-title">{{ $t('workFlows.time') }}</div>
           <div class="process-detail-info">1h ago action</div>
           <div class="process-detail-info">6m spend</div>
         </div>
@@ -31,7 +31,7 @@
 </template>
 <script lang='ts' setup>
 const props = defineProps({
-  workflowsInfoData: { type: Object }
+  workflowsDetailsData: { type: Object }
 });
 </script>
 <style lang='less' scoped>
@@ -40,6 +40,10 @@ const props = defineProps({
 html[data-theme='dark'] {
   .process-detail-item::after {
     border: 1px solid #302D2D;
+  }
+
+  .process-detail-info {
+    color: #FFFFFF;
   }
 }
 
@@ -75,12 +79,5 @@ html[data-theme='dark'] {
 
 .process-detail-info:last-child {
   margin-bottom: 0px;
-}
-
-html[data-theme='dark'] {
-  .process-detail-info {
-    color: #FFFFFF;
-
-  }
 }
 </style>
