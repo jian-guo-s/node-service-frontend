@@ -19,8 +19,8 @@ export default defineConfig({
       "/api": {
         target:
           // "http://localhost:8080",
-          // "http://175.24.179.2:9911",
-          "http://183.66.65.207:9500/",
+          "http://175.24.179.2:9911",
+        // "http://34.232.105.81:8080",
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
