@@ -37,6 +37,7 @@ import SimpleStorage from "../json/SimpleStorage.json";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import noData from "./components/noData.vue";
 import ContractList from "./components/ContractList.vue";
+import { apiGetContractDeployDetail } from "@/apis/workFlows";
 const activeKey = ref('1')
 const hasData = ref(true);
 const dataSource = ref([]);
@@ -67,7 +68,6 @@ const customHeaderRowStyle = (record: any, index: number) => {
   // }
 }
 
-const themeValue = computed(() => { localStorage.getItem('themeValue') })
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
