@@ -2,7 +2,7 @@
   <div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="flex justify-between">
         <div>
-          <a-input v-model:value="search" placeholder="Search here..." allow-clear autocomplete="off">
+          <a-input v-model:value="keyword" placeholder="Search here..." allow-clear autocomplete="off">
             <template #prefix>
               <img
                 src="@/assets/icons/white-search.svg"
@@ -18,21 +18,24 @@
       <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
     </div>
     <Overview :viewType="viewType" />
-    <a-pagination :class="[ isWhite ? 'white-css' : 'dark-css']" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="500" size="small" />
+    <a-pagination :class="[ isWhite ? 'white-css' : 'dark-css']" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="total" size="small" />
   </div>
 </template>
 <script lang='ts' setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
+import { apiGetProjects } from "@/apis/projects";
 
 
 const router = useRouter();
 const isWhite = ref(false);
-const search = ref('');
+const keyword = ref('');
 const viewType = ref("list");
 const current = ref(1);
+const total = ref(0);
 const pageSize = ref(10);
+const projectsList = ref([]); //projects列表
 
 const onChange = (pageNumber: number) => {
   console.log("onchange...",pageNumber);
@@ -58,7 +61,27 @@ onMounted(() => {
       }
     }
   })
+
+  getProjects();
 })
+
+const getProjects = async () => {
+  try {
+    const params = {
+      query: keyword.value,
+      page: current.value,
+      size: pageSize.value,
+    }
+    const data = await apiGetProjects(params);
+    projectsList.value = data.result;
+    total.value = data.total;
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
