@@ -7,36 +7,40 @@
   </Breadcrumb>
   <div
     class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px] mt-[24px]">
-    <a-form class="dark:text-white text-[#121211] col-span-3" :model="formState" name="basic" :label-col="{ span: 0 }"
-      :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" noStyle>
+    <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
+      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
-      <a-form-item class="">
+      <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="versionValue" style="width: 100%" @change="handleChange" placeholder="请选择">
+        <a-select v-model:value="formState.version" style="width: 100%" @change="handleChange" placeholder="请选择"
+          allowClear>
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="Name" class="mb-[32px]">
+      <a-form-item name="name" class="mb-[32px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="contractValue" name="checkboxgroup" :options="nameOptions" @change="changeContractValue">
+          v-model:value="formState.name" name="checkboxgroup" :options="nameOptions" @change="changeContractValue">
         </a-checkbox-group>
         <!-- <Checkbox></Checkbox> -->
       </a-form-item>
       <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
-      <a-form-item>
+      <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select v-model:value="chainValue" style="width: 100%" @change="handleChange" placeholder="请选择">
+        <a-select v-model:value="formState.chain" style="width: 100%" @change="handleChange" placeholder="请选择"
+          allowClear>
           <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="Network">
+      <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="networkValue" style="width: 100%" @change="handleChange" placeholder="请选择">
+        <a-select v-model:value="formState.network" style="width: 100%" @change="handleChange" placeholder="请选择"
+          allowClear>
           <a-select-option :value="item" v-for="item in networkData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-button class="btn" @click="deployClick">Deploy</a-button>
+
     </a-form>
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
@@ -44,17 +48,19 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
+import type { FormInstance } from 'ant-design-vue';
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
+import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import Checkbox from "./components/Checkbox.vue";
-import MathTest from "../json/MathTest.json";
-import SimpleStorage from "../json/SimpleStorage.json";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+import MathTest from "../json/MathTest.json";
 
+const formRef = ref<FormInstance>();
 const theme = useThemeStore()
 const router = useRouter()
 const id = router.currentRoute.value.params?.id;
@@ -70,7 +76,17 @@ const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive(['Testnet/Goerli', 'mainnet']);
-const nameOptions = reactive(['SimpleStorageA', 'SimpleStorageB']);
+const nameOptions = reactive([]);
+// const contract
+
+const formState = reactive({
+  version: '',
+  name: '',
+  chain: '',
+  network: '',
+});
+
+// const options = reactive([{ label: 'name', value: 'id' }]);
 
 const handleChange = (val: any) => {
   console.log(val, 'val')
@@ -84,32 +100,48 @@ const getVersion = async () => {
 
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: '1', version: '1' });
+  data.map((item: any) => {
+    item.label = item.name
+    item.value = item.id
+  })
+  Object.assign(nameOptions, data)
+  // console.log(data, 'data')
+}
+
+const contractFactory = async () => {
+  // 创建合约
+  const { ethereum } = window;
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  const accounts = await provider.send('eth_requestAccounts', []);
+  // console.log(ethereum, 'ethereum')
+
+  const factory = new ethers.ContractFactory(
+    MathTest.abi,
+    MathTest.bytecode,
+    provider.getSigner()
+  );
+
+  const contract = await factory.deploy();
+  await contract.deployed();
+
+  console.log(contract, 'contract')
+  window.localStorage.setItem("factoryAddress", contract.address);
+  router.push(`/projects/${'1'}/contracts-details/${'1.1.1'}`)
+  // router.push(`/projects/${id}/contracts-details/${version}`)  /projects/1/contracts-details/1
 }
 
 const deployClick = async () => {
+
+  console.log(formState)
   // 有值说明已连接钱包
   const walletAccount = window.localStorage.getItem("walletAccount");
   if (walletAccount) {
-    // 创建合约
-    const { ethereum } = window;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const accounts = await provider.send('eth_requestAccounts', []);
-    // console.log(ethereum, 'ethereum')
-
-    const factory = new ethers.ContractFactory(
-      MathTest.abi,
-      MathTest.bytecode,
-      provider.getSigner()
-    );
-
-    const contract = await factory.deploy();
-    await contract.deployed();
-
-    console.log(contract, 'contract')
-    window.localStorage.setItem("factoryAddress", contract.address);
-    router.push(`/projects/${'1'}/contracts-details/${'1.1.1'}`)
-    // router.push(`/projects/${id}/contracts-details/${version}`)  /projects/1/contracts-details/1
-
+    try {
+      const values = await formRef.value.validateFields();
+      contractFactory()
+    } catch (errorInfo) {
+      console.log('Failed:', errorInfo);
+    }
   } else {
     // 连接钱包后再创建合约
     visible.value = true
@@ -204,5 +236,11 @@ input:-ms-input-placeholder {
   color: #bcbebc;
 }
 
+:deep(.ant-form-item-has-error .ant-select:not(.ant-select-disabled):not(.ant-select-customize-input) .ant-select-selector) {
+  background-color: transparent;
+}
 
+:deep(.ant-select-clear) {
+  // background-color: #00000040;
+}
 </style>

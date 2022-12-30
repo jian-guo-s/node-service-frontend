@@ -5,6 +5,11 @@ interface GetWorkflowsDetailParams {
  detailId: string,
 }
 
+interface GetContractDeployDetailParams {
+  id: string,
+  version: string,
+}
+
 interface GetDetailLogsParams {
   id: number | string;
   workflowDetailId: string;
@@ -69,10 +74,19 @@ export function apiGetProjectsContract(params:any) {
 }
 
 // 获取部署详情信息 ==== 详情页
-export function apiGetContractDeployDetail(deployId: string) {
+// export function apiGetContractDeployDetail(deployId: string) {
+//   return httpRequest({
+//     url: `/contract/deploy/${deployId}/detail`,
+//     method: "get",
+//   });
+// }
+
+// projects/:id/contract/deploy/detail?version=xxx
+export function apiGetContractDeployDetail(params:GetContractDeployDetailParams) {
   return httpRequest({
-    url: `/contract/deploy/${deployId}/detail`,
+    url: `/projects/${params.id}/contract/deploy/detail`,
     method: "get",
+    params: {version: params.version}
   });
 }
 

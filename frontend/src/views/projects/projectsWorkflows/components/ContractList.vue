@@ -57,24 +57,11 @@ const props = defineProps({
 })
 const { contractListData } = toRefs(props)
 
-// const dataSource = ref(
-
-// )
-
 </script>
 
 <style lang="less" scoped>
 .btn {
   width: 131px;
   height: 43px;
-  // background-color: @baseColor;
-  // color: #fff;
-  // border-color: @baseColor;
 }
-
-// .btn:hover,
-// .btn:focus {
-//   background-color: @baseColor;
-//   color: #fff;
-// }
 </style>

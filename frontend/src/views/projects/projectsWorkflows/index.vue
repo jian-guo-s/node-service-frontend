@@ -47,8 +47,8 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  Object.assign(workflowsDetailsData, { startTime: data.StartTime, endTime: data.EndTime })
-  const StageInfo = YAML.parse(data.StageInfo)
+  Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
+  const StageInfo = YAML.parse(data.stageInfo)
   Object.assign(processData, StageInfo.stages)
   processData.unshift({ name: 'Start', status: 99, duration: '', })
 
