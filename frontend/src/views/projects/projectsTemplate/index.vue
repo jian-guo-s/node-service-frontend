@@ -24,33 +24,35 @@
       <div class="ml-4 text-[24px] font-bold">Select template</div>
     </div>
     <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
-      <div class="text-[24px] font-bold">NFTs</div>
-      <div class="text-[#73706E] dark:text-[#E0DBD2] mb-2">NFT Collections, Editions, Drops and everything else NFT-related.</div>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] rounded-[12px] border border-solid p-4">
-          <div class="font-bold">Multiwrap</div>
-          <div class="text-[14px] mt-2 text-[#BBBAB9]">Bundle multiple ERC721/ERC1155/ERC20 tokens into a single ERC721.</div>
-          <div class="flex mt-4">
-            <div class="flex items-center">
-              <img
-                src="@/assets/icons/version-white.svg"
-                class="h-[20px] dark:hidden"
-              />
-              <img
-                src="@/assets/icons/version-dark.svg"
-                class="h-[20px] hidden dark:inline-block"
-              />
-              V1.0.0</div>
-            <div class="flex items-center ml-4">
-              <img
-                src="@/assets/icons/audi-white.svg"
-                class="h-[20px] dark:hidden"
-              />
-              <img
-                src="@/assets/icons/audi-dark.svg"
-                class="h-[20px] hidden dark:inline-block"
-              />
-              Audited</div>
+      <div v-for="(items, index) in templatesCategory" :key="index">
+        <div class="text-[24px] font-bold">{{ items.name }}</div>
+        <div class="text-[#73706E] dark:text-[#E0DBD2] mb-2">{{ items.description }}</div>
+        <div class="grid grid-cols-3 gap-4">
+          <div v-for="(item, index2) in items.templatesList" :key="index2" class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] rounded-[12px] border border-solid p-4 cursor-pointer" @click="goDetail(item.id)">
+            <div class="font-bold">{{ item.name }}</div>
+            <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
+            <div class="flex mt-4">
+              <div class="flex items-center">
+                <img
+                  src="@/assets/icons/version-white.svg"
+                  class="h-[20px] dark:hidden"
+                />
+                <img
+                  src="@/assets/icons/version-dark.svg"
+                  class="h-[20px] hidden dark:inline-block"
+                />
+                {{ item.lastVersion }}</div>
+              <div class="flex items-center ml-4" v-if="item.audited === true">
+                <img
+                  src="@/assets/icons/audi-white.svg"
+                  class="h-[20px] dark:hidden"
+                />
+                <img
+                  src="@/assets/icons/audi-dark.svg"
+                  class="h-[20px] hidden dark:inline-block"
+                />
+                Audited</div>
+            </div>
           </div>
         </div>
       </div>
@@ -60,10 +62,18 @@
 <script lang='ts' setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
 
 
 const router = useRouter();
 
+const templatesCategory = ref([{
+  id: "",
+  name: "",
+  description: "",
+  templatesList: [],
+}]);
+const templatesList = ref([]);
 const isWhite = ref(false);
 onMounted(() => {
   window.addEventListener('setItemEvent', event => {
@@ -75,8 +85,29 @@ onMounted(() => {
       }
     }
   })
+  getTemplatesCategory();
+  
 })
 
+const getTemplatesCategory = async () => {
+  try {
+    const { data } = await apiTemplatesCategory("1");
+    templatesCategory.value = data;
+    templatesCategory.value.forEach(async (element,index) => {
+      const { data } = await apiTemplatesCategoryById(element.id);
+      
+      templatesCategory.value[index]['templatesList'] = data;
+    });
+    console.log("templatesCategory:",templatesCategory.value);
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+const goDetail = (id: string) => {
+  router.push("/projects/templates/"+id+"/details");
+}
 const goBack = () => {
    router.back();
 }

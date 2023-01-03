@@ -30,7 +30,7 @@
        <a-button type="primary" class="ml-4">Setting</a-button>
       </div>
     </div>
-    <Overview :viewType="viewType" />
+    <Overview :viewType="viewType" :viewInfo="projectsDetail" />
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex justify-between">
         <div class="mb-[32px] items-center text-[24px] font-bold">Workflows</div>
@@ -114,15 +114,20 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { formatToDateTime } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows } from "@/apis/projects";
 
 const router = useRouter();
+const { params } = useRoute();
+const detailId = ref(params.id);
 const viewType = ref("detail");
 const isWhite = ref(false);
+const projectsDetail = ref({});
 const activeKey = ref("1");
 const actionList = reactive(["All Action", "Contract Build", "Contract Check"]);
-const action = ref("All Action");
+const action = ref("1");
 const contractList = reactive(["All Contract"]);
 const contract = ref("All Contract");
 const versionList = reactive(["All Version"]);
@@ -138,40 +143,40 @@ const reportTableList = ref([]);
 const tableColumns = computed<any[]>(() => [
   {
     title: 'Status',
-    dataIndex: 'name',
+    dataIndex: 'status',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'name',
+    key: 'status',
   },
   {
     title: 'Action',
-    dataIndex: 'network',
+    dataIndex: 'type',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'network',
+    key: 'type',
   },
   {
     title: 'Trigger Info',
-    dataIndex: 'total_requests_today',
-    key: 'total_requests_today',
+    dataIndex: 'triggerMode',
+    key: 'triggerMode',
     ellipsis: 'fixed',
     align: 'center',
   },
   {
     title: 'Stage',
-    dataIndex: 'daylyRequests',
+    dataIndex: 'stageInfo',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'daylyRequests',
+    key: 'stageInfo',
     width: '200px'
   },
   {
     title: 'Time',
-    dataIndex: 'created_at',
+    dataIndex: 'startTime',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'DaysOnHamster',
-    customRender: ({ text }) => Math.floor((new Date()-new Date(text))/(60*60*24*1000))+' Days',
+    key: 'startTime',
+      customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: '操作',
@@ -351,7 +356,40 @@ onMounted(() => {
       }
     }
   })
+
+  getProjectsDetail();
+  getProjectsWorkflows();
 })
+
+const getProjectsDetail = async () => {
+  try {
+    const { data } = await apiGetProjectsDetail(detailId.value.toString());
+    projectsDetail.value = data;
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+}; 
+
+const getProjectsWorkflows = async () => {
+  try {
+    const params = {
+      type: action.value,
+      page: pagination.current,
+      size: pagination.pageSize,
+    }
+    const { data } = await apiGetProjectsWorkflows(detailId.value.toString(), params);
+    workflowList.value = data.data;
+    pagination.total = data.total
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
 
 const goBack = () => {
    router.back();

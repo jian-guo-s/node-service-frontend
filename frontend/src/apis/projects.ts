@@ -10,10 +10,18 @@ interface AddProjectsParams {
 }
 
 interface GetProjectsParams {
+  user: string;
   query: string;
   page: number;
   size: number;
 }
+
+interface GetWorkflowsParams {
+  type: string;
+  page: number;
+  size: number;
+}
+
 interface GetProjectsContractDeployParams {
   id: string,
   contractId: number,
@@ -40,21 +48,29 @@ export function apiGetProjects(params: GetProjectsParams) {
   });
 }
 // 查询项目详情
-export function apiGetProjectsDetail(id: Number) {
+export function apiGetProjectsDetail(id: String) {
   return httpRequest({
     url: `/projects/${id}`,
     method: "get",
   });
 }
+// 获取项目workflow列表 
+export function apiGetProjectsWorkflows(id: String, params: GetWorkflowsParams) {
+  return httpRequest({
+    url: `/projects/${id}/workflows`,
+    method: "get",
+    params: params,
+  });
+}
 //项目check
-export function apiProjectsCheck(id: Number) {
+export function apiProjectsCheck(id: String) {
   return httpRequest({
     url: `/projects/${id}/check`,
     method: "post",
   });
 }
 //项目build
-export function apiProjectsBuild(id: Number) {
+export function apiProjectsBuild(id: String) {
   return httpRequest({
     url: `/projects/${id}/build`,
     method: "post",
