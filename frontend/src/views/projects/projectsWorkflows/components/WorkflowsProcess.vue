@@ -32,11 +32,13 @@
   <Processmodal ref="processModalRef"></Processmodal>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, toRefs, watch, nextTick } from "vue";
+import { ref, onMounted, toRefs, watch, nextTick, reactive } from "vue";
 import BScroll from "@better-scroll/core";
 import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
 import { formatDurationTime } from "@/utils/time/dateUtils.js";
+import { apiGetDetailStageLogs } from "@/apis/workFlows";
+import { react } from "@babel/types";
 BScroll.use(Scrollbar);
 
 const props = defineProps({
@@ -56,6 +58,12 @@ const enum StatusEnum {
   "stop",
 }
 
+const queryParams = reactive({
+  id: '',
+  name: '',
+  detailId: '',
+})
+
 const processModalRef = ref();
 const wrapper = ref()
 const { processData } = toRefs(props);
@@ -70,6 +78,10 @@ const checkProcess = (item: any, e: Event) => {
     // stagesData.content = []
     // await getStageLogsData(item);
   }
+}
+
+const getStageLogsData = async () => {
+  const { data } = await apiGetDetailStageLogs(queryParams);
 }
 
 const getImageUrl = (status: any) => {

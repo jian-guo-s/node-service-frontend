@@ -1,8 +1,7 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
     <Breadcrumb :currentName="'Hamster'"></Breadcrumb>
-    <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px"
-      @change="handleChange">
+    <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px">
       <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
     </a-select>
   </div>

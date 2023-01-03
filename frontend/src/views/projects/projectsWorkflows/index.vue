@@ -2,7 +2,7 @@
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
       <Breadcrumb :currentName="'Contract Check_#1'"></Breadcrumb>
-      <a-button class="btn">{{ $t('workFlows.stop') }}</a-button>
+      <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData"></WorkflowsProcess>
@@ -20,13 +20,20 @@ import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailStageLogs } from "@/apis/workFlows";
+import { apiProjectsWorkflowsStop } from "@/apis/projects";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport } from "@/apis/workFlows";
 
 const router = useRouter();
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
   detailId: router.currentRoute.value.params?.workflowId,
   type: router.currentRoute.value.params?.type
+})
+
+const stopQueryParams = reactive({
+  id: router.currentRoute.value.params?.id,
+  workflowId: router.currentRoute.value.params?.workflowId,
+  detailId: '',
 })
 
 const inRunning = ref(false);
@@ -49,6 +56,8 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
+  stopQueryParams.detailId = data.id;
+
   data.duration = dayJs(data.endTime).valueOf() - dayJs(data.startTime).valueOf();
   // console.log(new Date().valueOf(), new Date('0001-01-01T00:00:00Z').valueOf(), '999')
   Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
@@ -75,10 +84,14 @@ const getContractList = async () => {
 }
 
 const getCheckReport = async () => {
-  const { data } = await apiGetWorkFlowsReport(queryJson)
+  const { data } = await apiGetWorkFlowsReport(queryJson);
+  getWorkflowsDetails()
 }
 
+const stopBtn = async () => {
+  const { data } = await apiProjectsWorkflowsStop(stopQueryParams)
 
+}
 
 onMounted(() => {
   getWorkflowsDetails()

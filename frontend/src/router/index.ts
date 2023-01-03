@@ -89,8 +89,8 @@ const router = createRouter({
           ]
         },
         {
-          path: "/projects/:id/workflows/:workflowId",
-          redirect: "/projects/:id/workflows/:workflowId",
+          path: "/projects/:id/workflows/:workflowId/:type",
+          redirect: "/projects/:id/workflows/:workflowId/:type",
           children: [
             {
               path: "/projects/:id/workflows/:workflowId/:type",
@@ -138,13 +138,13 @@ const router = createRouter({
   ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token') || '';
-//   if(!token && to.path !== '/login') {
-//     next('/')
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') || '';
+  if(!token && to.path !== '/login') {
+    next('/')
+  } else {
+    next()
+  }
+})
 
 export default router;
