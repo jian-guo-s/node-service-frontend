@@ -6,8 +6,8 @@
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData"></WorkflowsProcess>
-    <CheckReport :checkReportData="checkReportData"></CheckReport>
-    <ContractList :contractListData="contractListData"></ContractList>
+    <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
+    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
   </div>
 </template>
 <script lang='ts' setup>
@@ -49,10 +49,11 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  data.duration = dayJs(data.endTime) - dayJs(data.startTime);
-  console.log(new Date('0001-01-01T00:00:00Z'), dayJs('0001-01-01T00:00:00Z'), '999')
+  data.duration = dayJs(data.endTime).valueOf() - dayJs(data.startTime).valueOf();
+  // console.log(new Date().valueOf(), new Date('0001-01-01T00:00:00Z').valueOf(), '999')
   Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
   const StageInfo = YAML.parse(data.stageInfo)
+  console.log(StageInfo, 'StageInfo')
   Object.assign(processData, StageInfo.stages)
   processData.unshift({ name: 'Start', status: 99, duration: '', })
 

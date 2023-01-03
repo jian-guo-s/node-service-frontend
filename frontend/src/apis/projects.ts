@@ -23,6 +23,12 @@ interface GetProjectsContractDeployParams {
   address: string,
 }
 
+interface apiProjectsWorkflowsDetailStopParams {
+  id: string,
+  workflowId: string,
+  detailId: string,
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -65,6 +71,15 @@ export function apiProjectsBuild(id: Number) {
 export function apiProjectsContractDeploy(params: GetProjectsContractDeployParams) {
   return httpRequest({
     url: `/projects/${params.id}/contract/deploy`,
+    method: "post",
+    data: params,
+  });
+}
+
+// 停止workflows
+export function apiProjectsWorkflowsStop(params: apiProjectsWorkflowsDetailStopParams) {
+  return httpRequest({
+    url: `/projects/${params.id}/workflows/${params.workflowId}/detail/${params.detailId}/stop`,
     method: "post",
     data: params,
   });

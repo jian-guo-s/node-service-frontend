@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import Login from "../views/login/index.vue";
 import HomeView from "../views/home/HomeView.vue";
 import RpcsIndex from "../views/nodeService/rpcs/index.vue";
 import AppsIndex from "../views/nodeService/apps/index.vue";
@@ -34,8 +35,21 @@ const router = createRouter({
     //   component: AppsIndex,
     // },
     {
-      path: "/",
-      redirect: "/projects",
+      path: '/',
+      redirect: '/login',
+      children: [
+       {
+        path: '/login',
+        name: 'Login',
+        component: Login,
+       }
+      ],
+      meta: {
+        layout: 'null',
+      }
+    },
+    {
+      path: "/projects",
       children: [
         {
           path: "/projects",
@@ -88,7 +102,7 @@ const router = createRouter({
               name: "ProjectsWorkflowsAllLogs",
               component: ProjectsWorkflowsAllLogs,
               meta: {
-                layout: null,
+                layout: 'null',
               }
             }
           ],
@@ -123,5 +137,14 @@ const router = createRouter({
     },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') || '';
+  if(!token && to.path !== '/login') {
+    next('/')
+  } else {
+    next()
+  }
+})
 
 export default router;

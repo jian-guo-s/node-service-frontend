@@ -21,6 +21,11 @@ const service = axios.create({
 service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
+    let token = localStorage.getItem("token") || ''
+    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+      (config as Recordable).headers['Access-Token'] = token;
+    }
+
     return config;
   },
   function (error) {
