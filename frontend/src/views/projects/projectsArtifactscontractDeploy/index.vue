@@ -12,8 +12,7 @@
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
       <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="formState.version" style="width: 100%" @change="handleChange" placeholder="请选择"
-          allowClear>
+        <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -27,15 +26,13 @@
       <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
       <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select v-model:value="formState.chain" style="width: 100%" @change="handleChange" placeholder="请选择"
-          allowClear>
+        <a-select v-model:value="formState.chain" style="width: 100%" placeholder="请选择">
           <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="formState.network" style="width: 100%" @change="handleChange" placeholder="请选择"
-          allowClear>
+        <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择">
           <a-select-option :value="item" v-for="item in networkData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -58,13 +55,14 @@ import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiProjectsContractDeploy } from "@/apis/projects";
 import MathTest from "../json/MathTest.json";
 
 const formRef = ref<FormInstance>();
 const theme = useThemeStore()
 const router = useRouter()
 const id = router.currentRoute.value.params?.id;
-const versionValue = ref(router.currentRoute.value.params.version);
+// const versionValue = ref(router.currentRoute.value.params?.version);
 // const contractValue = router.currentRoute.value.params.contract;
 const contractValue = ref('SimpleStorageA');
 const chainValue = ref(undefined);
@@ -77,10 +75,9 @@ const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive(['Testnet/Goerli', 'mainnet']);
 const nameOptions = reactive([]);
-// const contract
 
 const formState = reactive({
-  version: '',
+  version: router.currentRoute.value.params?.version,
   name: '',
   chain: '',
   network: '',
@@ -88,10 +85,10 @@ const formState = reactive({
 
 // const options = reactive([{ label: 'name', value: 'id' }]);
 
-const handleChange = (val: any) => {
-  console.log(val, 'val')
-  versionValue.value = val
-}
+// const handleChange = (val: any) => {
+//   console.log(val, 'val')
+//   versionValue.value = val
+// }
 
 const getVersion = async () => {
   const { data } = await apiGetProjectsVersions({ id: '1' });
@@ -124,10 +121,23 @@ const contractFactory = async () => {
   const contract = await factory.deploy();
   await contract.deployed();
 
-  console.log(contract, 'contract')
+  // console.log(contract, 'contract')
+  setProjectsContractDeploy(contract.address)
   window.localStorage.setItem("factoryAddress", contract.address);
   router.push(`/projects/${'1'}/contracts-details/${'1.1.1'}`)
   // router.push(`/projects/${id}/contracts-details/${version}`)  /projects/1/contracts-details/1
+}
+
+const setProjectsContractDeploy = async (address: string) => {
+  const queryJson = {
+    id: id,
+    contractId: id,
+    projectId: id,
+    version: formState.version,
+    network: formState.network,
+    address: address,
+  }
+  const { data } = await apiProjectsContractDeploy(queryJson)
 }
 
 const deployClick = async () => {

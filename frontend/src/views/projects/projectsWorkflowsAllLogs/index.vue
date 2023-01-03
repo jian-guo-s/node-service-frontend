@@ -11,13 +11,13 @@ import { apiGetDetailLogs } from "@/apis/workFlows";
 const router = useRouter();
 const jobLogsData = reactive({ detailLogsList: [] });
 
-const queryParams = router.currentRoute.value.params;
-// const queryParams = reactive({
-//   id: router.currentRoute.value.params?.id,
-//   workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
-// })
+// const queryParams = router.currentRoute.value.params;
+const queryParams = reactive({
+  id: router.currentRoute.value.params?.id,
+  workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
+})
 const getDetailLogs = async () => {
-  const { data } = await apiGetDetailLogs({ id: queryParams.id, workflowDetailId: queryParams.workflowDetailId })
+  const { data } = await apiGetDetailLogs(queryParams)
   jobLogsData.detailLogsList = data.content?.split('\r')
 }
 onMounted(() => {

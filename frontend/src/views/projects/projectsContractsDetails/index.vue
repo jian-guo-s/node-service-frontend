@@ -3,7 +3,7 @@
     <Breadcrumb :currentName="'Hamster'"></Breadcrumb>
     <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px"
       @change="handleChange">
-      <a-select-option value="jack">Jack</a-select-option>
+      <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
     </a-select>
   </div>
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
@@ -50,8 +50,9 @@ import { ref, computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import noData from "./components/noData.vue";
+import YAML from "yaml";
 import ContractList from "./components/ContractList.vue";
-import { apiGetContractDeployDetail } from "@/apis/workFlows";
+import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
 const router = useRouter();
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
@@ -59,6 +60,7 @@ const queryJson = reactive({
 })
 const activeKey = ref()
 const hasData = ref(true);
+const versionData = reactive([]);
 const dataSource = ref([]);
 const columns = [
   {
@@ -75,7 +77,6 @@ const columns = [
       if (!text) {
         return '-'
       }
-
     },
     key: 'address',
   },
@@ -98,10 +99,21 @@ const getContractDeployDetail = async () => {
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 
-  // console.log(contractDeployDetail, 'lll')
-  // console.log(Object.keys(contractInfo), 'ppp')
+  console.log(YAML.parse(data.contractInfo['contract-one']['abiInfo']), 'asdfghj')
   activeKey.value = Object.keys(contractInfo)[0]
 }
+
+const getVersion = async () => {
+  const { data } = await apiGetProjectsVersions({ id: '1' });
+  Object.assign(versionData, data)
+}
+
+
+
+onMounted(() => {
+  getVersion()
+  getContractDeployDetail()
+})
 
 const customHeaderRowStyle = (record: any, index: number) => {
   // return {
@@ -111,9 +123,6 @@ const customHeaderRowStyle = (record: any, index: number) => {
   // }
 }
 
-onMounted(() => {
-  getContractDeployDetail()
-})
 
 </script>
 <style lang='less' scoped>
