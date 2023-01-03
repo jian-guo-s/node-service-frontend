@@ -14,6 +14,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import YAML from "yaml";
+import dayJs from "dayjs";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
@@ -24,7 +25,8 @@ import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, 
 const router = useRouter();
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
-  detailId: router.currentRoute.value.params?.workflowId
+  detailId: router.currentRoute.value.params?.workflowId,
+  type: router.currentRoute.value.params?.type
 })
 
 const inRunning = ref(false);
@@ -47,6 +49,8 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
+  data.duration = dayJs(data.endTime) - dayJs(data.startTime);
+  console.log(new Date('0001-01-01T00:00:00Z'), dayJs('0001-01-01T00:00:00Z'), '999')
   Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
   const StageInfo = YAML.parse(data.stageInfo)
   Object.assign(processData, StageInfo.stages)
@@ -77,8 +81,7 @@ const getCheckReport = async () => {
 
 onMounted(() => {
   getWorkflowsDetails()
-  getContractList()
-  getCheckReport()
+  queryJson.type === '1' ? getCheckReport() : getContractList();
 })
 
 </script>

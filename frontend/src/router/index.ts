@@ -79,7 +79,7 @@ const router = createRouter({
           redirect: "/projects/:id/workflows/:workflowId",
           children: [
             {
-              path: "/projects/:id/workflows/:workflowId",
+              path: "/projects/:id/workflows/:workflowId/:type",
               name: "ProjectsWorkflows",
               component: ProjectsWorkflows,
             },
