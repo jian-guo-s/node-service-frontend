@@ -21,6 +21,16 @@ interface GetWorkflowsParams {
   page: number;
   size: number;
 }
+
+interface GetProjectsContractDeployParams {
+  id: string,
+  contractId: number,
+  projectId: number,
+  version: string,
+  network: string,
+  address: string,
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -64,5 +74,14 @@ export function apiProjectsBuild(id: String) {
   return httpRequest({
     url: `/projects/${id}/build`,
     method: "post",
+  });
+}
+
+//  保存部署信息
+export function apiProjectsContractDeploy(params: GetProjectsContractDeployParams) {
+  return httpRequest({
+    url: `/projects/${params.id}/contract/deploy`,
+    method: "post",
+    data: params,
   });
 }

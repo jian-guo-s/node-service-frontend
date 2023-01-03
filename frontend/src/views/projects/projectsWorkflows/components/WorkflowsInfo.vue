@@ -22,14 +22,15 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ $t('workFlows.time') }}</div>
-          <div class="process-detail-info">1h ago action</div>
-          <div class="process-detail-info">6m spend</div>
+          <div class="process-detail-info">{{ fromNowexecutionTime(workflowsDetailsData.startTime, "noThing") }}</div>
+          <div class="process-detail-info">{{ formatDurationTime(workflowsDetailsData.EndTime) }}</div>
         </div>
       </a-col>
     </a-row>
   </div>
 </template>
 <script lang='ts' setup>
+import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 const props = defineProps({
   workflowsDetailsData: { type: Object }
 });

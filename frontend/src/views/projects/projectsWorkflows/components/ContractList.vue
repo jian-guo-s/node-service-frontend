@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
+import dayjs from "dayjs";
 
 const columns = [{
   title: 'Contract',
@@ -40,6 +41,9 @@ const columns = [{
   title: 'Build Time',
   dataIndex: 'buildTime',
   align: "center",
+  customRender: ({ text }) => {
+    return dayjs(text).format('YYYY/MM/DD ss:hh:mm')
+  },
   key: 'buildTime'
 },
 {
@@ -53,24 +57,11 @@ const props = defineProps({
 })
 const { contractListData } = toRefs(props)
 
-// const dataSource = ref(
-
-// )
-
 </script>
 
 <style lang="less" scoped>
 .btn {
   width: 131px;
   height: 43px;
-  // background-color: @baseColor;
-  // color: #fff;
-  // border-color: @baseColor;
 }
-
-// .btn:hover,
-// .btn:focus {
-//   background-color: @baseColor;
-//   color: #fff;
-// }
 </style>

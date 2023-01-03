@@ -5,7 +5,11 @@
       <img src="@/assets/icons/back-white.svg" class="svg-img w-[24px] mr-[8px] dark:hidden" />
       <span class="font-bold align-middle">{{ $t("workFlows.back") }}</span>
     </span>
-    <span class="font-bold align-middle">{{ currentName }}</span>
+    <span class="font-bold align-middle">
+      <span>{{ currentName }}</span>
+      <slot name="tags"></slot>
+    </span>
+
   </div>
 </template>
 <script lang='ts' setup>

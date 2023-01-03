@@ -1,88 +1,161 @@
 <template>
-  <Breadcrumb :currentName="'Contract Deploy'"></Breadcrumb>
+  <Breadcrumb :currentName="'Contract Deploy'">
+    <template v-slot:tags>
+      <span
+        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
+    </template>
+  </Breadcrumb>
   <div
     class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px] mt-[24px]">
-    <a-form class="dark:text-white text-[#121211] col-span-3" :model="formState" name="basic" :label-col="{ span: 0 }"
-      :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed" noStyle>
+    <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
+      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
-      <a-form-item class="">
+      <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="versionValue" style="width: 100%" @change="handleChange" placeholder="请选择">
+        <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="Name" class="mb-[32px]">
+      <a-form-item name="name" class="mb-[32px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-        <!-- <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="contractValue" name="checkboxgroup" :options="nameOptions" @change="changeContractValue" /> -->
-        <Checkbox></Checkbox>
+        <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+          v-model:value="formState.name" name="checkboxgroup" :options="nameOptions" @change="changeContractValue">
+        </a-checkbox-group>
+        <!-- <Checkbox></Checkbox> -->
       </a-form-item>
       <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
-      <a-form-item>
+      <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select v-model:value="chainValue" style="width: 100%" @change="handleChange" placeholder="请选择">
-          <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
+        <a-select v-model:value="formState.chain" style="width: 100%" placeholder="请选择">
+          <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="Network">
+      <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="networkValue" style="width: 100%" @change="handleChange" placeholder="请选择">
-          <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
+        <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择">
+          <a-select-option :value="item" v-for="item in networkData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-button class="btn" @click="deployClick">Deploy</a-button>
+
     </a-form>
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
+  <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
 </template>
 <script lang='ts' setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
+import type { FormInstance } from 'ant-design-vue';
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
+import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import Checkbox from "./components/Checkbox.vue";
-import MathTest from "../json/MathTest.json";
-import SimpleStorage from "../json/SimpleStorage.json";
 import SelectWallet from "./components/SelectWallet.vue";
+import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiProjectsContractDeploy } from "@/apis/projects";
+import MathTest from "../json/MathTest.json";
 
+const formRef = ref<FormInstance>();
 const theme = useThemeStore()
 const router = useRouter()
-const id = router.currentRoute.value.params.id;
-const versionValue = ref(router.currentRoute.value.params.version);
+const id = router.currentRoute.value.params?.id;
+// const versionValue = ref(router.currentRoute.value.params?.version);
 // const contractValue = router.currentRoute.value.params.contract;
 const contractValue = ref('SimpleStorageA');
 const chainValue = ref(undefined);
 const networkValue = ref(undefined);
-const isContractWallets = ref(false);
+// const isContractWallets = ref(false);
 const visible = ref(false)
-const versionData = reactive(['3.1.1', '2.1.1', '1.1.1', '0.1.1']);
-const nameOptions = reactive(['SimpleStorageA', 'SimpleStorageB']);
+const showWallets = ref();
+const isConnectedWallet = ref(false);
+const versionData = reactive([]);
+const chainData = reactive(['Ethereum']);
+const networkData = reactive(['Testnet/Goerli', 'mainnet']);
+const nameOptions = reactive([]);
 
-const handleChange = (val: any) => {
-  console.log(val, 'val')
-  versionValue.value = val
+const formState = reactive({
+  version: router.currentRoute.value.params?.version,
+  name: '',
+  chain: '',
+  network: '',
+});
+
+// const options = reactive([{ label: 'name', value: 'id' }]);
+
+// const handleChange = (val: any) => {
+//   console.log(val, 'val')
+//   versionValue.value = val
+// }
+
+const getVersion = async () => {
+  const { data } = await apiGetProjectsVersions({ id: '1' });
+  Object.assign(versionData, data)
+}
+
+const getProjectsContract = async () => {
+  const { data } = await apiGetProjectsContract({ id: '1', version: '1' });
+  data.map((item: any) => {
+    item.label = item.name
+    item.value = item.id
+  })
+  Object.assign(nameOptions, data)
+  // console.log(data, 'data')
+}
+
+const contractFactory = async () => {
+  // 创建合约
+  const { ethereum } = window;
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  const accounts = await provider.send('eth_requestAccounts', []);
+  // console.log(ethereum, 'ethereum')
+
+  const factory = new ethers.ContractFactory(
+    MathTest.abi,
+    MathTest.bytecode,
+    provider.getSigner()
+  );
+
+  const contract = await factory.deploy();
+  await contract.deployed();
+
+  // console.log(contract, 'contract')
+  setProjectsContractDeploy(contract.address)
+  window.localStorage.setItem("factoryAddress", contract.address);
+  router.push(`/projects/${'1'}/contracts-details/${'1.1.1'}`)
+  // router.push(`/projects/${id}/contracts-details/${version}`)  /projects/1/contracts-details/1
+}
+
+const setProjectsContractDeploy = async (address: string) => {
+  const queryJson = {
+    id: id,
+    contractId: id,
+    projectId: id,
+    version: formState.version,
+    network: formState.network,
+    address: address,
+  }
+  const { data } = await apiProjectsContractDeploy(queryJson)
 }
 
 const deployClick = async () => {
-  if (!isContractWallets) {
-    // 创建合约
-    const { ethereum } = window;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const accounts = await provider.send('eth_requestAccounts', []);
-    // console.log(ethereum, 'ethereum')
 
-    const factory = new ethers.ContractFactory(
-      MathTest.abi,
-      MathTest.bytecode,
-      provider.getSigner()
-    );
-
-    const contract = await factory.deploy();
-    await contract.deployed();
-
+  console.log(formState)
+  // 有值说明已连接钱包
+  const walletAccount = window.localStorage.getItem("walletAccount");
+  if (walletAccount) {
+    try {
+      const values = await formRef.value.validateFields();
+      contractFactory()
+    } catch (errorInfo) {
+      console.log('Failed:', errorInfo);
+    }
   } else {
+    // 连接钱包后再创建合约
     visible.value = true
+
   }
 }
 
@@ -93,6 +166,18 @@ const changeContractValue = (checkedValue: any) => {
 const cancelModal = (val: boolean) => {
   visible.value = val
 }
+
+const setWalletBtn = (val: boolean) => {
+  // isConnectedWallet.value = val;
+  // const account = window.localStorage.getItem("walletAccount");
+  // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
+}
+
+onMounted(() => {
+  getProjectsContract()
+  getVersion()
+})
+
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
@@ -121,8 +206,18 @@ const cancelModal = (val: boolean) => {
   border-radius: 4px;
 }
 
-:deep(.ant-checkbox-checked:hover) {
+:deep(.ant-checkbox-checked+span) {
+  color: #E2B578;
+}
+
+:deep(.ant-checkbox-inner),
+:deep(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: transparent;
+}
+
+:deep(.ant-checkbox-checked:after) {
   border-radius: 4px;
+  background-color: transparent;
 }
 
 :deep(.ant-checkbox-inner) {
@@ -131,23 +226,31 @@ const cancelModal = (val: boolean) => {
   border-radius: 4px;
 }
 
+:deep(.ant-checkbox-checked .ant-checkbox-inner:after) {
+  border: 5px solid #E2B578;
+  transform: rotate(0deg) scale(1);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+}
+
 :deep(.ant-checkbox-wrapper:hover) {
   border-radius: 4px;
 }
-
-:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
-  // background-color: #000000 !important;
-  // border: 1px solid @baseColor !important;
-}
-
-
-
-
 
 input::-webkit-input-placeholder,
 input:-moz-placeholder,
 input::-moz-placeholder,
 input:-ms-input-placeholder {
   color: #bcbebc;
+}
+
+:deep(.ant-form-item-has-error .ant-select:not(.ant-select-disabled):not(.ant-select-customize-input) .ant-select-selector) {
+  background-color: transparent;
+}
+
+:deep(.ant-select-clear) {
+  // background-color: #00000040;
 }
 </style>

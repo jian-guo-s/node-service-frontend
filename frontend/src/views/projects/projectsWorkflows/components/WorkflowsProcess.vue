@@ -6,23 +6,25 @@
         <span class="text-[14px] cursor-pointer" @click="checkAllLogs">{{ $t('workFlows.viewFullLogs') }}</span>
       </div>
       <div class="process-scroll-box wrapper" ref="wrapper">
-        <div v-for="item in processData" :key="item.name">
-          <div class="inline-block border border-solid border-[#EFEFEF] p-[11px] rounded-[5px]"
-            :class="item.status === 0 ? '' : 'cursorP'" @click="checkProcess(item, $event)">
-            <img src="@/assets/icons/start.svg" class="mr-[24px]" />
-            <!-- <img :src="getImageUrl(item.status)" class="w-[28px] mr-[24px] align-middle" v-if="item.status !== 1" /> -->
-            <!-- <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle" v-else /> -->
-            <span class="align-middle">
-              <span class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</span>
-              <!-- <span class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">{{ formatDurationTime(item.duration,
-                "noThing")
-            }}</span>  -->
-            </span>
+        <div class="process-scroll content">
+          <div class="inline-block execution_process_item" v-for="item in processData" :key="item.name">
+            <div class="inline-block border border-solid border-[#EFEFEF] p-[11px] rounded-[5px]"
+              :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
+              <img src="@/assets/icons/start.svg" class="mr-[24px]" v-if="item.status === 99" />
+              <img :src="getImageUrl(item.status)" class="w-[28px] mr-[24px] align-middle"
+                v-else-if="item.status !== 1" />
+              <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle" v-else />
+              <span class="align-middle">
+                <span class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</span>
+                <span class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">
+                  {{ formatDurationTime(item.duration, "noThing") }}
+                </span>
+              </span>
+            </div>
+            <img src="@/assets/icons/arrow-white.svg"
+              class="w-[28px] space-mark ml-[20px] mr-[20px]  hidden dark:inline-block" />
+            <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" />
           </div>
-          <!-- <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px]" /> -->
-          <img src="@/assets/icons/arrow-white.svg"
-            class="w-[28px] space-mark ml-[20px] mr-[20px]  hidden dark:inline-block" />
-          <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" />
         </div>
       </div>
     </div>
@@ -30,10 +32,11 @@
   <Processmodal ref="processModalRef"></Processmodal>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, toRefs } from "vue";
+import { ref, onMounted, toRefs, watch, nextTick } from "vue";
 import BScroll from "@better-scroll/core";
 import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
+import { formatDurationTime } from "@/utils/time/dateUtils.js";
 BScroll.use(Scrollbar);
 
 const props = defineProps({
@@ -44,15 +47,24 @@ const props = defineProps({
     }
   }
 })
+
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "passed",
+  "stop",
+}
+
 const processModalRef = ref();
 const wrapper = ref()
 const { processData } = toRefs(props);
 
 const checkProcess = (item: any, e: Event) => {
-  processModalRef.value.showVisible();
-  if (item.status === 0) {
+  if (item.status === 0 || item.status === 99) {
     e.stopPropagation();
   } else {
+    processModalRef.value.showVisible();
     // stagesData.title = item.name;
     // processModalRef.value.showVisible();
     // stagesData.content = []
@@ -60,11 +72,17 @@ const checkProcess = (item: any, e: Event) => {
   }
 }
 
+const getImageUrl = (status: any) => {
+  console.log(status)
+  return new URL(`../../../assets/icons/Status${status}.svg`, import.meta.url)
+    .href;
+};
+
 const checkAllLogs = () => {
   window.open(`/projects/:id/workflows/:workflowId/allLogs`)
 }
 
-onMounted(() => {
+const initScroll = () => {
   let scroll = new BScroll(wrapper.value, {
     startX: 0,
     scrollX: true,
@@ -75,6 +93,29 @@ onMounted(() => {
       interactive: true,
     },
   });
+}
+
+watch(
+  () => props.processData,
+  (oldV, newV) => {
+    nextTick(() => {
+      initScroll()
+    })
+  }, { deep: true }
+);
+
+onMounted(() => {
+  initScroll()
+  // let scroll = new BScroll(wrapper.value, {
+  //   startX: 0,
+  //   scrollX: true,
+  //   scrollY: false,
+  //   probeType: 1,
+  //   scrollbar: {
+  //     fade: false,
+  //     interactive: true,
+  //   },
+  // });
 })
 </script>
 <style lang='less' scoped>
@@ -95,6 +136,10 @@ onMounted(() => {
       .cursorP {
         cursor: pointer;
       }
+    }
+
+    :deep(.bscroll-horizontal-scrollbar) {
+      z-index: 4 !important;
     }
   }
 

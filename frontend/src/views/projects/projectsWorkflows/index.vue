@@ -8,31 +8,36 @@
     <WorkflowsProcess :processData="processData"></WorkflowsProcess>
     <CheckReport :checkReportData="checkReportData"></CheckReport>
     <ContractList :contractListData="contractListData"></ContractList>
-    <div>
-
-    </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import YAML from "yaml";
+import dayJs from "dayjs";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailStageLogs } from "@/apis/workFlows";
 
-const processData = reactive([
-  { name: '开始', status: 0, duration: '', }
-])
-
-const workflowsDetailsData = reactive({
-  type: 'report'
+const router = useRouter();
+const queryJson = reactive({
+  id: router.currentRoute.value.params?.id,
+  detailId: router.currentRoute.value.params?.workflowId,
+  type: router.currentRoute.value.params?.type
 })
 
-const contractListData = reactive([
-  { id: 1, workflowId: 1, workflowDetailsId: 1, name: 'contract-one', version: '#4', network: "mainnet", buildTime: "2022-12-21" },
-  { id: 2, workflowId: 2, workflowDetailsId: 2, name: 'contract-two', version: '#3', network: "mainnet", buildTime: "2022-12-19" }
-])
+const inRunning = ref(false);
+
+const processData = reactive([])
+const contractListData = reactive([])
+const workflowsDetailsData = reactive({
+  startTime: '',
+  endTime: '',
+})
+
 const checkReportData = reactive({
   id: 1,
   workflowId: 1,
@@ -42,23 +47,43 @@ const checkReportData = reactive({
   result: "",
 })
 
-const getWorkflowsDetails = () => {
+const getWorkflowsDetails = async () => {
+  const { data } = await apiGetWorkflowsDetail(queryJson)
+  data.duration = dayJs(data.endTime) - dayJs(data.startTime);
+  console.log(new Date('0001-01-01T00:00:00Z'), dayJs('0001-01-01T00:00:00Z'), '999')
+  Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
+  const StageInfo = YAML.parse(data.stageInfo)
+  Object.assign(processData, StageInfo.stages)
+  processData.unshift({ name: 'Start', status: 99, duration: '', })
 
+  // data.type === 1 ? getCheckReport() : getContractList();
+  // inRunning.value = processData.some((val: any) => val.status === 1);
+  // let detailTimer = null
+  // if (inRunning.value) {
+  //   detailTimer = setTimeout(() => {
+  //     getWorkflowsDetails();
+  //   }, 3000);
+  // } else {
+  //   clearTimeout(detailTimer);
+  // } 
 }
 
-const getContractList = () => {
-
+const getContractList = async () => {
+  const { data } = await apiGetWorkFlowsContract(queryJson)
+  Object.assign(contractListData, data)
 }
 
-const getCheckReport = () => {
-
+const getCheckReport = async () => {
+  const { data } = await apiGetWorkFlowsReport(queryJson)
 }
 
 
 
 onMounted(() => {
   getWorkflowsDetails()
+  queryJson.type === '1' ? getCheckReport() : getContractList();
 })
+
 </script>
 <style lang='less' scoped>
 .btn {
