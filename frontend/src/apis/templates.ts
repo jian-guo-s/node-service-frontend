@@ -12,14 +12,14 @@ export function apiTemplatesCategory(type: String) {
   });
 }
 // 根据模版类型ID查询模版信息
-export function apiTemplatesCategoryById(id: Number) {
+export function apiTemplatesCategoryById(id: String) {
   return httpRequest({
     url: `/templates-category/${id}/templates`,
     method: "get",
   });
 }
 // 查询模版详情
-export function apiTemplatesDetail(id: Number) {
+export function apiTemplatesDetail(id: String) {
   return httpRequest({
     url: `/templates/${id}`,
     method: "get",

@@ -4,9 +4,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer">
-            <a href="#/projects/1/details">Hamster</a>
-          </div>
+          <div class="text-[24px] font-bold cursor-pointer" @click="goDetail(viewInfo.id)">{{ viewInfo.name }}</div>
           <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
         </div>
       </div>
@@ -21,7 +19,9 @@
       <div class="grid grid-cols-5 gap-4">
         <div class="col-span-2">
           <div class="text-[16px] font-bold">代码仓库</div>
-          <div class="my-2">https://github.com/hamster-shared/hamster.git</div>
+          <div class="my-2">
+            <a target="_blank" :href="viewInfo.RepositoryUrl">{{ viewInfo.RepositoryUrl }}</a>
+          </div>
           <div>
             <img
                 src="@/assets/icons/white-link.svg"
@@ -69,12 +69,15 @@
 </template>
 <script lang='ts' setup>
 import { onMounted, ref, toRefs } from 'vue';
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 
 const props = defineProps({
   viewType: String,
+  viewInfo: Object,
 });
-const { viewType } = toRefs(props);
+const { viewType, viewInfo } = toRefs(props);
 
 const isWhite = ref(false);
    
@@ -89,6 +92,9 @@ onMounted(() => {
     }
   })
 })
+const goDetail = (id: string) => {
+  router.push("/projects/"+id+"/details");
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
