@@ -38,7 +38,6 @@ import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
 import { formatDurationTime } from "@/utils/time/dateUtils.js";
 import { apiGetDetailStageLogs } from "@/apis/workFlows";
-import { react } from "@babel/types";
 BScroll.use(Scrollbar);
 
 const props = defineProps({
