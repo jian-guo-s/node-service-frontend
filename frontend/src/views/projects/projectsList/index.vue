@@ -2,7 +2,7 @@
   <div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="flex justify-between">
         <div>
-          <a-input v-model:value="keyword" placeholder="Search here..." allow-clear autocomplete="off">
+          <a-input v-model:value="keyword" placeholder="Search here..." allow-clear autocomplete="off" @change="goSearch">
             <template #prefix>
               <img
                 src="@/assets/icons/white-search.svg"
@@ -17,7 +17,9 @@
         </div>
       <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
     </div>
-    <Overview :viewType="viewType" />
+    <div v-for="(item, index) in projectsList" :key="index">
+      <Overview :viewType="viewType" :viewInfo="item"  />
+    </div>
     <a-pagination :class="[ isWhite ? 'white-css' : 'dark-css']" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="total" size="small" />
   </div>
 </template>
@@ -38,12 +40,14 @@ const pageSize = ref(10);
 const projectsList = ref([]); //projects列表
 
 const onChange = (pageNumber: number) => {
-  console.log("onchange...",pageNumber);
+  console.log("onchange...", pageNumber);
+  current.value = pageNumber;
+  getProjects();
 }
-const onShowSizeChange = (current: number, pageSize: number) => {
-  current = current;
-  pageSize = pageSize;
-  
+const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
+  current.value = currentVal;
+  pageSize.value = pageSizeVal;
+  getProjects();
   console.log("onShowSizeChange...");
 }
 
@@ -65,15 +69,21 @@ onMounted(() => {
   getProjects();
 })
 
+const goSearch = async () => {
+  current.value = 1;
+  getProjects();
+}
+
 const getProjects = async () => {
   try {
     const params = {
+      user: "53070354",
       query: keyword.value,
       page: current.value,
       size: pageSize.value,
     }
-    const data = await apiGetProjects(params);
-    projectsList.value = data.result;
+    const { data } = await apiGetProjects(params);
+    projectsList.value = data.data;
     total.value = data.total;
     
   } catch (error: any) {

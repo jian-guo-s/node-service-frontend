@@ -22,32 +22,22 @@
             class="h-[16px] hidden dark:inline-block"
           />
         </div>
-        <div class="ml-4 text-[24px] font-bold">Multiwrap</div>
+        <div class="ml-4 text-[24px] font-bold">{{ templatesDetail.name }}</div>
       </div>
       <div>
-       <a-button type="primary" ghost>1.0.0（latest）</a-button>
+       <a-button type="primary" ghost>{{ templatesDetail.version }}（latest）</a-button>
        <a-button type="primary" class="ml-4">Creat by template</a-button>
       </div>
     </div>
     <div class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
       <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-4">
-        <div class="text-[24px] font-bold text-[#FFFFFF]">Multiwrap Contract</div>
-        <div class="mt-2 text-[#BBBAB9]">The Multiwrap contract lets you wrap ERC20, ERC721 and ERC1155 tokens into a new wrapped ERC721 NFT. The wrapped NFT can be unwrapped (burned) back into the underlying tokens.
-The wrapped NFT itself also acts as an ERC721 token, which can have the metadata you'd expect of an NFT, such as a name, image, description, etc.</div>
+        <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
+        <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
       </div>
       <div class="p-4">
         <div class="text-[24px] font-bold">Extensions</div>
         <div class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
-          <a-checkbox v-model:checked="checked">ERC721</a-checkbox>
-          <a-checkbox v-model:checked="checked">ERC721Supply</a-checkbox>
-          <a-checkbox v-model:checked="checked">ERC721Enumerable</a-checkbox>
-          <a-checkbox v-model:checked="checked">ContractMetadata</a-checkbox>
-          <a-checkbox v-model:checked="checked">Royalty</a-checkbox>
-          <a-checkbox v-model:checked="checked">Permissions</a-checkbox>
-          <a-checkbox v-model:checked="checked">PermissionsEnumerable</a-checkbox>
-          <a-checkbox v-model:checked="checked">Ownable</a-checkbox>
-          <a-checkbox v-model:checked="checked">ContractMetadata</a-checkbox>
-          <a-checkbox v-model:checked="checked">Gasless</a-checkbox>
+          <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index" v-model:checked="items.checked">{{ items.label }}</a-checkbox>
         </div>
         <div class="mt-4 text-[24px] font-bold flex items-center">
           <img
@@ -125,14 +115,28 @@ The wrapped NFT itself also acts as an ERC721 token, which can have the metadata
 </template>
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-
+import { useRouter, useRoute } from "vue-router";
+import { apiTemplatesDetail } from "@/apis/templates";
 
 const router = useRouter();
-const checked = ref(true);
+const { params } = useRoute();
+const templateId = ref(params.templateId); 
 const isWhite = ref(false);
 const activeKey = ref("1");
 const approveList = ref([]);
+const templatesDetail = ref([]);
+const extensionsList = ref([]);
+const checkboxList = ref([
+  { checked: false, label: 'ERC721'},
+  { checked: false, label: 'ERC721Supply'},
+  { checked: false, label: 'ERC721Enumerable'},
+  { checked: false, label: 'ContractMetadata'},
+  { checked: false, label: 'Royalty'},
+  { checked: false, label: 'Permissions'},
+  { checked: false, label: 'PermissionsEnumerable'},
+  { checked: false, label: 'Ownable'},
+  { checked: false, label: 'Gasless'},
+]);
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -161,7 +165,25 @@ onMounted(() => {
       }
     }
   })
+  getTemplatesDetail();
 })
+
+const getTemplatesDetail = async () => {
+  try {
+    const { data } = await apiTemplatesDetail(templateId.value.toString());
+    templatesDetail.value = data;
+    extensionsList.value = data.extensions.split(',');
+    checkboxList.value.forEach((element,index) => {
+      if (extensionsList.value.indexOf(element.label) !== -1) {
+        checkboxList.value[index].checked = true;
+      }
+    });
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
 
 const goBack = () => {
    router.back();
@@ -173,7 +195,7 @@ const goBack = () => {
   width: 150px;
   height: 40px;
 }
-:deep(.ant-checkbox-wrapper){
+:deep(.ant-checkbox-wrapper), :deep(.ant-checkbox-disabled+span){
   color: @baseColor;
 }
 :deep(.ant-checkbox-wrapper+.ant-checkbox-wrapper){

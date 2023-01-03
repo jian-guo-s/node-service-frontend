@@ -92,7 +92,7 @@ onMounted(() => {
 })
 
 const goNext = () => {
-  console.log("next...");
+  router.push("/projects/template");
 }
 
 const goBack = () => {
