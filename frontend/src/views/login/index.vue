@@ -23,7 +23,7 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -32,7 +32,7 @@ const theme = useThemeStore()
 const router = useRouter()
 
 const code = ref('');
-const myWindow = ref(null);
+const myWindow = ref();
 const clientId = ref('67f15ceaf935341e04df');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
@@ -40,7 +40,6 @@ const loginBox = () => {
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user&state=${state}`;
   myWindow.value = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400')
-
 }
 
 const login = async () => {
