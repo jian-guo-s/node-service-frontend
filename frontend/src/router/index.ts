@@ -144,13 +144,19 @@ const router = createRouter({
   ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token') || '';
-//   if(!token && to.path !== '/login') {
-//     next('/')
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') || '';
+  const list = ['/login', '/loginTransition']
+  if(!token ) {
+    if(to.path !== '/login' && to.path !== '/loginTransition') {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    debugger
+    next()
+  }
+})
 
 export default router;
