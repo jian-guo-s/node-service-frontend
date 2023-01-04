@@ -138,13 +138,13 @@ const router = createRouter({
   ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token') || '';
-//   if(!token && to.path !== '/login') {
-//     next('/')
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token') || '';
+  if(!token && to.path !== '/login') {
+    next('/')
+  } else {
+    next()
+  }
+})
 
 export default router;

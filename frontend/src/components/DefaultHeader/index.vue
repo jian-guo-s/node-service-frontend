@@ -59,8 +59,20 @@
         </a-dropdown>
       </div>
       <div class="ml-8">
-        <img src="@/assets/icons/Frame-dark.svg" class="h-[40px] hidden dark:inline-block" />
-        <img src="@/assets/icons/Frame-white.svg" class="h-[40px] dark:hidden" />
+        <a-dropdown>
+          <img :src="githubAvatarUrl" class="h-[40px] rounded-full" />
+          <template #overlay>
+            <a-menu>
+              <div class="text-center px-[16px]">{{ username }}</div>
+              <a-menu-item class="text-center">
+                <a class="text-center" href="javascript:;" @click="signOut">Sign out</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+
+        <!-- <img src="@/assets/icons/Frame-dark.svg" class="h-[40px] hidden dark:inline-block" />
+        <img src="@/assets/icons/Frame-white.svg" class="h-[40px] dark:hidden" /> -->
       </div>
     </div>
   </div>
@@ -99,8 +111,10 @@ const isConnectedWallet = ref(false);
 const walletAccount = ref("");
 const isProject = ref(true)
 const imgVal = ref("");
-const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"])
-
+const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
+const userInfo = localStorage.getItem('userInfo');
+const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
+const username = JSON.parse(userInfo)?.username;
 const goHome = () => {
   // router.push("/nodeService/RPCs");
   router.push("/projects");
@@ -153,6 +167,12 @@ const checkWallet = async (val: string) => {
   // }
   // console.log("wallet end..");
 }
+
+const signOut = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userInfo');
+  router.push('/')
+};
 
 onMounted(() => {
   changeTheme('dark');
