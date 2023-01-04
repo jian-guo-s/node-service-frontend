@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="mb-[32px] flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
@@ -59,11 +59,11 @@
           </div>
       </div>
     </div>
-    <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Functions">
           <div class="flex">
-            <div class="p-4 border-r-[#302D2D] border-r border">
+            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
               <div class=" flex items-center">
                 <img
                   src="@/assets/icons/send-w.svg"
@@ -87,7 +87,7 @@
               </div>
               <div class="text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]">DEFAULT_ADMIN_ROLE</div>
             </div>
-            <div class="p-4">
+            <div class="p-4  w-3/4">
               <div class="flex justify-between">
                 <div class="text-[16px] font-bold">approve</div>
                 <div class="text-[#E0DBD2]">inputs</div>
@@ -102,8 +102,30 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Events">
+          <div class="flex">
+            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+              <div class="text-[#73706E] dark:text-[#E0DBD2]" v-for="(item, index) in eventNameList" :key="index">{{ item }}</div>
+            </div>
+            <div class="p-4 w-3/4">
+              <div class="flex justify-between">
+                <div class="text-[16px] font-bold">Approval</div>
+                <div class="text-[#E0DBD2]">inputs</div>
+              </div>
+              <a-table
+                class="my-4"
+                :columns="tableColumns"
+                :dataSource="approvalList"
+                :pagination="false"
+              ></a-table>
+            </div>
+          </div>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Sources">
+          <div class="p-4 cursor-pointer">{{  setText(templatesDetail.codeSources) }}</div>
+          <div>
+            <iframe src="https://www.baidu.com/" frameborder="0" width="100%" :style="{height:100}" scrolling="auto"></iframe>
+            <iframe :src="templatesDetail.codeSources" frameborder="0" width="100%" :style="{height:100}" scrolling="auto"></iframe>
+          </div>
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -114,13 +136,16 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { apiProjectsContractVersion } from "@/apis/projects";
 import { apiTemplatesDetail } from "@/apis/templates";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
 const templateId = ref(params.templateId); 
-const isWhite = ref(false);
 const activeKey = ref("1");
 const approveList = ref([]);
+const eventNameList = ref([]);
+const approvalList = ref([])
 const templatesDetail = ref([]);
 const extensionsList = ref([]);
 const checkboxList = ref([
@@ -153,15 +178,6 @@ const tableColumns = computed<any[]>(() => [
 ]);
 
 onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
   getTemplatesDetail();
 })
 
@@ -179,9 +195,13 @@ const getTemplatesDetail = async () => {
       if (element.type === 'function' && element.name === 'approve') {
         approveList.value = element.inputs;
       }
+      if (element.type === 'event') {
+        eventNameList.value.push(element.name);
+        if (element.name === 'Approval') {
+          approvalList.value = element.inputs;
+        }
+      }
     });
-    console.log("abiinfo:",data.abiInfo);
-    console.log("abiinfo2:",JSON.parse(data.abiInfo));
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -199,6 +219,10 @@ const getProjectsContract = async () => {
     // loading.value = false;
   }
 };
+
+const setText = (str: String) => {
+  return str.slice(str.lastIndexOf('/')+1);
+}
 
 const goBack = () => {
    router.back();

@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
     <div class="flex justify-between">
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
@@ -41,21 +41,21 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago
+            Running｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+            Failed｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            Success｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
-          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+            Success｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
+          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
           <div class="text-[#E2B578] cursor-pointer" @click="checkNow(viewInfo.id, viewInfo.type)" v-if="viewInfo.recentCheck.status === 0">Check Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="ViewProcess(viewInfo.id, viewInfo.type)" v-else-if="viewInfo.recentCheck.status === 1">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="viewResult(viewInfo.id, viewInfo.type)" v-else>View Result</div>
@@ -68,22 +68,21 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.startTime))/(60*60*24*1000)) }} day ago
+            Running｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.startTime))/(60*60*24*1000)) }} day ago</div>
+            Failed｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            <!-- {{  new Date()  }}---{{ new Date(viewInfo.recentBuild.startTime) }}---{{ formatToDateTime(viewInfo.recentBuild.startTime) }} -->
             Success｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
-          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
           <div class="text-[#E2B578] cursor-pointer" @click="buildNow(viewInfo.id, viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="ViewProcess(viewInfo.id, viewInfo.type)" v-else-if="viewInfo.recentBuild.status === 1">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="deployNow(viewInfo.id, viewInfo.type)" v-else>Deploy Now</div>
@@ -96,7 +95,7 @@
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            {{ viewInfo.recentDeploy.version }}｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.deployTime))/(60*60*24*1000)) }} day ago</div>
+            {{ viewInfo.recentDeploy.version }}｜{{ setDays(viewInfo.recentDeploy.deployTime) }} day ago</div>
           <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
           <div class="text-[#E2B578]" v-else>View Contract</div>
         </div>
@@ -108,8 +107,10 @@
 import { onMounted, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
-import { formatToDateTime } from '@/utils/dateUtil';
+import { transTimestamp } from '@/utils/dateUtil';
 import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const router = useRouter();
 
@@ -119,24 +120,10 @@ const props = defineProps({
 });
 const { viewType, viewInfo } = toRefs(props);
 
-const isWhite = ref(false);
-
 const setDays = (startTime: any) => {
-  // return Math.floor((new Date() - new Date(startTime)) / (60 * 60 * 24 * 1000));
-  return Math.floor((new Date() - new Date(startTime)) / (60 * 60 * 24 * 1000) + 8 / 24);
+  return Math.floor((new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 24 * 1000));
 }
 
-onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
-})
 const goDetail = (id: string) => {
   router.push("/projects/"+id+"/details");
 }
@@ -190,6 +177,13 @@ const deployNow = async (id: String, type: String) => {
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
+
+html[data-theme='dark'] {
+  a, a:hover{
+    color: #FFFFFF;
+  }
+}
+
 :deep(.ant-btn){
   border-radius: 8px;
 }
@@ -201,10 +195,10 @@ const deployNow = async (id: String, type: String) => {
   border-color: @baseColor;
   background: @baseColor;
 }
-.dark-css a,.dark-css a:hover{
-  color: #FFFFFF;
-}
-.white-css a,.white-css a:hover{
+// .dark-css a,.dark-css a:hover{
+//   color: #FFFFFF;
+// }
+a, a:hover{
   color: #151210;
 }
 </style>

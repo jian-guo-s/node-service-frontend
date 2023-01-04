@@ -148,3 +148,27 @@ export function apiProjectsWorkflowsStop(params: apiProjectsWorkflowsDetailStopP
     data: params,
   });
 }
+
+//获取已部署的版本列表
+export function apiProjectsVersion(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/versions`,
+    method: "get",
+  });
+}
+
+//查询合约名字列表 
+export function apiProjectsContractName(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/name`,
+    method: "get",
+  });
+}
+
+//查询network列表 
+export function apiProjectsContractNetwork(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/network`,
+    method: "get",
+  });
+}
