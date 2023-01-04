@@ -25,8 +25,8 @@ const login = async () => {
     window.close();
     window.opener.location.reload();
   } catch (err) {
-    // window.close();
-    // router.push('/');
+    window.close();
+    router.push('/');
     message.error(err.message);
   }
 
