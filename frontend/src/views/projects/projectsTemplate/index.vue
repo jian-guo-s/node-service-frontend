@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="mb-[32px] flex items-center">
       <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
         <img
@@ -63,7 +63,8 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
-
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const router = useRouter();
 
@@ -73,18 +74,8 @@ const templatesCategory = ref([{
   description: "",
   templatesList: [],
 }]);
-const templatesList = ref([]);
-const isWhite = ref(false);
+
 onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
   getTemplatesCategory();
   
 })

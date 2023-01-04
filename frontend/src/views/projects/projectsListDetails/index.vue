@@ -56,23 +56,23 @@
         </template>
       </a-table>
     </div>
-    <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div> 
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Contract">
           <div class="flex">
             <div>
-              <a-select v-model:value="contract"
+              <a-select @change="changeContract" v-model:value="contract"
               :options="contractList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
             <div class="ml-4">
-              <a-select v-model:value="version"
+              <a-select @change="changeContract" v-model:value="version"
               :options="versionList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
             <div class="ml-4">
-              <a-select v-model:value="network"
+              <a-select @change="changeContract" v-model:value="network"
               :options="networkList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
@@ -93,7 +93,7 @@
         </a-tab-pane>
         <a-tab-pane key="2" tab="Report">
           <div>
-            <a-select v-model:value="checkTool"
+            <a-select @change="changeReport" v-model:value="checkTool"
               :options="checkToolList.map(item => ({ value: item.value, label:item.label }))">
               </a-select>
           </div>
@@ -128,10 +128,12 @@
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { formatToDateTime } from '@/utils/dateUtil';
+import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName } from "@/apis/projects";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork } from "@/apis/projects";
 import { message } from "ant-design-vue";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
@@ -152,13 +154,17 @@ const actionList = reactive([
   { label: "Build", value: "2" }
 ]);
 const action = ref("0");
-const contractList = reactive([{label:"All Contract",value: "0"}]);
-const contract = ref("0");
-const versionList = reactive([{label:"All Version",value: "0"}]);
-const version = ref("0");
-const networkList = reactive([{label:"All Network",value: "0"}]);
-const network = ref("0");
-const checkToolList = reactive([{label:"All Check Tool",value: "0"}]);
+const contractList = reactive([{label:"All Contract",value: ""}]);
+const contract = ref("");
+const versionList = reactive([{label:"All Version",value: ""}]);
+const version = ref("");
+const networkList = reactive([{label:"All Network",value: ""}]);
+const network = ref("");
+const checkToolList = reactive([
+  { label: "All Check Tool", value: "0" },
+  {label:"Check",value: "1"},
+  { label: "Build", value: "2" }
+]);
 const checkTool = ref("0");
 const workflowList = ref([]);
 const contractTableList = ref([]);
@@ -166,12 +172,12 @@ const reportTableList = ref([]);
 
 const formRules = computed(() => {
 
-    const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
-    
-    return {
-      name: [requiredRule('Name')],
-    };
-  });
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+  
+  return {
+    name: [requiredRule('Name')],
+  };
+});
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -209,7 +215,8 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
-    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
+    customRender: ({ text: date }) => transTimestamp(date),
+    // customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: '操作',
@@ -273,7 +280,7 @@ const contractTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'buildTime',
-    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
+    customRender: ({ text: date }) => transTimestamp(date),
   },
   {
     title: 'Action',
@@ -344,7 +351,7 @@ const reportTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'checkTime',
-    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
+    customRender: ({ text: date }) => transTimestamp(date),
   },
   {
     title: 'Action',
@@ -380,20 +387,13 @@ const reportPagination = reactive({
 });
   
 onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
-
   getProjectsDetail();
   getProjectsWorkflows();
   getProjectsContract();
   getProjectsReports();
+  getProjectsVersion();
+  getProjectsContractName();
+  getProjectsContractNetwork();
 })
 
 const getProjectsDetail = async () => {
@@ -428,14 +428,17 @@ const getProjectsWorkflows = async () => {
     // loading.value = false;
   }
 };
-// 
 
+const changeReport = async () => {
+  reportPagination.current = 1;
+  getProjectsReports();
+}
 const getProjectsReports = async () => {
   try {
     const params = {
       type: checkTool.value,
-      page: pagination.current,
-      size: pagination.pageSize,
+      page: reportPagination.current,
+      size: reportPagination.pageSize,
     }
     const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
     reportTableList.value = data.data;
@@ -448,14 +451,54 @@ const getProjectsReports = async () => {
   }
 };
 
+const getProjectsVersion = async () => {
+  try {
+    const { data } = await apiProjectsVersion(detailId.value.toString());
+    Object.assign("versionList",data);
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const getProjectsContractName = async () => {
+  try {
+    const { data } = await apiProjectsContractName(detailId.value.toString());
+    Object.assign("contractList",data);
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const getProjectsContractNetwork = async () => {
+  try {
+    const { data } = await apiProjectsContractNetwork(detailId.value.toString());
+    Object.assign("networkList",data);
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const changeContract = async () => {
+  contractPagination.current = 1;
+  getProjectsContract();
+}
 const getProjectsContract = async () => {
   try {
     const params = {
       query: contract.value,
       version: version.value,
       network: network.value,
-      page: pagination.current,
-      size: pagination.pageSize,
+      page: contractPagination.current,
+      size: contractPagination.pageSize,
     }
     const { data } = await apiGetProjectsContract(detailId.value.toString(), params);
     contractTableList.value = data.data;

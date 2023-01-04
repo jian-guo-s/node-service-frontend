@@ -25,28 +25,33 @@
     </div>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="flex justify-between">
-        <a-form :class="[ isWhite ? 'white-css' : 'dark-css']" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
-          <a-form-item label="Project Name" name="projectName" >
-            <a-input v-model:value="formData.projectName" placeholder="Project Name" allow-clear autocomplete="off" />
+        <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+          <a-form-item label="Project Name" name="name" >
+            <a-input v-model:value="formData.name" placeholder="Project Name" allow-clear autocomplete="off" />
           </a-form-item>
-          <a-form-item label="Project Type" name="projectType" >
-            <a-radio-group v-model:value="formData.projectType" name="projectType">
-              <a-radio value="Contract">Contract</a-radio>
-              <a-radio value="FrontEnd">FrontEnd</a-radio>
-              <a-radio value="Blockchain Node（coming soon）">Blockchain Node（coming soon）</a-radio>
+          <a-form-item label="Project Type" name="type" >
+            <a-radio-group v-model:value="formData.type" name="type">
+              <a-radio value="1">Contract</a-radio>
+              <a-radio value="2">FrontEnd</a-radio>
+              <a-radio value="3">Blockchain Node（coming soon）</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="Contract Code" name="contractCode" >
+          <a-form-item label="Contract Code">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
               <a-radio value="1">Creat a new repository by template</a-radio>
               <a-radio value="2">Use an existing repository</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="Contract Programming Language " name="language" >
-            <a-radio-group v-model:value="formData.language" name="language">
-              <a-radio value="Solidity">Solidity</a-radio>
-              <a-radio value="ink!">ink!</a-radio>
-              <a-radio value="Move（coming soon）">Move（coming soon）</a-radio>
+          <a-form-item label="Contract Programming Language " name="frameType" >
+            <a-radio-group v-model:value="formData.frameType" name="frameType">
+              <a-radio value="1">Solidity</a-radio>
+              <a-radio value="2">ink!</a-radio>
+              <a-radio value="3">Move（coming soon）</a-radio>
+              <!-- <a-radio value="4">vue.js</a-radio>
+              <a-radio value="5">nuxt.js</a-radio>
+              <a-radio value="6">next.js</a-radio>
+              <a-radio value="7">vite</a-radio>
+              <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
           <a-button type="primary" @click="goNext">Next</a-button>
@@ -57,16 +62,18 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const router = useRouter();
-const isWhite = ref(false);
+const formRef = ref();
 const formData = reactive({
-  projectName: '',
-  projectType: 'Contract',
-  contractCode: '',
-  language: '',
+  name: '',
+  type: '1',
+  contractCode: '1',
+  frameType: '1',
 });
 
 // Form rules
@@ -78,21 +85,17 @@ const formRules = computed(() => {
     name: [requiredRule('projectName')],
   };
 });
-      
-onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
-})
 
-const goNext = () => {
-  router.push("/projects/template");
+const goNext = async () => {
+  await formRef.value.validate();
+  try {
+    
+    router.push("/projects/template");
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // visibleModal.value = false;
+  }
 }
 
 const goBack = () => {
@@ -107,71 +110,18 @@ const goBack = () => {
 :deep(.dark-css .ant-form-item-label > label) {
   color: white;
 }
-:deep(.ant-input),:deep(.ant-input-affix-wrapper){
-  background-color: transparent;
-  border-radius: 8px;
-  height: 40px;
-}
-:deep(.ant-input-affix-wrapper){
-  padding-top: 0px;
-  padding-bottom: 0px;
-  width: 550px;
-}
-:deep(.ant-input:focus),:deep(.ant-input-focused),
-:deep(.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover),
-:deep(.ant-input-affix-wrapper:focus),:deep(.ant-input-affix-wrapper-focused){
-  border-color: @baseColor;
-  box-shadow: 0 0 0 2px rgb(226 181 120 / 20%);
-}
-:deep(.dark-css .ant-input),
-:deep(.dark-css .anticon.ant-input-clear-icon),
-:deep(.dark-css .ant-radio-wrapper) {
+:deep(.dark-css .ant-input){
   color: #E0DBD2;
 }
-:deep(.white-css .ant-radio-wrapper){
-  color: #BBBAB9;
-}
-:deep(.dark-css .ant-radio-inner),
 :deep(.dark-css .ant-input-affix-wrapper){
   border-color: #434343;
 }
-:deep(.white-css .ant-radio-inner),
 :deep(.white-css .ant-input-affix-wrapper){
   border-color: #EBEBEB;
 }
-:deep(.ant-radio-inner){
-  background-color: transparent;
-  border-radius: 4px;
-  height: 20px;
-  width: 20px;
-}
-:deep(.ant-radio-checked .ant-radio-inner),
-:deep(.ant-radio-wrapper:hover .ant-radio), 
-:deep(.ant-radio:hover .ant-radio-inner), 
-:deep(.ant-radio-input:focus + .ant-radio-inner){
-  border-color: @baseColor;
-}
-:deep(.ant-radio-input:focus + .ant-radio-inner){
-  box-shadow: 0 0 0 1px @baseColor;
-  
-}
-:deep(.ant-radio-inner::after){
-  background-color: @baseColor;
-  border-radius: 2px;
-}
-:deep(.ant-radio-wrapper-checked){
-  color: @baseColor !important;
-}
 
-:deep(.ant-btn){
-  border-radius: 8px;
-}
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
-}
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @baseColor;
-  background: @baseColor;
 }
 </style>
