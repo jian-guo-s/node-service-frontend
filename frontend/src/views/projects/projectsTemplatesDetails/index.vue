@@ -25,7 +25,7 @@
         <div class="ml-4 text-[24px] font-bold">{{ templatesDetail.name }}</div>
       </div>
       <div>
-       <a-button type="primary" ghost>{{ templatesDetail.version }}（latest）</a-button>
+       <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
        <a-button type="primary" class="ml-4">Creat by template</a-button>
       </div>
     </div>
@@ -45,23 +45,18 @@
             class="h-[32px]"
           />
           Use Cases & Examples</div>
-          <div class="mt-4">You could use the Multiwrap contract to:</div>
-          <ul class="dark:text-[#E0DBD2] text-[#73706E]">
-            <li>Combine multiple NFTs into one NFT with new metadata</li>
-            <li>Wrap NFTs along with ERC20 tokens to easily trade them for other NFTs</li>
-            <li>Create a transparent "bundle" in your game, where the contents of the bundle are visible to the player</li>
-          </ul>
+        <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
+          <pre>{{ templatesDetail.examples }}</pre>
+        </div>
         <div class="mt-4 text-[24px] font-bold flex items-center">
           <img
             src="@/assets/icons/resource.svg"
             class="h-[32px]"
           />
           Resources</div>
-          <ul class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
-            <li>Frontend demo project</li>
-            <li>Technical design doc</li>
-            <li>Full reference</li>
-          </ul>
+          <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
+            <pre>{{ templatesDetail.resources }}</pre>
+          </div>
       </div>
     </div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
@@ -92,7 +87,7 @@
               </div>
               <div class="text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]">DEFAULT_ADMIN_ROLE</div>
             </div>
-            <div>
+            <div class="p-4">
               <div class="flex justify-between">
                 <div class="text-[16px] font-bold">approve</div>
                 <div class="text-[#E0DBD2]">inputs</div>
@@ -101,6 +96,7 @@
                 class="my-4"
                 :columns="tableColumns"
                 :dataSource="approveList"
+                :pagination="false"
               ></a-table>
             </div>
           </div>
@@ -116,6 +112,7 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { apiProjectsContractVersion } from "@/apis/projects";
 import { apiTemplatesDetail } from "@/apis/templates";
 
 const router = useRouter();
@@ -148,10 +145,10 @@ const tableColumns = computed<any[]>(() => [
   },
   {
     title: 'TYPE',
-    dataIndex: 'network',
+    dataIndex: 'type',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'network',
+    key: 'type',
   },
 ]);
 
@@ -178,6 +175,24 @@ const getTemplatesDetail = async () => {
         checkboxList.value[index].checked = true;
       }
     });
+    JSON.parse(data.abiInfo).forEach((element: any) => {
+      if (element.type === 'function' && element.name === 'approve') {
+        approveList.value = element.inputs;
+      }
+    });
+    console.log("abiinfo:",data.abiInfo);
+    console.log("abiinfo2:",JSON.parse(data.abiInfo));
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const getProjectsContract = async () => {
+  try {
+    const { data } = await apiProjectsContractVersion(templateId.value.toString(), templatesDetail.value.version);
+    console.log("data:",data);
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
