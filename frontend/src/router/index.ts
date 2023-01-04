@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/login/index.vue";
 import HomeView from "../views/home/HomeView.vue";
 import RpcsIndex from "../views/nodeService/rpcs/index.vue";
@@ -13,7 +13,7 @@ import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs
 import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: [
     {
       path: "/home",
