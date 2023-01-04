@@ -43,13 +43,16 @@ const router = createRouter({
         path: '/login',
         name: 'Login',
         component: Login,
-       },
-       {
-        path: '/loginTransition',
-        name: 'LoginTransition',
-        component: LoginTransition,
        }
       ],
+      meta: {
+        layout: 'null',
+      }
+    },
+    {
+      path: '/loginTransition',
+      name: 'LoginTransition',
+      component: LoginTransition,
       meta: {
         layout: 'null',
       }
@@ -146,7 +149,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token') || '';
-  if(!token && to.path !== '/login') {
+  const list = ['/login', '/loginTransition']
+  // if(!token && (to.path !== '/login')) {
+    if(!token && (list.indexOf(to.path) !== -1)) {
     next('/')
   } else {
     next()
