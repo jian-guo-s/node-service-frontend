@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/login/index.vue";
+import LoginTransition from "../views/login/loginTransition.vue";
 import HomeView from "../views/home/HomeView.vue";
 import RpcsIndex from "../views/nodeService/rpcs/index.vue";
 import AppsIndex from "../views/nodeService/apps/index.vue";
@@ -42,6 +43,11 @@ const router = createRouter({
         path: '/login',
         name: 'Login',
         component: Login,
+       },
+       {
+        path: '/loginTransition',
+        name: 'LoginTransition',
+        component: LoginTransition,
        }
       ],
       meta: {
@@ -138,13 +144,13 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token') || '';
-  if(!token && to.path !== '/login') {
-    next('/')
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   const token = localStorage.getItem('token') || '';
+//   if(!token && to.path !== '/login') {
+//     next('/')
+//   } else {
+//     next()
+//   }
+// })
 
 export default router;

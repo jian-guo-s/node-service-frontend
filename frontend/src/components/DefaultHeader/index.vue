@@ -63,9 +63,13 @@
           <img :src="githubAvatarUrl" class="h-[40px] rounded-full" />
           <template #overlay>
             <a-menu>
-              <div class="text-center px-[16px]">{{ username }}</div>
-              <a-menu-item class="text-center">
-                <a class="text-center" href="javascript:;" @click="signOut">Sign out</a>
+              <div class="text-center px-[16px] py-[8px] h-[40px]">
+                <span>Signed in as </span>
+                <span class="text-[#000000] font-bold">{{ username }}</span>
+              </div>
+              <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
+              <a-menu-item class="text-center ">
+                <div class="text-[#E2B578] py-[4px]" @click="signOut">Sign out</div>
               </a-menu-item>
             </a-menu>
           </template>
