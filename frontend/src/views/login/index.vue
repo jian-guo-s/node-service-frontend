@@ -32,14 +32,13 @@ const theme = useThemeStore()
 const router = useRouter()
 
 const code = ref('');
-const myWindow = ref();
 const clientId = ref('67f15ceaf935341e04df');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user&state=${state}`;
-  myWindow.value = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400')
+  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400')
 }
 
 const login = async () => {
@@ -47,8 +46,8 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('token', data.token);
     localStorage.setItem('userInfo', JSON.stringify(data));
-    myWindow.value.close();
-    window.location.reload();
+    window.close();
+    window.opener.location.reload();
     // router.push('/projects')
   } catch (err) {
     message.error(err.message)
