@@ -149,7 +149,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token') || '';
-  const list = ['/login', '/loginTransition']
   if(!token ) {
     if(to.path !== '/login' && to.path !== '/loginTransition') {
       next('/')
@@ -157,7 +156,6 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    debugger
     next()
   }
 })
