@@ -40,7 +40,7 @@ interface apiProjectsWorkflowsDetailStopParams {
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
-    url: "/projects",
+    url: "/api/projects",
     method: "post",
     data: params,
   });
@@ -48,7 +48,7 @@ export function apiAddProjects(params: AddProjectsParams) {
 // 查询项目列表
 export function apiGetProjects(params: GetProjectsParams) {
   return httpRequest({
-    url: "/projects",
+    url: "/api/projects",
     method: "get",
     params: params,
   });
@@ -56,14 +56,14 @@ export function apiGetProjects(params: GetProjectsParams) {
 // 查询项目详情
 export function apiGetProjectsDetail(id: String) {
   return httpRequest({
-    url: `/projects/${id}`,
+    url: `/api/projects/${id}`,
     method: "get",
   });
 }
 // 获取项目workflow列表 
 export function apiGetProjectsWorkflows(id: String, params: GetWorkflowsParams) {
   return httpRequest({
-    url: `/projects/${id}/workflows`,
+    url: `/api/projects/${id}/workflows`,
     method: "get",
     params: params,
   });
@@ -71,14 +71,14 @@ export function apiGetProjectsWorkflows(id: String, params: GetWorkflowsParams) 
 //项目check
 export function apiProjectsCheck(id: String) {
   return httpRequest({
-    url: `/projects/${id}/check`,
+    url: `/api/projects/${id}/check`,
     method: "post",
   });
 }
 //项目build
 export function apiProjectsBuild(id: String) {
   return httpRequest({
-    url: `/projects/${id}/build`,
+    url: `/api/projects/${id}/build`,
     method: "post",
   });
 }
@@ -86,7 +86,7 @@ export function apiProjectsBuild(id: String) {
 //  保存部署信息
 export function apiProjectsContractDeploy(params: GetProjectsContractDeployParams) {
   return httpRequest({
-    url: `/projects/${params.id}/contract/deploy`,
+    url: `/api/projects/${params.id}/contract/deploy`,
     method: "post",
     data: params,
   });
@@ -95,7 +95,7 @@ export function apiProjectsContractDeploy(params: GetProjectsContractDeployParam
 // 停止workflows
 export function apiProjectsWorkflowsStop(params: apiProjectsWorkflowsDetailStopParams) {
   return httpRequest({
-    url: `/projects/${params.id}/workflows/${params.workflowId}/detail/${params.detailId}/stop`,
+    url: `/api/projects/${params.id}/workflows/${params.workflowId}/detail/${params.detailId}/stop`,
     method: "post",
     data: params,
   });

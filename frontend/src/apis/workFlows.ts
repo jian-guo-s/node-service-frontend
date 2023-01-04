@@ -25,7 +25,7 @@ interface GetDetailStagelogsParams {
 // templates-category?type=1
 export function apiGetTemplates(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/templates-category`,
+    url: `/api/templates-category`,
     method: "get",
     params: params,
   });
@@ -35,7 +35,7 @@ export function apiGetTemplates(params: GetWorkflowsDetailParams) {
 export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
   console.log(params,'params')
   return httpRequest({
-    url: `/workflows/${params.id}/detail/${params.detailId}`,
+    url: `/api/workflows/${params.id}/detail/${params.detailId}`,
     method: "get",
   });
 }
@@ -43,7 +43,7 @@ export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
 // 合约列表详情  workflows/:id/details/:workflowDetailId/contract
 export function apiGetWorkFlowsContract(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/workflows/${params.id}/detail/${params.detailId}/contract`,
+    url: `/api/workflows/${params.id}/detail/${params.detailId}/contract`,
     method: "get",
   });
 }
@@ -51,7 +51,7 @@ export function apiGetWorkFlowsContract(params: GetWorkflowsDetailParams) {
 // workflow下的check report  workflows/:id/details/:workflowDetailId/report
 export function apiGetWorkFlowsReport(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/workflows/${params.id}/detail/${params.detailId}/report`,
+    url: `/api/workflows/${params.id}/detail/${params.detailId}/report`,
     method: "get",
   });
 }
@@ -59,7 +59,7 @@ export function apiGetWorkFlowsReport(params: GetWorkflowsDetailParams) {
 // 获取已部署的版本列表
 export function apiGetProjectsVersions(params:any) {
   return httpRequest({
-    url: `/projects/${params.id}/versions`,
+    url: `/api/projects/${params.id}/versions`,
     method: "get",
   });
 }
@@ -68,7 +68,7 @@ export function apiGetProjectsVersions(params:any) {
 export function apiGetProjectsContract(params:any) {
   // console.log(id, version)
   return httpRequest({
-    url: `/projects/${params.id}/contract/${params.version}`,
+    url: `/api/projects/${params.id}/contract/${params.version}`,
     method: "get",
   });
 }
@@ -84,7 +84,7 @@ export function apiGetProjectsContract(params:any) {
 // projects/:id/contract/deploy/detail?version=xxx
 export function apiGetContractDeployDetail(params:GetContractDeployDetailParams) {
   return httpRequest({
-    url: `/projects/${params.id}/contract/deploy/detail`,
+    url: `/api/projects/${params.id}/contract/deploy/detail`,
     method: "get",
     params: {version: params.version}
   });
@@ -93,7 +93,7 @@ export function apiGetContractDeployDetail(params:GetContractDeployDetailParams)
 //  获取指定stage日志  /workflows/:id/detail/:workflowDetailId/logs/:stageName
 export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
   return httpRequest({
-    url: `/workflows/${params.id}/detail/${params.workflowDetailId}/logs/${params.stagename}`,
+    url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}/logs/${params.stagename}`,
     method: "get",
     params: {start: params.start},
   });
@@ -102,7 +102,7 @@ export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
 // 查看所有日志   /workflows/:id/detail/:workflowDetailId/logs 
 export function apiGetDetailLogs(params: GetDetailLogsParams) {
   return httpRequest({
-    url: `/workflows/${params.id}/detail/${params.workflowDetailId}/logs`,
+    url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}/logs`,
     method: "get",
   });
 }

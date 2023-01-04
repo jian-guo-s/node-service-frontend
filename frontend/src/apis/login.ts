@@ -8,7 +8,7 @@ interface AddLoginParams {
 // login
 export function apiLogin(params: AddLoginParams) {
   return httpRequest({
-    url: "/login",
+    url: "/api/login",
     method: "post",
     data: params,
   });

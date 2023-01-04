@@ -8,7 +8,8 @@ declare module 'axios' {
 
 // 创建一个 axios 实例
 const service = axios.create({
-  baseURL: "/api", // 所有的请求地址前缀部分
+  // baseURL: "/api", // 所有的请求地址前缀部分
+  baseURL: "/",
   timeout: 60000, // 请求超时时间毫秒
   headers: {
     // 设置后端需要的传参类型
@@ -22,7 +23,7 @@ service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
     // HVjeN9DACUFWMj2rmNB8DADZ/8qhHo8x/IRJ2+dxIkU/mW4FKlucHHouI8K5dLnl
-    let token = localStorage.getItem("token") || ''
+    let token = localStorage.getItem("token") || 'HVjeN9DACUFWMj2rmNB8DADZ/8qhHo8x/IRJ2+dxIkU/mW4FKlucHHouI8K5dLnl'
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       (config as Recordable).headers['Access-Token'] = token;
     }

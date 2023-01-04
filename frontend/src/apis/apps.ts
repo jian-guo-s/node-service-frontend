@@ -18,7 +18,7 @@ interface GetAppsParams {
 //获取app列表
 export function apiGetApps(account: string, params: GetAppsParams) {
   return httpRequest({
-    url: `/apps/${account}`,
+    url: `/nodeService/apps/${account}`,
     method: "get",
     params: params,
   });
@@ -26,7 +26,7 @@ export function apiGetApps(account: string, params: GetAppsParams) {
 // 创建app
 export function apiAddApp(params: AddAppParams) {
   return httpRequest({
-    url: "/app",
+    url: "/nodeService/app",
     method: "post",
     data: params,
   });
@@ -35,7 +35,7 @@ export function apiAddApp(params: AddAppParams) {
 //删除app
 export function apiGetPipelineByName(account: String, app_id: String) {
   return httpRequest({
-    url: `/app/${account}/${app_id}`,
+    url: `/nodeService/app/${account}/${app_id}`,
     method: "DELETE",
   });
 }
