@@ -22,21 +22,23 @@
             class="h-[16px] hidden dark:inline-block"
           />
         </div>
-        <div class="ml-4 text-[24px] font-bold">Hamster</div>
+        <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
       </div>
       <div>
        <a-button type="primary" ghost>Delete</a-button>
-       <a-button type="primary" class="ml-4">Setting</a-button>
+       <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
       </div>
     </div>
-    <Overview :viewType="viewType" :viewInfo="projectsDetail" />
+    <div v-if="Object.keys(projectsDetail).length!==0">
+      <Overview :viewType="viewType" :viewInfo="projectsDetail" />
+    </div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex justify-between">
-        <div class="mb-[32px] items-center text-[24px] font-bold">Workflows</div>
+        <div class="mb-2 items-center text-[24px] font-bold">Workflows</div>
         <div>
-          <a-select v-model:value="action" placeholder="Please enter Network"
-          :options="actionList.map(item => ({ value: item }))">
+          <a-select @change="changeAction" v-model:value="action" placeholder="Please enter Network"
+          :options="actionList.map(item => ({ value: item.value, label: item.label }))">
           </a-select>
         </div>
       </div>  
@@ -55,23 +57,23 @@
       </a-table>
     </div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
-      <div class="flex mb-[32px] items-center text-[24px] font-bold">Artifacts</div> 
+      <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div> 
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Contract">
           <div class="flex">
             <div>
               <a-select v-model:value="contract"
-              :options="contractList.map(item => ({ value: item }))">
+              :options="contractList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select v-model:value="version"
-              :options="versionList.map(item => ({ value: item }))">
+              :options="versionList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select v-model:value="network"
-              :options="networkList.map(item => ({ value: item }))">
+              :options="networkList.map(item => ({ value: item.value, label: item.label }))">
               </a-select>
             </div>
           </div>
@@ -92,7 +94,7 @@
         <a-tab-pane key="2" tab="Report">
           <div>
             <a-select v-model:value="checkTool"
-              :options="checkToolList.map(item => ({ value: item }))">
+              :options="checkToolList.map(item => ({ value: item.value, label:item.label }))">
               </a-select>
           </div>
           <a-table
@@ -111,34 +113,65 @@
       </a-tabs> 
     </div>
   </div>
+  <a-modal v-model:visible="visibleModal" :footer="null">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
+    <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+      <a-form-item label="Project Name" name="name" >
+        <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+      </a-form-item>
+    </a-form>
+    <div class="text-center mt-4">
+      <a-button class="ml-4" type="primary" @click="updateName">Done</a-button>
+    </div>
+  </a-modal>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { formatToDateTime } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows } from "@/apis/projects";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName } from "@/apis/projects";
+import { message } from "ant-design-vue";
 
 const router = useRouter();
 const { params } = useRoute();
 const detailId = ref(params.id);
 const viewType = ref("detail");
 const isWhite = ref(false);
+const visibleModal = ref(false);
+const formRef = ref();
+const formData = reactive({
+  name: '',
+  userId: 53070354,
+});
 const projectsDetail = ref({});
 const activeKey = ref("1");
-const actionList = reactive(["All Action", "Contract Build", "Contract Check"]);
-const action = ref("1");
-const contractList = reactive(["All Contract"]);
-const contract = ref("All Contract");
-const versionList = reactive(["All Version"]);
-const version = ref("All Version");
-const networkList = reactive(["All Network"]);
-const network = ref("All Network");
-const checkToolList = reactive(["All Check Tool"]);
-const checkTool = ref("All Network");
+const actionList = reactive([
+  {label:"All Action",value: "0"},
+  {label:"Check",value: "1"},
+  { label: "Build", value: "2" }
+]);
+const action = ref("0");
+const contractList = reactive([{label:"All Contract",value: "0"}]);
+const contract = ref("0");
+const versionList = reactive([{label:"All Version",value: "0"}]);
+const version = ref("0");
+const networkList = reactive([{label:"All Network",value: "0"}]);
+const network = ref("0");
+const checkToolList = reactive([{label:"All Check Tool",value: "0"}]);
+const checkTool = ref("0");
 const workflowList = ref([]);
 const contractTableList = ref([]);
 const reportTableList = ref([]);
+
+const formRules = computed(() => {
+
+    const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+    
+    return {
+      name: [requiredRule('Name')],
+    };
+  });
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -176,7 +209,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
-      customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
+    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: '操作',
@@ -222,25 +255,25 @@ const contractTableColumns = computed<any[]>(() => [
   },
   {
     title: 'Version',
-    dataIndex: 'network',
+    dataIndex: 'version',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'network',
+    key: 'version',
   },
   {
     title: 'Network',
-    dataIndex: 'total_requests_today',
-    key: 'total_requests_today',
+    dataIndex: 'network',
+    key: 'network',
     ellipsis: 'fixed',
     align: 'center',
   },
   {
     title: 'Build Time',
-    dataIndex: 'daylyRequests',
+    dataIndex: 'buildTime',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'daylyRequests',
-    width: '200px'
+    key: 'buildTime',
+    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: 'Action',
@@ -285,33 +318,33 @@ const reportTableColumns = computed<any[]>(() => [
   },
   {
     title: 'Report Type',
-    dataIndex: 'network',
+    dataIndex: 'type',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'network',
+    key: 'type',
   },
   {
     title: 'Check Tool',
-    dataIndex: 'total_requests_today',
-    key: 'total_requests_today',
+    dataIndex: 'checkTool',
+    key: 'checkTool',
     ellipsis: 'fixed',
     align: 'center',
   },
   {
     title: 'Result',
-    dataIndex: 'daylyRequests',
+    dataIndex: 'result',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'daylyRequests',
+    key: 'result',
     width: '200px'
   },
   {
     title: 'Check Time',
-    dataIndex: 'daylyRequests',
+    dataIndex: 'checkTime',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'daylyRequests',
-    width: '200px'
+    key: 'checkTime',
+    customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: 'Action',
@@ -359,6 +392,8 @@ onMounted(() => {
 
   getProjectsDetail();
   getProjectsWorkflows();
+  getProjectsContract();
+  getProjectsReports();
 })
 
 const getProjectsDetail = async () => {
@@ -372,7 +407,10 @@ const getProjectsDetail = async () => {
     // loading.value = false;
   }
 }; 
-
+const changeAction = async () => {
+  pagination.current = 1;
+  getProjectsWorkflows();
+}
 const getProjectsWorkflows = async () => {
   try {
     const params = {
@@ -390,6 +428,59 @@ const getProjectsWorkflows = async () => {
     // loading.value = false;
   }
 };
+// 
+
+const getProjectsReports = async () => {
+  try {
+    const params = {
+      type: checkTool.value,
+      page: pagination.current,
+      size: pagination.pageSize,
+    }
+    const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
+    reportTableList.value = data.data;
+    reportPagination.total = data.total
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const getProjectsContract = async () => {
+  try {
+    const params = {
+      query: contract.value,
+      version: version.value,
+      network: network.value,
+      page: pagination.current,
+      size: pagination.pageSize,
+    }
+    const { data } = await apiGetProjectsContract(detailId.value.toString(), params);
+    contractTableList.value = data.data;
+    contractPagination.total = data.total
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const updateName = async () => {
+  await formRef.value.validate();
+
+  try {
+    const data = await apiUpdateProjectsName(detailId.value.toString(), formData);
+    message.success(data.message);
+    projectsDetail.value.name = formData.name;
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    visibleModal.value = false;
+  }
+}
 
 const goBack = () => {
    router.back();
@@ -400,5 +491,11 @@ const goBack = () => {
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
+}
+:deep(.dark-css .ant-tabs){
+  color: #E0DBD2;
+}
+:deep(.ant-input-affix-wrapper){
+  border-color: #EBEBEB;
 }
 </style>

@@ -36,6 +36,7 @@ export function formatToDateTime(
   date: dayjs.Dayjs | undefined = undefined,
   formatter: string | ((f: typeof FORMATTERS) => string) = FORMATTERS.datetime,
 ) {
+  if (date == '0001-01-01T00:00:00Z') date = '';
   return formatDate(date, formatter);
 }
 

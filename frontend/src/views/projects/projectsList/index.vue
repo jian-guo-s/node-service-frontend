@@ -77,7 +77,7 @@ const goSearch = async () => {
 const getProjects = async () => {
   try {
     const params = {
-      user: "53070354",
+      // user: "53070354",
       query: keyword.value,
       page: current.value,
       size: pageSize.value,

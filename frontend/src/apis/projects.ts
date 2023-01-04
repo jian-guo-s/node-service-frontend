@@ -10,7 +10,7 @@ interface AddProjectsParams {
 }
 
 interface GetProjectsParams {
-  user: string;
+  // user: string;
   query: string;
   page: number;
   size: number;
@@ -18,6 +18,14 @@ interface GetProjectsParams {
 
 interface GetWorkflowsParams {
   type: string;
+  page: number;
+  size: number;
+}
+
+interface GetContractParams {
+  query: string;
+  version: string;
+  network: string;
   page: number;
   size: number;
 }
@@ -35,6 +43,11 @@ interface apiProjectsWorkflowsDetailStopParams {
   id: string,
   workflowId: string,
   detailId: string,
+}
+
+interface updateProjectparams {
+  name: string,
+  userId: number,
 }
 
 //创建项目
@@ -68,6 +81,33 @@ export function apiGetProjectsWorkflows(id: String, params: GetWorkflowsParams) 
     params: params,
   });
 }
+//获取项目合约列表
+export function apiGetProjectsContract(id: String, params: GetContractParams) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract`,
+    method: "get",
+    params: params,
+  });
+}
+// 获取项目报告列表 
+export function apiGetProjectsReports(id: String, params: GetWorkflowsParams) {
+  return httpRequest({
+    url: `/api/projects/${id}/reports`,
+    method: "get",
+    params: params,
+  });
+}
+
+//修改项目信息
+export function apiUpdateProjectsName(id: String, params: updateProjectparams) {
+  return httpRequest({
+    url: `/api/projects/${id}`,
+    method: "put",
+    data: params,
+  });
+}
+
+
 //项目check
 export function apiProjectsCheck(id: String) {
   return httpRequest({
@@ -80,6 +120,14 @@ export function apiProjectsBuild(id: String) {
   return httpRequest({
     url: `/api/projects/${id}/build`,
     method: "post",
+  });
+}
+
+//根据版本查询合约信息
+export function apiProjectsContractVersion(id: String, version: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/${version}`,
+    method: "get",
   });
 }
 

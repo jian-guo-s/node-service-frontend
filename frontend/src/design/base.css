@@ -74,15 +74,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-.ant-modal-content {
-  border-radius: 16px !important;
-}
-.ant-modal-title{
-  font-size: 24px !important;
-  font-weight: 700 !important;
-}
-.ant-modal-header{
-  border-radius: 16px 16px 0 0 !important;
-  /* border-bottom: none !important; */
-}

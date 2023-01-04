@@ -9,10 +9,10 @@
         </div>
       </div>
       <div>
-        <a-button type="primary">Check</a-button>
-        <a-button type="primary" class="ml-4">Build</a-button>
-        <a-button type="primary" class="ml-4">Deploy</a-button>
-        <a-button type="primary" class="ml-4">Ops</a-button>
+        <a-button type="primary" @click="projectsCheck(viewInfo.id)">Check</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id)">Build</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id)">Deploy</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id)">Ops</a-button>
       </div>
     </div>  
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -25,43 +25,80 @@
           <div>
             <img
                 src="@/assets/icons/white-link.svg"
-                class="h-[16px] dark:hidden"
+                class="h-[16px] mr-1 dark:hidden"
               />
               <img
                 src="@/assets/icons/dark-link.svg"
-                class="h-[16px] hidden dark:inline-block"
+                class="h-[16px] mr-1 hidden dark:inline-block"
               />
             master</div>
         </div>
-        <div class="text-center">
+        <div>
           <div class="text-[16px] font-bold">Recent Check</div>
-          <div class="my-2">
+          <div class="my-2" v-if="viewInfo.recentCheck.status === 0">No Data</div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 1">
             <img
               src="@/assets/icons/running.svg"
-              class="h-[16px]"
+              class="h-[16px] mr-1"
             />
-            No Data</div>
-          <div class="text-[#E2B578]">Check Now</div>
-        </div>
-        <div class="text-center">
-          <div class="text-[16px] font-bold">Recent Build</div>
-          <div class="my-2">
-            <img
-              src="@/assets/icons/success.svg"
-              class="h-[16px]"
-            />
-            No Data</div>
-          <div class="text-[#E2B578]">Build Now</div>
-        </div>
-        <div class="text-center">
-          <div class="text-[16px] font-bold">Recent Deploy</div>
-          <div class="my-2">
+            Running｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago
+          </div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 2">
             <img
               src="@/assets/icons/failed.svg"
-              class="h-[16px]"
+              class="h-[16px] mr-1"
             />
-            No Data</div>
-          <div class="text-[#D3C9BC]">Explorer</div>
+            Failed｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 3">
+            <img
+              src="@/assets/icons/success.svg"
+              class="h-[16px] mr-1"
+            />
+            Success｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="checkNow(viewInfo.id, viewInfo.type)" v-if="viewInfo.recentCheck.status === 0">Check Now</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="ViewProcess(viewInfo.id, viewInfo.type)" v-else-if="viewInfo.recentCheck.status === 1">View Process</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="viewResult(viewInfo.id, viewInfo.type)" v-else>View Result</div>
+        </div>
+        <div>
+          <div class="text-[16px] font-bold">Recent Build</div>
+          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">No Data</div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 1">
+            <img
+              src="@/assets/icons/running.svg"
+              class="h-[16px] mr-1"
+            />
+            Running｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.startTime))/(60*60*24*1000)) }} day ago
+          </div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 2">
+            <img
+              src="@/assets/icons/failed.svg"
+              class="h-[16px] mr-1"
+            />
+            Failed｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 3">
+            <img
+              src="@/assets/icons/success.svg"
+              class="h-[16px] mr-1"
+            />
+            <!-- {{  new Date()  }}---{{ new Date(viewInfo.recentBuild.startTime) }}---{{ formatToDateTime(viewInfo.recentBuild.startTime) }} -->
+            Success｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
+          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ Math.floor((new Date()-new Date(viewInfo.recentCheck.startTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="buildNow(viewInfo.id, viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="ViewProcess(viewInfo.id, viewInfo.type)" v-else-if="viewInfo.recentBuild.status === 1">View Process</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="deployNow(viewInfo.id, viewInfo.type)" v-else>Deploy Now</div>
+        </div>
+        <div>
+          <div class="text-[16px] font-bold">Recent Deploy</div>
+          <div class="my-2" v-if="viewInfo.recentDeploy.version === ''">No Data</div>
+          <div class="my-2 flex items-center" v-else>
+            <img
+              src="@/assets/icons/success.svg"
+              class="h-[16px] mr-1"
+            />
+            {{ viewInfo.recentDeploy.version }}｜{{ Math.floor((new Date()-new Date(viewInfo.recentBuild.deployTime))/(60*60*24*1000)) }} day ago</div>
+          <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
+          <div class="text-[#E2B578]" v-else>View Contract</div>
         </div>
       </div>
     </div>
@@ -70,6 +107,9 @@
 <script lang='ts' setup>
 import { onMounted, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
+import { message } from 'ant-design-vue';
+import { formatToDateTime } from '@/utils/dateUtil';
+import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
 
 const router = useRouter();
 
@@ -80,7 +120,12 @@ const props = defineProps({
 const { viewType, viewInfo } = toRefs(props);
 
 const isWhite = ref(false);
-   
+
+const setDays = (startTime: any) => {
+  // return Math.floor((new Date() - new Date(startTime)) / (60 * 60 * 24 * 1000));
+  return Math.floor((new Date() - new Date(startTime)) / (60 * 60 * 24 * 1000) + 8 / 24);
+}
+
 onMounted(() => {
   window.addEventListener('setItemEvent', event => {
     if (event.key === 'themeValue') {
@@ -95,6 +140,53 @@ onMounted(() => {
 const goDetail = (id: string) => {
   router.push("/projects/"+id+"/details");
 }
+
+const projectsCheck = async (id: String) => {
+  try {
+    const res = await apiProjectsCheck(id);
+    console.log("res;",res);
+    message.success(res.message);
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  } finally {
+    // loading.value = false;
+  }
+};
+
+const projectsBuild = async (id: String) => {
+  try {
+    const res = await apiProjectsBuild(id);
+    console.log("res;",res);
+    message.success(res.message);
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  } finally {
+    // loading.value = false;
+  }
+};
+const projectsDeploy = async (id: String) => {
+  message.info("api not added");
+};
+const projectsOps = async (id: String) => {
+  message.info("api not added");
+};
+const checkNow = async (id: String, type: String) => {
+  router.push("/projects/"+id+"/workflows/:workflowId/"+id);
+};
+const viewResult = async (id: String, type: String) => {
+  message.info("viewResult...");
+};
+const buildNow = async (id: String, type: String) => {
+  message.info("buildNow...");
+};
+const ViewProcess = async (id: String, type: String) => {
+  message.info("ViewProcess...");
+};
+const deployNow = async (id: String, type: String) => {
+  message.info("deployNow...");
+};
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
