@@ -5,7 +5,8 @@
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData"></WorkflowsInfo>
-    <WorkflowsProcess :processData="processData"></WorkflowsProcess>
+    <WorkflowsProcess :processData="processData" id="10" workflowDetailId="10">
+    </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
     <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
   </div>
@@ -26,14 +27,14 @@ import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport }
 const router = useRouter();
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
-  detailId: router.currentRoute.value.params?.workflowId,
+  workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
   type: router.currentRoute.value.params?.type
 })
 
 const stopQueryParams = reactive({
   id: router.currentRoute.value.params?.id,
-  workflowId: router.currentRoute.value.params?.workflowId,
-  detailId: '',
+  workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
+  // workflowDetailId: '',
 })
 
 const inRunning = ref(false);
@@ -56,15 +57,17 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  stopQueryParams.detailId = data.id;
+  data.nowEndTime = data.endTime === '0001-01-01T00:00:00Z' ? '' : data.endTime;
+  data.nowStartTime = data.start === '0001-01-01T00:00:00Z' ? '' : data.startTime;
+  // stopQueryParams.detailId = data.id;
 
-  data.duration = dayJs(data.endTime).valueOf() - dayJs(data.startTime).valueOf();
-  // console.log(new Date().valueOf(), new Date('0001-01-01T00:00:00Z').valueOf(), '999')
+  // console.log(new Date(data.nowStartTime), 'hhh')
+  // data.duration = dayJs(data.nowEndTime).valueOf() - dayJs(data.nowStartTime).valueOf();
   Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
-  const StageInfo = YAML.parse(data.stageInfo)
-  console.log(StageInfo, 'StageInfo')
-  Object.assign(processData, StageInfo.stages)
-  processData.unshift({ name: 'Start', status: 99, duration: '', })
+  const stageInfo = YAML.parse(data.stageInfo)
+  // console.log(stageInfo, 'stageInfo')
+  Object.assign(processData, stageInfo)
+  processData.unshift({ name: 'Start', status: 99, duration: 'none', })
 
   // data.type === 1 ? getCheckReport() : getContractList();
   // inRunning.value = processData.some((val: any) => val.status === 1);

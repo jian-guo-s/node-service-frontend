@@ -38,7 +38,8 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize')
 const loginBox = () => {
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user&state=${state}`;
-  window.open(url);
+  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400');
+  myWindow?.focus()
 }
 
 const login = async () => {

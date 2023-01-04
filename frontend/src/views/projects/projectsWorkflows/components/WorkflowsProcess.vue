@@ -29,10 +29,10 @@
       </div>
     </div>
   </div>
-  <Processmodal ref="processModalRef"></Processmodal>
+  <Processmodal ref="processModalRef" :stagesData="stagesData"></Processmodal>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, toRefs, watch, nextTick, reactive } from "vue";
+import { ref, onMounted, toRefs, watch, nextTick, reactive, onUnmounted } from "vue";
 import BScroll from "@better-scroll/core";
 import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
@@ -41,13 +41,15 @@ import { apiGetDetailStageLogs } from "@/apis/workFlows";
 BScroll.use(Scrollbar);
 
 const props = defineProps({
+  id: String,
+  workflowDetailId: String,
   processData: {
     type: Array,
     default: () => {
       return []
     }
-  }
-})
+  },
+});
 
 const enum StatusEnum {
   "nonExecution",
@@ -59,52 +61,61 @@ const enum StatusEnum {
 
 const queryParams = reactive({
   id: '',
-  name: '',
-  detailId: '',
+  stagename: '',
+  workflowDetailId: '',
+  start: 0,
 })
+const stagesData = reactive({
+  title: "",
+  content: [],
+});
 
+const stagesTimer = ref(null);
+const wrapper = ref();
 const processModalRef = ref();
-const wrapper = ref()
-const { processData } = toRefs(props);
+
+const { processData, id, workflowDetailId } = toRefs(props);
+Object.assign(queryParams, { id: id, workflowDetailId: workflowDetailId });
+
+// console.log(id, 'id')
 
 const checkProcess = (item: any, e: Event) => {
   if (item.status === 0 || item.status === 99) {
     e.stopPropagation();
   } else {
+    stagesData.title = item.name;
+    stagesData.content = []
+    queryParams.stagename = item.name;
     processModalRef.value.showVisible();
-    // stagesData.title = item.name;
-    // processModalRef.value.showVisible();
-    // stagesData.content = []
-    // await getStageLogsData(item);
+    getStageLogsData(item);
   }
 }
 
-const getStageLogsData = async () => {
+const getStageLogsData = async (val: any, start = 0) => {
   const { data } = await apiGetDetailStageLogs(queryParams);
+
+  let t = data?.content?.split("\r");
+  if (data.content) {
+    t.forEach((item: any) => {
+      stagesData.content.push(item)
+    })
+  }
+
+  if (!data.end && processModalRef.value.visible) {
+    stagesTimer.value = setTimeout(() => {
+      getStageLogsData(item, data.lastLine);
+    }, 3000);
+  } else {
+    clearTimeout(stagesTimer.value);
+  }
 }
 
 const getImageUrl = (status: any) => {
-  console.log(status)
-  return new URL(`../../../assets/icons/Status${status}.svg`, import.meta.url)
+  // console.log(status, `${StatusEnum[status]}`, 'status')
+  let iconName = `${StatusEnum[status]}`;
+  return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
-
-const checkAllLogs = () => {
-  window.open(`/projects/:id/workflows/:workflowId/allLogs`)
-}
-
-const initScroll = () => {
-  let scroll = new BScroll(wrapper.value, {
-    startX: 0,
-    scrollX: true,
-    scrollY: false,
-    probeType: 1,
-    scrollbar: {
-      fade: false,
-      interactive: true,
-    },
-  });
-}
 
 watch(
   () => props.processData,
@@ -117,17 +128,29 @@ watch(
 
 onMounted(() => {
   initScroll()
-  // let scroll = new BScroll(wrapper.value, {
-  //   startX: 0,
-  //   scrollX: true,
-  //   scrollY: false,
-  //   probeType: 1,
-  //   scrollbar: {
-  //     fade: false,
-  //     interactive: true,
-  //   },
-  // });
 })
+
+onUnmounted(() => {
+  clearTimeout(stagesTimer.value);
+})
+
+const initScroll = () => {
+  let scroll = new BScroll(wrapper.value, {
+    startX: 0,
+    scrollX: true,
+    scrollY: false,
+    probeType: 1,
+    scrollbar: {
+      fade: false,
+      interactive: true,
+    },
+  });
+};
+
+const checkAllLogs = () => {
+  window.open(`/projects/${id}/workflows/${workflowDetailId}/allLogs`)
+}
+
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
