@@ -32,14 +32,15 @@ const theme = useThemeStore()
 const router = useRouter()
 
 const code = ref('');
+const myWindow = ref(null);
 const clientId = ref('67f15ceaf935341e04df');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user&state=${state}`;
-  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400');
-  myWindow?.focus()
+  myWindow.value = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400')
+
 }
 
 const login = async () => {
@@ -47,7 +48,9 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('token', data.token);
     localStorage.setItem('userInfo', JSON.stringify(data));
-    router.push('/projects')
+    myWindow.value.close();
+    window.location.reload();
+    // router.push('/projects')
   } catch (err) {
     message.error(err.message)
     // console.log('登录失败，请重新登录')
@@ -55,10 +58,15 @@ const login = async () => {
 
 }
 onMounted(async () => {
-  code.value = router.currentRoute.value.query?.code
-  if (code.value) {
-    login()
+  if (localStorage.getItem('token')) {
+    router.push('/projects')
+  } else {
+    code.value = router.currentRoute.value.query?.code;
+    if (code.value) {
+      login()
+    }
   }
+
 })
 </script>
 <style lang='less' scoped>
