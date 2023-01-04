@@ -22,7 +22,8 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ $t('workFlows.time') }}</div>
-          <div class="process-detail-info">{{ fromNowexecutionTime(workflowsDetailsData.startTime, "noThing") }}</div>
+          <div class="process-detail-info">{{ fromNowexecutionTime(workflowsDetailsData.nowStartTime, "noThing") }}
+          </div>
           <div class="process-detail-info">{{ formatDurationTime(workflowsDetailsData.duration, "elapsedTime") }}</div>
         </div>
       </a-col>

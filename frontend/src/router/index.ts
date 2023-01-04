@@ -89,16 +89,16 @@ const router = createRouter({
           ]
         },
         {
-          path: "/projects/:id/workflows/:workflowId/:type",
-          redirect: "/projects/:id/workflows/:workflowId/:type",
+          path: "/projects/:id/workflows/:workflowDetailId/:type",
+          redirect: "/projects/:id/workflows/:workflowDetailId/:type",
           children: [
             {
-              path: "/projects/:id/workflows/:workflowId/:type",
+              path: "/projects/:id/workflows/:workflowDetailId/:type",
               name: "ProjectsWorkflows",
               component: ProjectsWorkflows,
             },
             {
-              path: "/projects/:id/workflows/:workflowId/allLogs",
+              path: "/projects/:id/workflows/:workflowDetailId/allLogs",
               name: "ProjectsWorkflowsAllLogs",
               component: ProjectsWorkflowsAllLogs,
               meta: {

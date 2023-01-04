@@ -2,7 +2,7 @@ import httpRequest from "@/request/index";
 
 interface GetWorkflowsDetailParams {
  id: string,
- detailId: string,
+ workflowDetailId: string,
 }
 
 interface GetContractDeployDetailParams {
@@ -35,7 +35,7 @@ export function apiGetTemplates(params: GetWorkflowsDetailParams) {
 export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
   console.log(params,'params')
   return httpRequest({
-    url: `/api/workflows/${params.id}/detail/${params.detailId}`,
+    url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}`,
     method: "get",
   });
 }
@@ -43,7 +43,7 @@ export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
 // 合约列表详情  workflows/:id/details/:workflowDetailId/contract
 export function apiGetWorkFlowsContract(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/api/workflows/${params.id}/detail/${params.detailId}/contract`,
+    url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}/contract`,
     method: "get",
   });
 }
@@ -51,7 +51,7 @@ export function apiGetWorkFlowsContract(params: GetWorkflowsDetailParams) {
 // workflow下的check report  workflows/:id/details/:workflowDetailId/report
 export function apiGetWorkFlowsReport(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/api/workflows/${params.id}/detail/${params.detailId}/report`,
+    url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}/report`,
     method: "get",
   });
 }
