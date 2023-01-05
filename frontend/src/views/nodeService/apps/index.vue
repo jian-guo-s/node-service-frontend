@@ -306,30 +306,14 @@
 :deep(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
   color: @baseColor;
 }
-:deep(.ant-input-affix-wrapper){
-  border-radius: 8px;
-  padding: 8px 11px;
-}
 :deep(.ant-input-affix-wrapper-disabled){
   background-color: transparent;
   border-color: #EBEBEB;
   color: #BBBAB9;
 }
-:deep(.ant-btn){
-  border-radius: 8px;
-}
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
-}
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @baseColor;
-  background: @baseColor;
-}
-
-:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
-  border-color: @baseColor;
-  color: @baseColor;
 }
 :deep(.ant-table){
   border-top-left-radius: 15px;
