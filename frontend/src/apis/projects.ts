@@ -4,9 +4,11 @@ import httpRequest from "@/request/index";
 interface AddProjectsParams {
   name: string;
   type: number;
-  templateUrl: string;
+  templateOwner: string;
   frameType: string;
-  userId: string;
+  repoOwner: string;
+  templateRepo: string;
+  userId: number;
 }
 
 interface GetProjectsParams {

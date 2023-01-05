@@ -89,7 +89,12 @@ const formRules = computed(() => {
 const goNext = async () => {
   await formRef.value.validate();
   try {
-    
+    const createProjectTemp = {
+      name: formData.name,
+      type: formData.type,
+      frameType: formData.frameType,
+    }
+    window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
     router.push("/projects/template");
   } catch (error: any) {
     console.log("erro:",error)

@@ -38,11 +38,11 @@ const router = createRouter({
       path: '/',
       redirect: '/login',
       children: [
-       {
-        path: '/login',
-        name: 'Login',
-        component: Login,
-       }
+        {
+          path: '/login',
+          name: 'Login',
+          component: Login,
+        }
       ],
       meta: {
         layout: 'null',
@@ -71,7 +71,7 @@ const router = createRouter({
           path: "/projects/creat",
           name: "ProjectsCreat",
           component: ProjectsCreat,
-        }, 
+        },
         {
           path: "/projects/template",
           redirect: "/projects/template",
@@ -138,13 +138,13 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token') || '';
-  if(!token && to.path !== '/login') {
-    next('/')
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   const token = localStorage.getItem('token') || '';
+//   if(!token && to.path !== '/login') {
+//     next('/')
+//   } else {
+//     next()
+//   }
+// })
 
 export default router;
