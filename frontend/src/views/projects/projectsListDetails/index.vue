@@ -26,12 +26,19 @@
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
       </div>
       <div>
+        <a-popconfirm
+          title="Are you sure delete this projects?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="deleteProjects"
+        >
        <a-button type="primary" ghost>Delete</a-button>
+       </a-popconfirm>
        <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length!==0">
-      <Overview :viewType="viewType" :viewInfo="projectsDetail" />
+      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="getProjectsDetail" />
     </div>
     <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex justify-between">
@@ -49,9 +56,24 @@
         :pagination="pagination"
       >
         <template #bodyCell="{ column, record, index }">
+          <template v-if="column.dataIndex === 'type'">
+            <label v-if="record.type === 1">Contract Check_#{{ record.id}}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.id}}</label>
+          </template>
+          <template v-if="column.dataIndex === 'triggerMode'">
+            <div v-if="record.triggerMode === 1">manual trigger</div>
+            <div>{{ record.codeInfo }}</div>
+          </template>
+          <template v-if="column.dataIndex === 'startTime'">
+            <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
+              <div>{{ setDays(record.startTime) }} hour ago action</div>
+              <div>{{ record.duration }}m spend</div>
+            </div>
+            <div v-else></div>
+          </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="text-[#E2B578] cursor-pointer">Details</label>｜
-            <label class="text-[#E2B578] cursor-pointer">Stop</label>
+            <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.id)">Details</label>｜
+            <label class="text-[#E2B578] cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
           </template>
         </template>
       </a-table>
@@ -85,8 +107,8 @@
           >
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer">Deploy</label>｜
-                <label class="text-[#E2B578] cursor-pointer">Details</label>
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>｜
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractDetail(record.version)">Details</label>
               </template>
             </template>
           </a-table>
@@ -104,8 +126,12 @@
             :pagination="reportPagination"
           >
             <template #bodyCell="{ column, record, index }">
+              <template v-if="column.dataIndex === 'type'">
+                <label v-if="record.type === 1">Contract Check</label>
+                <label v-if="record.type === 2">Contract Build</label>
+              </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer">View Report</label>
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.workflowDetailsId)">View Report</label>
               </template>
             </template>
           </a-table>
@@ -130,7 +156,7 @@ import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork } from "@/apis/projects";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
@@ -169,6 +195,7 @@ const checkTool = ref("0");
 const workflowList = ref([]);
 const contractTableList = ref([]);
 const reportTableList = ref([]);
+const statusList = reactive(["Notrun","Running","Fail","Success","Stop"]);
 
 const formRules = computed(() => {
 
@@ -186,6 +213,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'status',
+    customRender: ({ text }) => statusList[text]
   },
   {
     title: 'Action',
@@ -215,8 +243,6 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
-    customRender: ({ text: date }) => transTimestamp(date),
-    // customRender: ({ text: date }) => formatToDateTime(date, (f) => f.datetime),
   },
   {
     title: '操作',
@@ -280,7 +306,7 @@ const contractTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'buildTime',
-    customRender: ({ text: date }) => transTimestamp(date),
+    customRender: ({ text: date }) => transTimestamp(date, "/"),
   },
   {
     title: 'Action',
@@ -351,7 +377,7 @@ const reportTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'checkTime',
-    customRender: ({ text: date }) => transTimestamp(date),
+    customRender: ({ text: date }) => transTimestamp(date, "/"),
   },
   {
     title: 'Action',
@@ -520,13 +546,54 @@ const updateName = async () => {
     projectsDetail.value.name = formData.name;
   } catch (error: any) {
     console.log("erro:",error)
+    message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
   }
 }
+const deleteProjects = async () => {
 
+  try {
+    const data = await apiDeleteProjects(detailId.value.toString());
+    message.success(data.message);
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  } finally {
+    visibleModal.value = false;
+  }
+}
+const stopWorkflow = async (workflowId: String, detailId: String) => {
+  try {
+    const params = reactive({
+      id: detailId.value,
+      workflowId: workflowId,
+      detailId: detailId,
+    })
+    const data = await apiProjectsWorkflowsStop(params);
+    message.success(data.message);
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  } finally {
+    visibleModal.value = false;
+  }
+
+}
+const goContractDetail = async (version: String) => {
+  router.push("/projects/"+detailId.value+"/contracts-details/"+version);
+}
+const goContractDeploy = async (contract: String, version: String) => {
+  router.push("/projects/"+detailId.value+"/artifacts-contract/"+version+"/deploy/"+contract);
+};
+const goContractWorkflows = (type: string, workflowDetailId: string) => {
+  router.push("/projects/"+detailId.value+"/workflows/"+workflowDetailId+"/"+type);
+}
 const goBack = () => {
    router.back();
+}
+const setDays = (startTime: any) => {
+  return Math.floor((new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 24 * 1000));
 }
 </script>
 <style lang='less' scoped>
