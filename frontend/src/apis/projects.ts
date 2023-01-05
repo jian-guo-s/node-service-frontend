@@ -52,6 +52,11 @@ interface updateProjectparams {
   userId: number,
 }
 
+interface apiDupProjectNameParams {
+  owner: string;
+  name: string;
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -172,5 +177,22 @@ export function apiProjectsContractNetwork(id: String) {
   return httpRequest({
     url: `/api/projects/${id}/contract/network`,
     method: "get",
+  });
+}
+
+//删除项目  
+export function apiDeleteProjects(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}`,
+    method: "delete",
+  });
+}
+
+//校验仓库名称是否存在 
+export function apiDupProjectName(params: apiDupProjectNameParams) {
+  return httpRequest({
+    url: "/api/projects/check-name",
+    method: "post",
+    data: params,
   });
 }

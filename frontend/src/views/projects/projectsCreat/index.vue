@@ -64,6 +64,8 @@
 <script lang='ts' setup>
 import { computed, reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
+import { apiDupProjectName } from "@/apis/projects";
+import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
@@ -89,15 +91,25 @@ const formRules = computed(() => {
 const goNext = async () => {
   await formRef.value.validate();
   try {
-    const createProjectTemp = {
+    //校验仓库名称是否存在
+    const userInfo = localStorage.getItem('userInfo');
+    const params = {
+      owner: JSON.parse(userInfo)?.username,
       name: formData.name,
-      type: formData.type,
-      frameType: formData.frameType,
     }
-    window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
-    router.push("/projects/template");
+    const res = await apiDupProjectName(params);
+    if (res.code === 200) {
+      const createProjectTemp = {
+        name: formData.name,
+        type: formData.type,
+        frameType: formData.frameType,
+      }
+      window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
+      router.push("/projects/template");
+    }
   } catch (error: any) {
     console.log("erro:",error)
+    message.error(error.response.data.message);
   } finally {
     // visibleModal.value = false;
   }

@@ -18,7 +18,7 @@
       <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
     </div>
     <div v-for="(item, index) in projectsList" :key="index">
-      <Overview :viewType="viewType" :viewInfo="item"  />
+      <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
     </div>
     <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="total" size="small" />
   </div>
