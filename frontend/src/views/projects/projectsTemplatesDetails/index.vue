@@ -26,7 +26,7 @@
       </div>
       <div>
        <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-       <a-button type="primary" class="ml-4">Creat by template</a-button>
+       <a-button type="primary" class="ml-4" @click="createProject">Creat by template</a-button>
       </div>
     </div>
     <div class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
@@ -122,8 +122,7 @@
         </a-tab-pane>
         <a-tab-pane key="3" tab="Sources">
           <div class="p-4 cursor-pointer">{{  setText(templatesDetail.codeSources) }}</div>
-          <div>
-            <iframe src="https://www.baidu.com/" frameborder="0" width="100%" :style="{height:100}" scrolling="auto"></iframe>
+          <div class="hidden">
             <iframe :src="templatesDetail.codeSources" frameborder="0" width="100%" :style="{height:100}" scrolling="auto"></iframe>
           </div>
         </a-tab-pane>
@@ -134,8 +133,9 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { apiProjectsContractVersion } from "@/apis/projects";
+import { apiAddProjects } from "@/apis/projects";
 import { apiTemplatesDetail } from "@/apis/templates";
+import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
@@ -210,15 +210,38 @@ const getTemplatesDetail = async () => {
 };
 
 const getProjectsContract = async () => {
+  // try {
+  //   const { data } = await apiProjectsContractVersion(templateId.value.toString(), templatesDetail.value.version);
+  //   console.log("data:",data);
+  // } catch (error: any) {
+  //   console.log("erro:",error)
+  // } finally {
+  //   // loading.value = false;
+  // }
+};
+
+const createProject = async () => {
   try {
-    const { data } = await apiProjectsContractVersion(templateId.value.toString(), templatesDetail.value.version);
-    console.log("data:",data);
+    const userInfo = localStorage.getItem('userInfo');
+    const createProjectTemp = localStorage.getItem('createProjectTemp');
+    const params = {
+      name: JSON.parse(createProjectTemp)?.name,
+      type: JSON.parse(createProjectTemp)?.type-0,
+      templateOwner: templatesDetail.value.author,
+      frameType: JSON.parse(createProjectTemp)?.frameType-0,
+      repoOwner: JSON.parse(userInfo)?.username,
+      templateRepo: templatesDetail.value.repositoryName,
+      userId: JSON.parse(userInfo)?.userid,
+    }
+    const res = await apiAddProjects(params);
+    message.success(res.message);
   } catch (error: any) {
     console.log("erro:",error)
+    message.error(error.response.data.message);
   } finally {
     // loading.value = false;
   }
-};
+}
 
 const setText = (str: String) => {
   return str.slice(str.lastIndexOf('/')+1);

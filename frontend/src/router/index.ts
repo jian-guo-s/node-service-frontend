@@ -39,11 +39,11 @@ const router = createRouter({
       path: '/',
       redirect: '/login',
       children: [
-       {
-        path: '/login',
-        name: 'Login',
-        component: Login,
-       }
+        {
+          path: '/login',
+          name: 'Login',
+          component: Login,
+        }
       ],
       meta: {
         layout: 'null',
@@ -80,7 +80,7 @@ const router = createRouter({
           path: "/projects/creat",
           name: "ProjectsCreat",
           component: ProjectsCreat,
-        }, 
+        },
         {
           path: "/projects/template",
           redirect: "/projects/template",
