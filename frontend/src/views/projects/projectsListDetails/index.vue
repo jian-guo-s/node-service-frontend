@@ -131,7 +131,7 @@
                 <label v-if="record.type === 2">Contract Build</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.workflowDetailsId)">View Report</label>
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.workflowDetailId)">View Report</label>
               </template>
             </template>
           </a-table>
