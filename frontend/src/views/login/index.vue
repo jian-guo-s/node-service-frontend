@@ -23,49 +23,56 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { message } from "ant-design-vue";
+// import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
-import { apiLogin } from "@/apis/login";
+// import { apiLogin } from "@/apis/login";
 const theme = useThemeStore()
 const router = useRouter()
 
-const code = ref('');
+// const code = ref('');
 const clientId = ref('67f15ceaf935341e04df');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user&state=${state}`;
-  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=200,left=500,width=600,height=400')
+  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+  myWindow?.focus()
 }
 
-const login = async () => {
-  try {
-    const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    window.close();
-    window.opener.location.reload();
-    // router.push('/projects')
-  } catch (err) {
-    message.error(err.message)
-    // console.log('登录失败，请重新登录')
-  }
+// const login = async () => {
+//   try {
+//     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
+//     localStorage.setItem('token', data.token);
+//     localStorage.setItem('userInfo', JSON.stringify(data));
+//     window.close();
+//     window.opener.location.reload();
+//     // router.push('/projects')
+//   } catch (err) {
+//     message.error(err.message)
+//     // console.log('登录失败，请重新登录')
+//   }
+// }
 
-}
-onMounted(async () => {
+onMounted(() => {
   if (localStorage.getItem('token')) {
     router.push('/projects')
-  } else {
-    code.value = router.currentRoute.value.query?.code;
-    if (code.value) {
-      login()
-    }
   }
-
 })
+
+// onMounted(async () => {
+//   if (localStorage.getItem('token')) {
+//     router.push('/projects')
+//   } else {
+//     code.value = router.currentRoute.value.query?.code;
+//     if (code.value) {
+//       login()
+//     }
+//   }
+// })
+
 </script>
 <style lang='less' scoped>
 .login-box {
