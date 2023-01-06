@@ -124,7 +124,7 @@
   import { apiGetApps } from "@/apis/apps";
   import Echarts from "@/components/Echarts.vue";
   import CreateApp from "./components/CreateApp.vue"
-  import CodeEditor from "./components/CodeEditor.vue"
+  import CodeEditor from "@/components/CodeEditor.vue"
   import { message } from 'ant-design-vue';
   import { useThemeStore } from "@/stores/useTheme";
   const theme = useThemeStore()
