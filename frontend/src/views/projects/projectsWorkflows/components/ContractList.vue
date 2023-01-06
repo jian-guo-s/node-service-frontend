@@ -3,12 +3,14 @@
     class="contracyList p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">{{ $t("workFlows.contractList") }}</span>
-      <a-button class="btn">{{ $t('common.deploy') }}</a-button>
+      <a-button class="btn" @click="toDeployUrl({})">{{ $t('common.deploy') }}</a-button>
     </div>
     <a-table :dataSource="contractListData" :columns="columns" :pagination="false">
-      <template #bodyCell="{ column }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
-          <a class="dark:text-[#E0DBD2] text-[#151210]">{{ $t('common.detail') }}</a>
+          <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDeployUrl(record)">{{ $t('common.deploy') }}</a>
+          <a-divider type="vertical" />
+          <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDetailUrl(record)">{{ $t('common.detail') }}</a>
         </template>
       </template>
     </a-table>
@@ -16,8 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { reactive, ref, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import dayjs from "dayjs";
+
+const router = useRouter();
 
 const columns = [{
   title: 'Contract',
@@ -52,10 +57,28 @@ const columns = [{
   key: 'action',
 }];
 
+const state = reactive({
+  id: '',
+})
+
 const props = defineProps({
+  id: String,
   contractListData: Array,
 })
-const { contractListData } = toRefs(props)
+
+
+
+const { contractListData, id } = toRefs(props)
+Object.assign(state, { id: id })
+
+const toDeployUrl = (val: any) => {
+  const contract = val.id || '00'
+  router.push(`/projects/${state.id}/artifacts-contract/${contractListData[0]?.version}/deploy/${contract}`)
+}
+
+const toDetailUrl = (val: any) => {
+  router.push(``)
+}
 
 </script>
 

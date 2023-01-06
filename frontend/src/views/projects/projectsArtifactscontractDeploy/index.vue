@@ -19,7 +19,8 @@
       <a-form-item name="name" class="mb-[32px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="formState.name" name="checkboxgroup" :options="nameOptions" @change="changeContractValue">
+          v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData"
+          @change="changeContractValue">
         </a-checkbox-group>
         <!-- <Checkbox></Checkbox> -->
       </a-form-item>
@@ -48,9 +49,10 @@ import { reactive, ref, onMounted } from "vue";
 import type { FormInstance } from 'ant-design-vue';
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
+import web3 from "web3";
 import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
-import Checkbox from "./components/Checkbox.vue";
+// import Checkbox from "./components/Checkbox.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -61,57 +63,65 @@ import MathTest from "../json/MathTest.json";
 const formRef = ref<FormInstance>();
 const theme = useThemeStore()
 const router = useRouter()
-const id = router.currentRoute.value.params?.id;
-// const versionValue = ref(router.currentRoute.value.params?.version);
-// const contractValue = router.currentRoute.value.params.contract;
-// const isContractWallets = ref(false);
+
+const queryParams = reactive({
+  id: router.currentRoute.value.params?.id,
+  version: router.currentRoute.value.params?.version,
+  contract: router.currentRoute.value.params?.contract,
+})
+
 const visible = ref(false)
 const showWallets = ref();
 const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive(['Testnet/Goerli', 'mainnet']);
-const nameOptions = reactive([]);
+// const walletAccount = ref('');
+const projectsContractData = reactive([]);
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
-  name: '',
+  name: [],
   chain: '',
   network: '',
 });
 
-// const options = reactive([{ label: 'name', value: 'id' }]);
 
-// const handleChange = (val: any) => {
-//   console.log(val, 'val')
-//   versionValue.value = val
-// }
 
+// 查询版本号
 const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: '1' });
+  const { data } = await apiGetProjectsVersions({ id: queryParams.id });
   Object.assign(versionData, data)
 }
 
 const getProjectsContract = async () => {
-  const { data } = await apiGetProjectsContract({ id: '1', version: '1' });
+  const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
-    item.label = item.name
-    item.value = item.id
+    item.label = item.name;
+    item.value = item.id;
+    item.abiInfoData = YAML.parse(item.abiInfo)
   })
-  Object.assign(nameOptions, data)
-  // console.log(data, 'data')
+  Object.assign(projectsContractData, data)
+  if (queryParams.contract === '00') {
+    data.map((item: any) => {
+      formState.name.push(item.id)
+    })
+  } else {
+    formState.name.push(queryParams?.contract)
+  }
+
+  // console.log(projectsContractData, data, 'data')
 }
 
-const contractFactory = async () => {
-  // 创建合约
+//  创建合约
+const contractFactory = async (abi: any, bytecode: any) => {
+  console.log(abi, 'abi')
   const { ethereum } = window;
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
-  // console.log(ethereum, 'ethereum')
-
   const factory = new ethers.ContractFactory(
-    MathTest.abi,
-    MathTest.bytecode,
+    abi,
+    bytecode,
     provider.getSigner()
   );
 
@@ -119,17 +129,18 @@ const contractFactory = async () => {
   await contract.deployed();
 
   // console.log(contract, 'contract')
-  setProjectsContractDeploy(contract.address)
+  // setProjectsContractDeploy(contract.address)
   window.localStorage.setItem("factoryAddress", contract.address);
-  router.push(`/projects/${'1'}/contracts-details/${'1.1.1'}`)
-  // router.push(`/projects/${id}/contracts-details/${version}`)  /projects/1/contracts-details/1
+
+
+  // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
 const setProjectsContractDeploy = async (address: string) => {
   const queryJson = {
-    id: id,
-    contractId: id,
-    projectId: id,
+    id: queryParams.id,
+    contractId: queryParams.id,
+    projectId: queryParams.id,
     version: formState.version,
     network: formState.network,
     address: address,
@@ -138,21 +149,24 @@ const setProjectsContractDeploy = async (address: string) => {
 }
 
 const deployClick = async () => {
-
-  console.log(formState)
   // 有值说明已连接钱包
-  const walletAccount = window.localStorage.getItem("walletAccount");
-  if (walletAccount) {
+  const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
+  if (isWalletAccount) {
     try {
-      const values = await formRef.value.validateFields();
-      contractFactory()
+      const values = await formRef?.value.validateFields();
+      // console.log(formState, 'formState')
+      const { name } = formState
+      name.map((item: number) => {
+        let selectItem = projectsContractData.find(val => { return val.id === item });
+        contractFactory(selectItem.abiInfoData, selectItem.byteCode)
+      })
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
   } else {
     // 连接钱包后再创建合约
     visible.value = true
-
+    setWalletBtn()
   }
 }
 
@@ -165,14 +179,19 @@ const cancelModal = (val: boolean) => {
 }
 
 const setWalletBtn = (val: boolean) => {
-  // isConnectedWallet.value = val;
+  isConnectedWallet.value = val;
   // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 
-onMounted(() => {
-  getProjectsContract()
+onMounted(async () => {
+  await getProjectsContract()
   getVersion()
+  // if (queryParams.contract === '00') {
+
+  // } else {
+  //   formState.name.push(queryParams.contract)
+  // }
 })
 
 </script>

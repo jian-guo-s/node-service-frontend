@@ -77,7 +77,6 @@ const processModalRef = ref();
 const { processData, id, workflowDetailId } = toRefs(props);
 Object.assign(queryParams, { id: id, workflowDetailId: workflowDetailId });
 
-// console.log(id, 'id')
 
 const checkProcess = (item: any, e: Event) => {
   if (item.status === 0 || item.status === 99) {
@@ -111,7 +110,6 @@ const getStageLogsData = async (val: any, start = 0) => {
 }
 
 const getImageUrl = (status: any) => {
-  // console.log(status, `${StatusEnum[status]}`, 'status')
   let iconName = `${StatusEnum[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
@@ -148,7 +146,7 @@ const initScroll = () => {
 };
 
 const checkAllLogs = () => {
-  window.open(`/projects/${id}/workflows/${workflowDetailId}/allLogs`)
+  window.open(`/projects/${queryParams.id}/workflows/${queryParams.workflowDetailId}/allLogs`)
 }
 
 </script>

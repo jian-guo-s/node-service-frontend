@@ -5,10 +5,11 @@
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData"></WorkflowsInfo>
-    <WorkflowsProcess :processData="processData" id="10" workflowDetailId="10">
+    <WorkflowsProcess :processData="processData" :id="queryJson.id" :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData" :id="queryJson.id">
+    </ContractList>
   </div>
 </template>
 <script lang='ts' setup>
@@ -34,7 +35,7 @@ const queryJson = reactive({
 const stopQueryParams = reactive({
   id: router.currentRoute.value.params?.id,
   workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
-  // workflowDetailId: '',
+  workflowId: '',
 })
 
 const inRunning = ref(false);
@@ -57,13 +58,14 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  data.nowEndTime = data.endTime === '0001-01-01T00:00:00Z' ? '' : data.endTime;
-  data.nowStartTime = data.start === '0001-01-01T00:00:00Z' ? '' : data.startTime;
-  // stopQueryParams.detailId = data.id;
-
-  // console.log(new Date(data.nowStartTime), 'hhh')
+  // data.nowEndTime = data.endTime === '0001-01-01T00:00:00Z' ? '' : data.endTime;
+  // data.nowStartTime = data.start === '0001-01-01T00:00:00Z' ? '' : data.startTime;
   // data.duration = dayJs(data.nowEndTime).valueOf() - dayJs(data.nowStartTime).valueOf();
-  Object.assign(workflowsDetailsData, { startTime: data.startTime, endTime: data.endTime })
+
+  // console.log(data)
+  stopQueryParams.workflowId = data.workflowId;
+
+  Object.assign(workflowsDetailsData, data)
   const stageInfo = YAML.parse(data.stageInfo)
   // console.log(stageInfo, 'stageInfo')
   Object.assign(processData, stageInfo)
@@ -88,12 +90,12 @@ const getContractList = async () => {
 
 const getCheckReport = async () => {
   const { data } = await apiGetWorkFlowsReport(queryJson);
-  getWorkflowsDetails()
 }
 
 const stopBtn = async () => {
-  const { data } = await apiProjectsWorkflowsStop(stopQueryParams)
-
+  const { data } = await apiProjectsWorkflowsStop(stopQueryParams);
+  // 停止后跟新详情数据
+  // getWorkflowsDetails()
 }
 
 onMounted(() => {
