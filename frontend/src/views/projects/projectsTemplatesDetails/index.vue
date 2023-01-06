@@ -121,9 +121,18 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Sources">
-          <div class="p-4 cursor-pointer">{{  setText(templatesDetail.codeSources) }}</div>
-          <div class="hidden">
-            <iframe :src="templatesDetail.codeSources" frameborder="0" width="100%" :style="{height:100}" scrolling="auto"></iframe>
+          <div class="p-4">
+            <div class="flex justify-between">
+              <div>{{  setText(templatesDetail.codeSources) }}</div>
+              <img @click="copyInfo(sourceContent)"
+                src="@/assets/icons/copy.svg"
+                class="h-[19px] cursor-pointer"
+              />
+            </div>
+            <div class="cursor-pointer"></div>
+            <div class="h-[200px] mt-4">
+              <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
+            </div>
           </div>
         </a-tab-pane>
       </a-tabs>
@@ -133,10 +142,12 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import CodeEditor from "@/components/CodeEditor.vue"
 import { apiAddProjects } from "@/apis/projects";
 import { apiTemplatesDetail } from "@/apis/templates";
 import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
+import axios from "axios";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -146,6 +157,7 @@ const activeKey = ref("1");
 const approveList = ref([]);
 const eventNameList = ref([]);
 const approvalList = ref([])
+const sourceContent = ref("");
 const templatesDetail = ref([]);
 const extensionsList = ref([]);
 const checkboxList = ref([
@@ -202,6 +214,13 @@ const getTemplatesDetail = async () => {
         }
       }
     });
+    axios
+      .get(data.codeSources)
+      .then(res => {
+        if (res.data) {
+          sourceContent.value = res.data;
+        }
+      });
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -231,10 +250,11 @@ const createProject = async () => {
       frameType: JSON.parse(createProjectTemp)?.frameType-0,
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
-      userId: JSON.parse(userInfo)?.userid,
+      userId: JSON.parse(userInfo)?.id,
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
+    router.push("/projects");
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
@@ -249,6 +269,30 @@ const setText = (str: String) => {
 
 const goBack = () => {
    router.back();
+}
+const copyInfo = async (_items: any) => {
+  // 存储传递过来的数据
+  let OrderNumber = _items;
+  // 创建一个input 元素
+  // createElement() 方法通过指定名称创建一个元素
+  let newInput = document.createElement("input");
+  // 讲存储的数据赋值给input的value值
+  newInput.value = OrderNumber;
+  // appendChild() 方法向节点添加最后一个子节点。
+  document.body.appendChild(newInput);
+  // 选中input元素中的文本
+  // select() 方法用于选择该元素中的文本。
+  newInput.select();
+  // 执行浏览器复制命令
+  try {
+    //  execCommand方法是执行一个对当前文档，当前选择或者给出范围的命令
+    await document.execCommand('Copy') // 执行浏览器复制命令
+    // 清空输入框
+    newInput.remove();
+    message.success("copy success");
+  } catch {
+    message.error("copy failed");
+  }
 }
 </script>
 <style lang='less' scoped>
