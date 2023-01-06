@@ -1,8 +1,8 @@
 import httpRequest from "@/request/index";
 
 interface GetWorkflowsDetailParams {
- id: string,
- workflowDetailId: string,
+  id: string,
+  workflowDetailId: string,
 }
 
 interface GetContractDeployDetailParams {
@@ -33,7 +33,7 @@ export function apiGetTemplates(params: GetWorkflowsDetailParams) {
 
 // 获取workFlows详情 workflows/:id
 export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
-  console.log(params,'params')
+  console.log(params, 'params')
   return httpRequest({
     url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}`,
     method: "get",
@@ -57,7 +57,7 @@ export function apiGetWorkFlowsReport(params: GetWorkflowsDetailParams) {
 }
 
 // 获取已部署的版本列表
-export function apiGetProjectsVersions(params:any) {
+export function apiGetProjectsVersions(params: any) {
   return httpRequest({
     url: `/api/projects/${params.id}/versions`,
     method: "get",
@@ -65,7 +65,7 @@ export function apiGetProjectsVersions(params:any) {
 }
 
 //  根据版本查询合约信息/api/projects/:id/contract/:version
-export function apiGetProjectsContract(params:any) {
+export function apiGetProjectsContract(params: any) {
   // console.log(id, version)
   return httpRequest({
     url: `/api/projects/${params.id}/contract/${params.version}`,
@@ -82,11 +82,11 @@ export function apiGetProjectsContract(params:any) {
 // }
 
 // projects/:id/contract/deploy/detail?version=xxx
-export function apiGetContractDeployDetail(params:GetContractDeployDetailParams) {
+export function apiGetContractDeployDetail(params: GetContractDeployDetailParams) {
   return httpRequest({
     url: `/api/projects/${params.id}/contract/deploy/detail`,
     method: "get",
-    params: {version: params.version}
+    params: { version: params.version }
   });
 }
 
@@ -95,7 +95,7 @@ export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
   return httpRequest({
     url: `/api/workflows/${params.id}/detail/${params.workflowDetailId}/logs/${params.stagename}`,
     method: "get",
-    params: {start: params.start},
+    params: { start: params.start },
   });
 }
 

@@ -188,6 +188,14 @@ export function apiDeleteProjects(id: String) {
   });
 }
 
+//删除workflows 
+export function apiDeleteWorkflows(id: String, workflowId: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/workflows/${workflowId}`,
+    method: "delete",
+  });
+}
+
 //校验仓库名称是否存在 
 export function apiDupProjectName(params: apiDupProjectNameParams) {
   return httpRequest({

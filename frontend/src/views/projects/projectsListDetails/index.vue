@@ -64,6 +64,9 @@
             <div v-if="record.triggerMode === 1">manual trigger</div>
             <div>{{ record.codeInfo }}</div>
           </template>
+          <template v-if="column.key === 'stageInfo'">
+            <StageVue v-if="record.stageInfo != ''" :stages="JSON.parse(record.stageInfo)" />
+          </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
               <div>{{ setDays(record.startTime) }} hour ago action</div>
@@ -72,8 +75,17 @@
             <div v-else></div>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.id)">Details</label>｜
-            <label class="text-[#E2B578] cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
+            <label class="cursor-pointer" @click="goContractWorkflows(record.type, record.id)">Details</label>
+            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
+            
+            <a-popconfirm  v-else
+              title="Are you sure delete this workflows?"
+              ok-text="Yes"
+              cancel-text="No"
+              @confirm="deleteWorkflow(record.id)"
+            >
+              <label class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
+            </a-popconfirm>
           </template>
         </template>
       </a-table>
@@ -106,9 +118,15 @@
             :pagination="contractPagination"
           >
             <template #bodyCell="{ column, record, index }">
+              <template v-if="column.dataIndex === 'version'">
+                <label class="text-[#E2B578]">{{ record.version }}</label>
+              </template>
+              <template v-if="column.dataIndex === 'network'">
+                <label v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+              </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>｜
-                <label class="text-[#E2B578] cursor-pointer" @click="goContractDetail(record.version)">Details</label>
+                <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
+                <label class="text-[#E2B578] ml-2 cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>
               </template>
             </template>
           </a-table>
@@ -156,7 +174,8 @@ import { reactive, ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop } from "@/apis/projects";
+import StageVue from "./components/Stage.vue";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
@@ -235,7 +254,6 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'stageInfo',
-    width: '200px'
   },
   {
     title: 'Time',
@@ -556,6 +574,7 @@ const deleteProjects = async () => {
   try {
     const data = await apiDeleteProjects(detailId.value.toString());
     message.success(data.message);
+    router.push("/projects");
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
@@ -579,6 +598,19 @@ const stopWorkflow = async (workflowId: String, detailId: String) => {
     visibleModal.value = false;
   }
 
+}
+const deleteWorkflow = async (workflowId: String) => {
+  try {
+    
+    const data = await apiDeleteWorkflows(detailId.value.toString(), workflowId);
+    message.success(data.message);
+    getProjectsWorkflows();
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  } finally {
+    visibleModal.value = false;
+  }
 }
 const goContractDetail = async (version: String) => {
   router.push("/projects/"+detailId.value+"/contracts-details/"+version);
