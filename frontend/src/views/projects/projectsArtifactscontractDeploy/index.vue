@@ -19,8 +19,7 @@
       <a-form-item name="name" class="mb-[32px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData"
-          @change="changeContractValue">
+          v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData">
         </a-checkbox-group>
         <!-- <Checkbox></Checkbox> -->
       </a-form-item>
@@ -34,13 +33,15 @@
       <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
         <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择">
-          <a-select-option :value="item" v-for="item in networkData" :key="item">{{ item }}</a-select-option>
+          <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
+            {{ item.name }}
+          </a-select-option>
         </a-select>
       </a-form-item>
-      <a-button class="btn" @click="deployClick">Deploy</a-button>
-
+      <a-button class="btn" @click="deployClick" :loading="loading">{{ loading ? 'Deploying' : 'Deploy' }}</a-button>
     </a-form>
   </div>
+
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
 </template>
@@ -70,12 +71,13 @@ const queryParams = reactive({
   contract: router.currentRoute.value.params?.contract,
 })
 
+const loading = ref(false);
 const visible = ref(false)
 const showWallets = ref();
 const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
-const networkData = reactive(['Testnet/Goerli', 'mainnet']);
+const networkData = reactive([{ name: 'Testnet/Goerli', id: 5 }, { name: 'mainnet', id: 1 }]);
 // const walletAccount = ref('');
 const projectsContractData = reactive([]);
 
@@ -114,9 +116,19 @@ const getProjectsContract = async () => {
 }
 
 //  创建合约
-const contractFactory = async (abi: any, bytecode: any) => {
-  console.log(abi, 'abi')
+const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
+  // window.ethereum.request({ method: "eth_requestAccounts" });
+
   const { ethereum } = window;
+
+  console.log(ethereum, 'ethereum');
+
+
+  if (ethereum.chainId === "0x1") {
+    switchToChain(5)
+  }
+
+
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
@@ -128,21 +140,53 @@ const contractFactory = async (abi: any, bytecode: any) => {
   const contract = await factory.deploy();
   await contract.deployed();
 
-  // console.log(contract, 'contract')
+
+  setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+
+
+  // console.log(contract.setThawingTime('0'), '00')
+
+  // contract.setThawingTime().then((val: any) => {
+  //   console.log(val, 'val')
+  // })
+
+  console.log(contract, 'contract')
+
+
+  // let tx = await contractWithSigner.setValue("I like turtles.");
+  // 查看: https://ropsten.etherscan.io/tx/0xaf0068dcf728afa5accd02172867627da4e6f946dfb8174a7be31f01b11d5364
+  // console.log(tx.hash);
+  // "0xaf0068dcf728afa5accd02172867627da4e6f946dfb8174a7be31f01b11d5364"
+
+  // 操作还没完成，需要等待挖矿
+  // await tx.wait();
+
+  // 再次调用合约的 getValue()
+  // let currentValue = await contract['owner'].getValue();
+
+  // console.log(contract['owner']);
   // setProjectsContractDeploy(contract.address)
   window.localStorage.setItem("factoryAddress", contract.address);
-
+  // loading.value = false contracts-details/0
 
   // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
-const setProjectsContractDeploy = async (address: string) => {
+const switchToChain = (chainId: number) => {
+  window.ethereum.request({
+    method: "wallet_switchEthereumChain",
+    params: [{ chainId: `0x${chainId.toString()}` }],
+  });
+}
+
+const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
   const queryJson = {
     id: queryParams.id,
-    contractId: queryParams.id,
-    projectId: queryParams.id,
+    contractId: contractId,
+    projectId: Number(queryParams.id),
     version: formState.version,
-    network: formState.network,
+    // network: formState.network,
+    network: 'Testnet/Goerli',
     address: address,
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
@@ -151,14 +195,15 @@ const setProjectsContractDeploy = async (address: string) => {
 const deployClick = async () => {
   // 有值说明已连接钱包
   const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-  if (isWalletAccount) {
+  if (isWalletAccount.length > 0) {
     try {
+      loading.value = true
       const values = await formRef?.value.validateFields();
       // console.log(formState, 'formState')
       const { name } = formState
       name.map((item: number) => {
-        let selectItem = projectsContractData.find(val => { return val.id === item });
-        contractFactory(selectItem.abiInfoData, selectItem.byteCode)
+        let selectItem: any = projectsContractData.find(val => { return val.id === item });
+        contractFactory(selectItem.abiInfoData, selectItem.byteCode, item)
       })
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
@@ -171,6 +216,7 @@ const deployClick = async () => {
 }
 
 const changeContractValue = (checkedValue: any) => {
+  // formState.contractId = checkedValue.id
   console.log(checkedValue, 'checkedValue')
 }
 
@@ -187,11 +233,6 @@ const setWalletBtn = (val: boolean) => {
 onMounted(async () => {
   await getProjectsContract()
   getVersion()
-  // if (queryParams.contract === '00') {
-
-  // } else {
-  //   formState.name.push(queryParams.contract)
-  // }
 })
 
 </script>
