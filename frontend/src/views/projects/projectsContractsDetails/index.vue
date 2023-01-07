@@ -9,7 +9,7 @@
     <a-tabs v-model:activeKey="activeKey" class="dark:text-white text-[#121211]">
       <a-tab-pane v-for="(item, key) in contractInfo" :key="key" :tab="key">
         <a-table :dataSource="item.deployInfo" :columns="columns" class="mb-[64px]"
-          :customHeaderRow="customHeaderRowStyle" :pagination="false">
+          :customHeaderRow="customHeaderRowStyle" :pagination="false" :customRow="customRowClick">
           <template #bodyCell="{ column }">
             <template v-if="column.key === 'action'">
               <a>Deploy</a>
@@ -50,6 +50,7 @@ import { useRouter } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import noData from "./components/noData.vue";
 import YAML from "yaml";
+import * as ethers from "ethers";
 import ContractList from "./components/ContractList.vue";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
 const router = useRouter();
@@ -98,14 +99,44 @@ const getContractDeployDetail = async () => {
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 
-  console.log(YAML.parse(data.contractInfo['contract-one']['abiInfo']), 'asdfghj')
+  // console.log(YAML.parse(data.contractInfo['contract-one']['abiInfo']), 'asdfghj')
   activeKey.value = Object.keys(contractInfo)[0]
 }
 
 const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: '1' });
+  const { data } = await apiGetProjectsVersions({ id: queryJson.id });
   Object.assign(versionData, data)
 }
+
+
+const customRowClick = (record: any, index: number) => {
+  return {
+    style: {
+      cursor: 'pointer',
+    },
+    onClick: async (event: Event) => {
+      ethers.utils.parseEther("0");
+
+      const { ethereum } = window;
+      let provider = new ethers.providers.Web3Provider(ethereum);
+      let abi = YAML.parse(contractInfo?.ConvertLib.abiInfo);
+      let contractAddress = record.address;
+      let contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
+
+
+
+      // contract.getValue().then((val: any) => {
+      //   console.log(val, 'val')
+      // })
+      console.log(contract)
+      console.log(contract.getValue(), 'contract')
+      // let currentValue = await contract.setThawingTime.getValue();
+
+      // console.log(currentValue);
+      // console.log(record.address, '99')
+    }
+  }
+};
 
 
 
