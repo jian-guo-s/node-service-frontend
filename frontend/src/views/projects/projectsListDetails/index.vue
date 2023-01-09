@@ -69,7 +69,7 @@
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
-              <div>{{ setTimes(record.startTime) }} ago action</div>
+              <div>{{ fromNowexecutionTime(record.startTime, "noThing") }} action</div>
               <div>{{ record.duration }}m spend</div>
             </div>
             <div v-else></div>
@@ -171,6 +171,7 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
+import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
@@ -178,6 +179,7 @@ import StageVue from "./components/Stage.vue";
 import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
+import dayjs from "dayjs";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -623,28 +625,6 @@ const goContractWorkflows = (type: String, workflowId: String, workflowDetailId:
 }
 const goBack = () => {
    router.back();
-}
-const setTimes = (startTime: any) => {
-  let curDate = new Date(transTimestamp(startTime));
-  let seconds = (new Date() - curDate) / 1000;
-  let minutes = seconds / 60;
-  let hours = minutes / 60;
-  let days = hours / 24;
-  let months = days / 30;
-  let years = days / 365;
-  if (seconds < 60) {
-    return  Math.floor(seconds) + " seconds";
-  } else if (minutes < 60) {
-    return  Math.floor(minutes) + " minutes";
-  } else if (hours < 24) {
-    return  Math.floor(hours) + " hours";
-  } else if (days < 30) {
-    return  Math.floor(days) + " days";
-  } else if (months < 12) {
-    return  Math.floor(months) + " months";
-  } else if (years > 1) {
-    return  Math.floor(years) + " years";
-  }
 }
 </script>
 <style lang='less' scoped>

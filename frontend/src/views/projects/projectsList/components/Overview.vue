@@ -41,21 +41,21 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago
+            Running｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
+            Failed｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            Success｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
-          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
+            Success｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
+          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)" v-if="viewInfo.recentCheck.status === 0">Check Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View Result</div>
@@ -68,21 +68,21 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago
+            Running｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
+            Failed｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            Success｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
-          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
+            Success｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
+          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
@@ -96,7 +96,7 @@
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            {{ viewInfo.recentDeploy.version }}｜{{ setDays(viewInfo.recentDeploy.deployTime) }} day ago</div>
+            {{ viewInfo.recentDeploy.version }}｜{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</div>
           <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
           <div class="text-[#E2B578]" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-else>View Contract</div>
         </div>
@@ -108,6 +108,7 @@
 import { toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
+import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { transTimestamp } from '@/utils/dateUtil';
 import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
