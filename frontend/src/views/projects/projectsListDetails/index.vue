@@ -69,13 +69,13 @@
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
-              <div>{{ setDays(record.startTime) }} ago action</div>
+              <div>{{ fromNowexecutionTime(record.startTime, "noThing") }} action</div>
               <div>{{ record.duration }}m spend</div>
             </div>
             <div v-else></div>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="cursor-pointer" @click="goContractWorkflows(record.type, record.detailId)">Details</label>
+            <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
             <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
             
             <a-popconfirm  v-else
@@ -97,17 +97,17 @@
           <div class="flex">
             <div>
               <a-select @change="changeContract" v-model:value="contract"
-              :options="contractList.map(item => ({ value: item.value, label: item.label }))">
+              :options="contractList.map(item => ({ value: item }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select @change="changeContract" v-model:value="version"
-              :options="versionList.map(item => ({ value: item.value, label: item.label }))">
+              :options="versionList.map(item => ({ value: item }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select @change="changeContract" v-model:value="network"
-              :options="networkList.map(item => ({ value: item.value, label: item.label }))">
+              :options="networkList.map(item => ({ value: item }))">
               </a-select>
             </div>
           </div>
@@ -122,7 +122,7 @@
                 <label class="text-[#E2B578]">{{ record.version }}</label>
               </template>
               <template v-if="column.dataIndex === 'network'">
-                <label v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+                <label v-if="record.network != ''" v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
@@ -134,7 +134,7 @@
         <a-tab-pane key="2" tab="Report">
           <div>
             <a-select @change="changeReport" v-model:value="checkTool"
-              :options="checkToolList.map(item => ({ value: item.value, label:item.label }))">
+              :options="checkToolList.map(item => ({ value: item }))">
               </a-select>
           </div>
           <a-table
@@ -149,7 +149,7 @@
                 <label v-if="record.type === 2">Contract Build</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.workflowDetailId)">View Report</label>
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type,record.workflowId, record.workflowDetailId)">View Report</label>
               </template>
             </template>
           </a-table>
@@ -171,13 +171,15 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted } from "vue";
+import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
 import StageVue from "./components/Stage.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiProjectsCheckTools,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
+import dayjs from "dayjs";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -199,18 +201,14 @@ const actionList = reactive([
   { label: "Build", value: "2" }
 ]);
 const action = ref("0");
-const contractList = reactive([{label:"All Contract",value: ""}]);
-const contract = ref("");
-const versionList = reactive([{label:"All Version",value: ""}]);
-const version = ref("");
-const networkList = reactive([{label:"All Network",value: ""}]);
-const network = ref("");
-const checkToolList = reactive([
-  { label: "All Check Tool", value: "0" },
-  {label:"Check",value: "1"},
-  { label: "Build", value: "2" }
-]);
-const checkTool = ref("0");
+const contractList = ref(["All Contract"]);
+const contract = ref("All Contract");
+const versionList = ref(["All Version"]);
+const version = ref("All Version");
+const networkList = ref(["All Network"]);
+const network = ref("All Network");
+const checkToolList = ref(["All Check Tool"]);
+const checkTool = ref("All Check Tool");
 const workflowList = ref([]);
 const contractTableList = ref([]);
 const reportTableList = ref([]);
@@ -438,6 +436,7 @@ onMounted(() => {
   getProjectsVersion();
   getProjectsContractName();
   getProjectsContractNetwork();
+  getProjectsCheckTools();
 })
 
 const getProjectsDetail = async () => {
@@ -480,7 +479,7 @@ const changeReport = async () => {
 const getProjectsReports = async () => {
   try {
     const params = {
-      type: checkTool.value,
+      type: checkTool.value === 'All Check Tool' ? "" : checkTool.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
     }
@@ -498,7 +497,8 @@ const getProjectsReports = async () => {
 const getProjectsVersion = async () => {
   try {
     const { data } = await apiProjectsVersion(detailId.value.toString());
-    Object.assign("versionList",data);
+    versionList.value.length = 1;
+    versionList.value = versionList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -510,7 +510,8 @@ const getProjectsVersion = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiProjectsContractName(detailId.value.toString());
-    Object.assign("contractList",data);
+    contractList.value.length = 1;
+    contractList.value = contractList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -522,7 +523,8 @@ const getProjectsContractName = async () => {
 const getProjectsContractNetwork = async () => {
   try {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
-    Object.assign("networkList",data);
+    networkList.value.length = 1;
+    networkList.value = networkList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -531,6 +533,19 @@ const getProjectsContractNetwork = async () => {
   }
 };
 
+const getProjectsCheckTools = async () => {
+  try {
+    const { data } = await apiProjectsCheckTools(detailId.value.toString());
+    checkToolList.value.length = 1;
+    checkToolList.value = checkToolList.value.concat(data);
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+}
+
 const changeContract = async () => {
   contractPagination.current = 1;
   getProjectsContract();
@@ -538,9 +553,9 @@ const changeContract = async () => {
 const getProjectsContract = async () => {
   try {
     const params = {
-      query: contract.value,
-      version: version.value,
-      network: network.value,
+      query: contract.value === 'All Contract' ? "" : contract.value,
+      version: version.value === 'All Version' ? "" : version.value,
+      network: network.value === 'All Network' ? "" : network.value,
       page: contractPagination.current,
       size: contractPagination.pageSize,
     }
@@ -618,18 +633,11 @@ const goContractDetail = async (version: String) => {
 const goContractDeploy = async (contract: String, version: String) => {
   router.push("/projects/"+detailId.value+"/artifacts-contract/"+version+"/deploy/"+contract);
 };
-const goContractWorkflows = (type: string, workflowDetailId: string) => {
-  router.push("/projects/"+detailId.value+"/workflows/"+workflowDetailId+"/"+type);
+const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
+  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type);
 }
 const goBack = () => {
    router.back();
-}
-const setDays = (startTime: any) => {
-  let hours = (new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 1000);
-  if (hours >= 24) {
-    return  Math.floor(hours / 24) + " day";
-  }
-  return  Math.floor(hours) + " hour";
 }
 </script>
 <style lang='less' scoped>
