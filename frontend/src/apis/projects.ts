@@ -180,6 +180,14 @@ export function apiProjectsContractNetwork(id: String) {
   });
 }
 
+//查询check-tools列表  
+export function apiProjectsCheckTools(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/check-tools`,
+    method: "get",
+  });
+}
+
 //删除项目  
 export function apiDeleteProjects(id: String) {
   return httpRequest({

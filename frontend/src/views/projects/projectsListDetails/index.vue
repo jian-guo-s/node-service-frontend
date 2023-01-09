@@ -134,7 +134,7 @@
         <a-tab-pane key="2" tab="Report">
           <div>
             <a-select @change="changeReport" v-model:value="checkTool"
-              :options="checkToolList.map(item => ({ value: item.value, label:item.label }))">
+              :options="checkToolList.map(item => ({ value: item }))">
               </a-select>
           </div>
           <a-table
@@ -176,7 +176,7 @@ import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
 import StageVue from "./components/Stage.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
+import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiProjectsCheckTools,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import dayjs from "dayjs";
@@ -201,18 +201,14 @@ const actionList = reactive([
   { label: "Build", value: "2" }
 ]);
 const action = ref("0");
-const contractList = reactive(["All Contract"]);
+const contractList = ref(["All Contract"]);
 const contract = ref("All Contract");
-const versionList = reactive(["All Version"]);
+const versionList = ref(["All Version"]);
 const version = ref("All Version");
-const networkList = reactive(["All Network"]);
+const networkList = ref(["All Network"]);
 const network = ref("All Network");
-const checkToolList = reactive([
-  { label: "All Check Tool", value: "0" },
-  {label:"Check",value: "1"},
-  { label: "Build", value: "2" }
-]);
-const checkTool = ref("0");
+const checkToolList = ref(["All Check Tool"]);
+const checkTool = ref("All Check Tool");
 const workflowList = ref([]);
 const contractTableList = ref([]);
 const reportTableList = ref([]);
@@ -440,6 +436,7 @@ onMounted(() => {
   getProjectsVersion();
   getProjectsContractName();
   getProjectsContractNetwork();
+  getProjectsCheckTools();
 })
 
 const getProjectsDetail = async () => {
@@ -482,7 +479,7 @@ const changeReport = async () => {
 const getProjectsReports = async () => {
   try {
     const params = {
-      type: checkTool.value,
+      type: checkTool.value === 'All Check Tool' ? "" : checkTool.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
     }
@@ -500,7 +497,8 @@ const getProjectsReports = async () => {
 const getProjectsVersion = async () => {
   try {
     const { data } = await apiProjectsVersion(detailId.value.toString());
-    Object.assign("versionList",data);
+    versionList.value.length = 1;
+    versionList.value = versionList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -512,7 +510,8 @@ const getProjectsVersion = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiProjectsContractName(detailId.value.toString());
-    Object.assign("contractList",data);
+    contractList.value.length = 1;
+    contractList.value = contractList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -524,7 +523,8 @@ const getProjectsContractName = async () => {
 const getProjectsContractNetwork = async () => {
   try {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
-    Object.assign("networkList",data);
+    networkList.value.length = 1;
+    networkList.value = networkList.value.concat(data);
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -532,6 +532,19 @@ const getProjectsContractNetwork = async () => {
     // loading.value = false;
   }
 };
+
+const getProjectsCheckTools = async () => {
+  try {
+    const { data } = await apiProjectsCheckTools(detailId.value.toString());
+    checkToolList.value.length = 1;
+    checkToolList.value = checkToolList.value.concat(data);
+    
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
+}
 
 const changeContract = async () => {
   contractPagination.current = 1;
