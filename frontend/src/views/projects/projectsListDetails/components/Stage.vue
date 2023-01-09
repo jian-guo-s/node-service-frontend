@@ -43,6 +43,5 @@ onMounted(() => {
   if (stages.value.length > 8) {
     stages.value = [...stages.value.slice(-8, -1), ...stages.value.slice(-1)];
   }
-  console.log("stages.value:",stages.value);
 });
 </script>
