@@ -69,13 +69,13 @@
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
-              <div>{{ setDays(record.startTime) }} ago action</div>
+              <div>{{ setTimes(record.startTime) }} ago action</div>
               <div>{{ record.duration }}m spend</div>
             </div>
             <div v-else></div>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="cursor-pointer" @click="goContractWorkflows(record.type, record.detailId)">Details</label>
+            <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
             <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
             
             <a-popconfirm  v-else
@@ -149,7 +149,7 @@
                 <label v-if="record.type === 2">Contract Build</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type, record.workflowDetailId)">View Report</label>
+                <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type,record.workflowId, record.workflowDetailId)">View Report</label>
               </template>
             </template>
           </a-table>
@@ -618,18 +618,33 @@ const goContractDetail = async (version: String) => {
 const goContractDeploy = async (contract: String, version: String) => {
   router.push("/projects/"+detailId.value+"/artifacts-contract/"+version+"/deploy/"+contract);
 };
-const goContractWorkflows = (type: string, workflowDetailId: string) => {
-  router.push("/projects/"+detailId.value+"/workflows/"+workflowDetailId+"/"+type);
+const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
+  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type);
 }
 const goBack = () => {
    router.back();
 }
-const setDays = (startTime: any) => {
-  let hours = (new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 1000);
-  if (hours >= 24) {
-    return  Math.floor(hours / 24) + " day";
+const setTimes = (startTime: any) => {
+  let curDate = new Date(transTimestamp(startTime));
+  let seconds = (new Date() - curDate) / 1000;
+  let minutes = seconds / 60;
+  let hours = minutes / 60;
+  let days = hours / 24;
+  let months = days / 30;
+  let years = days / 365;
+  if (seconds < 60) {
+    return  Math.floor(seconds) + " seconds";
+  } else if (minutes < 60) {
+    return  Math.floor(minutes) + " minutes";
+  } else if (hours < 24) {
+    return  Math.floor(hours) + " hours";
+  } else if (days < 30) {
+    return  Math.floor(days) + " days";
+  } else if (months < 12) {
+    return  Math.floor(months) + " months";
+  } else if (years > 1) {
+    return  Math.floor(years) + " years";
   }
-  return  Math.floor(hours) + " hour";
 }
 </script>
 <style lang='less' scoped>

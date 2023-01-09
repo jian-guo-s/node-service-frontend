@@ -20,7 +20,7 @@
         <div class="col-span-2">
           <div class="text-[16px] font-bold">Code Repository</div>
           <div class="my-2">
-            <a target="_blank" :href="viewInfo.RepositoryUrl">{{ viewInfo.RepositoryUrl }}</a>
+            <a target="_blank" :href="viewInfo.repositoryUrl">{{ viewInfo.repositoryUrl }}</a>
           </div>
           <div>
             <img
@@ -84,8 +84,8 @@
             Success｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
           <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ setDays(viewInfo.recentBuild.startTime) }} day ago</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(viewInfo.id, viewInfo.recentDeploy.version)" v-else>Deploy Now</div>
         </div>
         <div>
@@ -184,8 +184,8 @@ const loadView = async () => {
 const goContractCheck = async (id: String, detailId: String) => {
   router.push("/projects/"+id+"/workflows/"+detailId+"/1");
 };
-const goContractBuild = async (id: String, detailId: String) => {
-  router.push("/projects/"+id+"/workflows/"+detailId+"/2");
+const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2");
 };
 const goContractDeploy = async (id: String, version: String) => {
   if (version === "") {
