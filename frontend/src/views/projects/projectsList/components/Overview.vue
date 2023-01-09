@@ -11,8 +11,8 @@
       <div>
         <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
         <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">Build</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentDeploy.version, viewInfo.recentBuild.status)">Deploy</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentBuild.version)">Ops</a-button>
       </div>
     </div>  
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -86,7 +86,7 @@
           <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(viewInfo.id, viewInfo.recentDeploy.version)" v-else>Deploy Now</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.version)" v-else>Deploy Now</div>
         </div>
         <div>
           <div class="text-[16px] font-bold">Recent Deploy</div>
@@ -165,7 +165,7 @@ const projectsBuild = async (id: String, status: Number) => {
   }
 };
 const projectsDeploy = async (id: String, version: String, status: Number) => {
-  if (status === 0 || status === 1) {
+  if (status === 0 || status === 1 || version === "") {
     message.info("Smart contract not avaliable.");
   } else {
     goContractDeploy(id, version);

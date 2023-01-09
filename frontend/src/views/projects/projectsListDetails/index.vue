@@ -97,17 +97,17 @@
           <div class="flex">
             <div>
               <a-select @change="changeContract" v-model:value="contract"
-              :options="contractList.map(item => ({ value: item.value, label: item.label }))">
+              :options="contractList.map(item => ({ value: item }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select @change="changeContract" v-model:value="version"
-              :options="versionList.map(item => ({ value: item.value, label: item.label }))">
+              :options="versionList.map(item => ({ value: item }))">
               </a-select>
             </div>
             <div class="ml-4">
               <a-select @change="changeContract" v-model:value="network"
-              :options="networkList.map(item => ({ value: item.value, label: item.label }))">
+              :options="networkList.map(item => ({ value: item }))">
               </a-select>
             </div>
           </div>
@@ -201,12 +201,12 @@ const actionList = reactive([
   { label: "Build", value: "2" }
 ]);
 const action = ref("0");
-const contractList = reactive([{label:"All Contract",value: ""}]);
-const contract = ref("");
-const versionList = reactive([{label:"All Version",value: ""}]);
-const version = ref("");
-const networkList = reactive([{label:"All Network",value: ""}]);
-const network = ref("");
+const contractList = reactive(["All Contract"]);
+const contract = ref("All Contract");
+const versionList = reactive(["All Version"]);
+const version = ref("All Version");
+const networkList = reactive(["All Network"]);
+const network = ref("All Network");
 const checkToolList = reactive([
   { label: "All Check Tool", value: "0" },
   {label:"Check",value: "1"},
@@ -540,9 +540,9 @@ const changeContract = async () => {
 const getProjectsContract = async () => {
   try {
     const params = {
-      query: contract.value,
-      version: version.value,
-      network: network.value,
+      query: contract.value === 'All Contract' ? "" : contract.value,
+      version: version.value === 'All Version' ? "" : version.value,
+      network: network.value === 'All Network' ? "" : network.value,
       page: contractPagination.current,
       size: contractPagination.pageSize,
     }
