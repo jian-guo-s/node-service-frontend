@@ -69,13 +69,13 @@
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
-              <div>{{ setDays(record.startTime) }} hour ago action</div>
+              <div>{{ setDays(record.startTime) }} ago action</div>
               <div>{{ record.duration }}m spend</div>
             </div>
             <div v-else></div>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="cursor-pointer" @click="goContractWorkflows(record.type, record.id)">Details</label>
+            <label class="cursor-pointer" @click="goContractWorkflows(record.type, record.detailId)">Details</label>
             <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
             
             <a-popconfirm  v-else
@@ -625,7 +625,11 @@ const goBack = () => {
    router.back();
 }
 const setDays = (startTime: any) => {
-  return Math.floor((new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 24 * 1000));
+  let hours = (new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 1000);
+  if (hours >= 24) {
+    return  Math.floor(hours / 24) + " day";
+  }
+  return  Math.floor(hours) + " hour";
 }
 </script>
 <style lang='less' scoped>
