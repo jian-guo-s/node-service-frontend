@@ -122,7 +122,7 @@
                 <label class="text-[#E2B578]">{{ record.version }}</label>
               </template>
               <template v-if="column.dataIndex === 'network'">
-                <label v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+                <label v-if="record.network != ''" v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
