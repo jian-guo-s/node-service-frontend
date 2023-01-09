@@ -41,7 +41,7 @@ import { apiGetDetailStageLogs } from "@/apis/workFlows";
 BScroll.use(Scrollbar);
 
 const props = defineProps({
-  id: String,
+  workflowsId: String,
   workflowDetailId: String,
   processData: {
     type: Array,
@@ -62,6 +62,7 @@ const enum StatusEnum {
 const queryParams = reactive({
   id: '',
   stagename: '',
+  workflowsId: '',
   workflowDetailId: '',
   start: 0,
 })
@@ -74,8 +75,8 @@ const stagesTimer = ref(null);
 const wrapper = ref();
 const processModalRef = ref();
 
-const { processData, id, workflowDetailId } = toRefs(props);
-Object.assign(queryParams, { id: id, workflowDetailId: workflowDetailId });
+const { processData, workflowsId, workflowDetailId } = toRefs(props);
+Object.assign(queryParams, { workflowsId: workflowsId, workflowDetailId: workflowDetailId });
 
 
 const checkProcess = (item: any, e: Event) => {
@@ -146,7 +147,7 @@ const initScroll = () => {
 };
 
 const checkAllLogs = () => {
-  window.open(`/projects/${queryParams.id}/workflows/${queryParams.workflowDetailId}/allLogs`)
+  window.open(`/projects/${queryParams.workflowsId}/workflows/${queryParams.workflowDetailId}/allLogs`)
 }
 
 </script>

@@ -4,8 +4,9 @@
       <Breadcrumb :currentName="'Contract Check_#1'"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData"></WorkflowsInfo>
-    <WorkflowsProcess :processData="processData" :id="queryJson.id" :workflowDetailId="queryJson.workflowDetailId">
+    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title"></WorkflowsInfo>
+    <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
+      :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
     <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData" :id="queryJson.id">
@@ -22,29 +23,25 @@ import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
-import { apiProjectsWorkflowsStop } from "@/apis/projects";
+import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
 import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport } from "@/apis/workFlows";
+import { message } from 'ant-design-vue';
 
 const router = useRouter();
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
   workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
+  workflowsId: router.currentRoute.value.params?.workflowsId,
   type: router.currentRoute.value.params?.type
 })
-
-const stopQueryParams = reactive({
-  id: router.currentRoute.value.params?.id,
-  workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
-  workflowId: '',
-})
-
+const title = ref('');
 const inRunning = ref(false);
-
 const processData = reactive([])
 const contractListData = reactive([])
 const workflowsDetailsData = reactive({
   startTime: '',
   endTime: '',
+  RepositoryUrl: '',
 })
 
 const checkReportData = reactive({
@@ -58,16 +55,8 @@ const checkReportData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  // data.nowEndTime = data.endTime === '0001-01-01T00:00:00Z' ? '' : data.endTime;
-  // data.nowStartTime = data.start === '0001-01-01T00:00:00Z' ? '' : data.startTime;
-  // data.duration = dayJs(data.nowEndTime).valueOf() - dayJs(data.nowStartTime).valueOf();
-
-  // console.log(data)
-  stopQueryParams.workflowId = data.workflowId;
-
   Object.assign(workflowsDetailsData, data)
   const stageInfo = YAML.parse(data.stageInfo)
-  // console.log(stageInfo, 'stageInfo')
   Object.assign(processData, stageInfo)
   processData.unshift({ name: 'Start', status: 99, duration: 'none', })
 
@@ -84,8 +73,8 @@ const getWorkflowsDetails = async () => {
 }
 
 const getContractList = async () => {
-  const { data } = await apiGetWorkFlowsContract(queryJson)
-  Object.assign(contractListData, data)
+  const { data } = await apiGetWorkFlowsContract(queryJson);
+  Object.assign(contractListData, data);
 }
 
 const getCheckReport = async () => {
@@ -93,14 +82,24 @@ const getCheckReport = async () => {
 }
 
 const stopBtn = async () => {
-  const { data } = await apiProjectsWorkflowsStop(stopQueryParams);
-  // 停止后跟新详情数据
-  // getWorkflowsDetails()
+  try {
+    const { data } = await apiProjectsWorkflowsStop(queryJson);
+    getWorkflowsDetails()
+  } catch (err: any) {
+    message.error(err.message)
+  }
+}
+
+const getProjectsDetailData = async () => {
+  const { data } = await apiGetProjectsDetail(queryJson.id.toString())
+  Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl })
 }
 
 onMounted(() => {
-  getWorkflowsDetails()
+  getWorkflowsDetails();
+  getProjectsDetailData();
   queryJson.type === '1' ? getCheckReport() : getContractList();
+  title.value = queryJson.type === '1' ? 'Check Result' : 'Build Result';
 })
 
 </script>

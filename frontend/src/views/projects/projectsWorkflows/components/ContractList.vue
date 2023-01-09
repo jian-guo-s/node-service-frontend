@@ -73,11 +73,11 @@ Object.assign(state, { id: id })
 
 const toDeployUrl = (val: any) => {
   const contract = val.id || '00'
-  router.push(`/projects/${state.id}/artifacts-contract/${contractListData[0]?.version}/deploy/${contract}`)
+  router.push(`/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}`)
 }
 
 const toDetailUrl = (val: any) => {
-  router.push(``)
+  router.push(`/projects/${val.projectId}/contracts-details/${val.version}`)
 }
 
 </script>

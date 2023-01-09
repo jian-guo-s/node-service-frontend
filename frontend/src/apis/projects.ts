@@ -41,7 +41,7 @@ interface GetProjectsContractDeployParams {
 
 interface apiProjectsWorkflowsDetailStopParams {
   id: string,
-  workflowId: string,
+  workflowsId: string,
   detailId: string,
 }
 
@@ -143,7 +143,7 @@ export function apiProjectsContractDeploy(params: GetProjectsContractDeployParam
 // 停止workflows
 export function apiProjectsWorkflowsStop(params: apiProjectsWorkflowsDetailStopParams) {
   return httpRequest({
-    url: `/api/projects/${params.id}/workflows/${params.workflowId}/detail/${params.detailId}/stop`,
+    url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/stop`,
     method: "post",
     data: params,
   });

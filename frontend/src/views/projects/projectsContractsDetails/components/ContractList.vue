@@ -28,15 +28,16 @@
           @click="checkContract(val.name, val)">
           {{ val.name }}</div>
       </div>
-
     </div>
     <div class="col-span-2 p-[32px]">
-      <div class="flex justify-between mb-[32px]">
+      <!-- <div class="flex justify-between mb-[32px]">
         <span class="text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
         <a-button class="btn" @click="deployBtn">Deploy</a-button>
-      </div>
+      </div> -->
       <div>
-        <ContractForm :inputs="inputs" :outputs="outputs"></ContractForm>
+        <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs"
+          :abiInfo="abiInfo" ref="contractForm">
+        </ContractForm>
       </div>
     </div>
   </div>
@@ -46,17 +47,22 @@ import { ref, reactive, onMounted, toRefs } from "vue";
 import YAML from "yaml";
 import * as ethers from "ethers";
 import ContractForm from "./ContractForm.vue";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const props = defineProps({
+  contractAddress: String,
   abiInfo: String,
 })
 
-const { abiInfo } = toRefs(props)
-const inputs = reactive([]);
+const { contractAddress, abiInfo } = toRefs(props)
+const inputs = ref([]);
 const outputs = reactive([])
 
 const abiInfoData = YAML.parse(abiInfo.value)
+const contractForm = ref();
 
+const emit = defineEmits(["checkContract"])
 
 console.log(abiInfoData, '0000')
 
@@ -74,9 +80,13 @@ abiInfoData.map(item => {
   checkValue.value = sendAbis[0]?.name
 })
 
-const deployBtn = () => {
-  const value = ethers.utils.parseEther("5");
-  console.log(value)
+const deployBtn = (e: Event) => {
+  // const data = new FormData(e.target);
+  console.log(contractForm.value, 'formRef')
+}
+
+const Submit = () => {
+
 }
 
 // console.log(abis, 'abis')
@@ -92,9 +102,16 @@ const initData = () => {
 
 const checkContract = (name: string, val: any) => {
   checkValue.value = name
-  Object.assign(inputs, val.inputs)
+  inputs.value = val.inputs
+  // Object.assign(inputs, val.inputs)
   Object.assign(outputs, val.outputs)
+
+  emit("checkContract", inputs, name);
 }
+
+// const setYamlValue = async (item: string, val: string) => {
+//   emit("setYamlCode", true, stage?.value, index?.value, item, val);
+// }
 
 onMounted(() => {
   initData()

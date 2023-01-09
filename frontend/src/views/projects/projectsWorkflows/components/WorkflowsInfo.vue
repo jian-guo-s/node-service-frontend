@@ -4,7 +4,7 @@
       <a-col :span="8">
         <div class="">
           <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
-          <div class="process-detail-info">https://github.com/hamster-shared/hamster.git</div>
+          <div class="process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
           <div class="process-detail-info">
             <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
@@ -14,9 +14,9 @@
       </a-col>
       <a-col :span="8">
         <div class="process-detail-item">
-          <div class="process-detail-title">{{ $t('workFlows.checkResult') }}</div>
-          <div class="process-detail-info">Action succeed</div>
-          <div class="process-detail-info">Action succeed</div>
+          <div class="process-detail-title">{{ title }}</div>
+          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status]}`) }}</div>
+          <!-- <div class="process-detail-info">Action succeed</div> -->
         </div>
       </a-col>
       <a-col :span="8">
@@ -24,7 +24,7 @@
           <div class="process-detail-title">{{ $t('workFlows.time') }}</div>
           <div class="process-detail-info">{{ fromNowexecutionTime(workflowsDetailsData.startTime, "noThing") }}
           </div>
-          <div class="process-detail-info">{{ formatDurationTime(workflowsDetailsData.duration, "elapsedTime")}}</div>
+          <div class="process-detail-info">{{ formatDurationTime(workflowsDetailsData.duration, "elapsedTime") }}</div>
         </div>
       </a-col>
     </a-row>
@@ -33,8 +33,17 @@
 <script lang='ts' setup>
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 const props = defineProps({
+  title: String,
   workflowsDetailsData: { type: Object }
 });
+
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "passed",
+  "stop",
+}
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
@@ -55,6 +64,7 @@ html[data-theme='dark'] {
 }
 
 .process-detail-item {
+  height: 100%;
   position: relative;
   padding-left: 32px;
 

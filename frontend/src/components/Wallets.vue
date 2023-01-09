@@ -6,7 +6,7 @@ import { useOnboard } from '@web3-onboard/vue'
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
 const emit = defineEmits(["setWalletBtn"]);
-  
+
 const injected = injectedModule()
 let walletStates: WalletState[]
 
@@ -81,13 +81,13 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
     return null
   }
 }
- 
+
 onBeforeMount(async () => {
   // 进入页面即要求连接钱包
   const walletStatesOrNull = await autoConnectSavedWallet()
   if (walletStatesOrNull !== null) {
     walletStates = walletStatesOrNull
-  } 
+  }
   if (walletStates[0]) {
     setWalletAccount(walletStates[0]);
   }

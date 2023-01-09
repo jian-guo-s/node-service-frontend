@@ -32,7 +32,7 @@
       </a-form-item>
       <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择">
+        <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择" @change="changeNetwork">
           <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
             {{ item.name }}
           </a-select-option>
@@ -50,7 +50,6 @@ import { reactive, ref, onMounted } from "vue";
 import type { FormInstance } from 'ant-design-vue';
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
-import web3 from "web3";
 import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 // import Checkbox from "./components/Checkbox.vue";
@@ -59,7 +58,6 @@ import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiProjectsContractDeploy } from "@/apis/projects";
-import MathTest from "../json/MathTest.json";
 
 const formRef = ref<FormInstance>();
 const theme = useThemeStore()
@@ -78,7 +76,6 @@ const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: 5 }, { name: 'mainnet', id: 1 }]);
-// const walletAccount = ref('');
 const projectsContractData = reactive([]);
 
 const formState = reactive({
@@ -117,12 +114,8 @@ const getProjectsContract = async () => {
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
-  // window.ethereum.request({ method: "eth_requestAccounts" });
-
   const { ethereum } = window;
-
-  console.log(ethereum, 'ethereum');
-
+  // console.log(ethereum, 'ethereum');
 
   if (ethereum.chainId === "0x1") {
     switchToChain(5)
@@ -136,12 +129,24 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
     bytecode,
     provider.getSigner()
   );
+  try {
+    const contract = await factory.deploy();
+    await contract.deployed();
 
-  const contract = await factory.deploy();
-  await contract.deployed();
+    setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+    console.log(contract, 'contract')
 
 
-  setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+  } catch (errorInfo) {
+    // 失败的处理
+    console.log('失败了errorInfo')
+  }
+
+
+
+  // console.log(contract, 'contract')
+
+
 
 
   // console.log(contract.setThawingTime('0'), '00')
@@ -150,7 +155,8 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   //   console.log(val, 'val')
   // })
 
-  console.log(contract, 'contract')
+  // console.log(contract, 'contract')
+  // contract.setValue(9)
 
 
   // let tx = await contractWithSigner.setValue("I like turtles.");
@@ -165,8 +171,6 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   // let currentValue = await contract['owner'].getValue();
 
   // console.log(contract['owner']);
-  // setProjectsContractDeploy(contract.address)
-  window.localStorage.setItem("factoryAddress", contract.address);
   // loading.value = false contracts-details/0
 
   // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
@@ -190,14 +194,17 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
     address: address,
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
+
+  return data.code
 }
 
 const deployClick = async () => {
   // 有值说明已连接钱包
   const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-  if (isWalletAccount.length > 0) {
+  console.log(isWalletAccount, 'isWalletAccount')
+  if (isWalletAccount) {
     try {
-      loading.value = true
+      // loading.value = true
       const values = await formRef?.value.validateFields();
       // console.log(formState, 'formState')
       const { name } = formState
@@ -205,13 +212,15 @@ const deployClick = async () => {
         let selectItem: any = projectsContractData.find(val => { return val.id === item });
         contractFactory(selectItem.abiInfoData, selectItem.byteCode, item)
       })
+
+      // promsise.all
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
   } else {
     // 连接钱包后再创建合约
     visible.value = true
-    setWalletBtn()
+    setWalletBtn(true)
   }
 }
 
@@ -228,6 +237,11 @@ const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
   // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
+}
+
+
+const changeNetwork = (val: string) => {
+  console.log(val, 'val')
 }
 
 onMounted(async () => {

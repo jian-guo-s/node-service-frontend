@@ -11,7 +11,7 @@ const router = useRouter();
 const jobLogsData = reactive({ detailLogsList: [] });
 
 const queryParams = reactive({
-  id: router.currentRoute.value.params?.id,
+  workflowsId: router.currentRoute.value.params?.workflowsId,
   workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
 })
 
