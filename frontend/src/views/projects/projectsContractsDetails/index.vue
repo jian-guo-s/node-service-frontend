@@ -8,11 +8,11 @@
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
     <a-tabs v-model:activeKey="activeKey" class="dark:text-white text-[#121211]">
       <a-tab-pane v-for="(item, key) in contractInfo" :key="key" :tab="key">
-        <a-table :dataSource="item.deployInfo" :columns="columns" class="mb-[64px]"
-          :customHeaderRow="customHeaderRowStyle" :pagination="false" :customRow="customRowClick">
-          <template #bodyCell="{ column }">
+        <a-table :dataSource="item.deployInfo" :columns="columns" class="mb-[64px]" :pagination="false"
+          :customRow="customRowClick" :rowClassName="setRowClassName">
+          <template #bodyCell="{ record, column }">
             <template v-if="column.key === 'action'">
-              <a @click.stop="deploy">Deploy</a>
+              <a @click.stop="deploy(record)">Deploy</a>
             </template>
           </template>
         </a-table>
@@ -34,19 +34,26 @@ import Breadcrumb from "../components/Breadcrumb.vue";
 import noData from "./components/noData.vue";
 import YAML from "yaml";
 import * as ethers from "ethers";
+import { useThemeStore } from "@/stores/useTheme";
 import ContractList from "./components/ContractList.vue";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
 const router = useRouter();
+const theme = useThemeStore();
+
+console.log(theme.themeValue, 'theme')
+
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
   version: router.currentRoute.value.params?.version,
 })
-const activeKey = ref()
+const activeKey = ref('');
+const activeKeyId = ref('');
 const hasData = ref(true);
 const versionData = reactive([]);
 const dataSource = ref([]);
 const contractName = ref('');
 const contractAddress = ref('');
+const selectedRow = ref(0);
 const columns = [
   {
     title: 'Network',
@@ -84,7 +91,9 @@ const getContractDeployDetail = async () => {
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 
-  activeKey.value = Object.keys(contractInfo)[0]
+  activeKey.value = Object.keys(contractInfo)[0];
+  activeKeyId.value = Object.values(contractInfo)[0].id;
+  contractAddress.value = Object.values(contractInfo)[0].deployInfo[0].address
 }
 
 const getVersion = async () => {
@@ -92,8 +101,8 @@ const getVersion = async () => {
   Object.assign(versionData, data)
 }
 
-const deploy = () => {
-
+const deploy = (val: any) => {
+  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
 }
 
 const checkContract = (name: string) => {
@@ -109,16 +118,10 @@ const customRowClick = (record: any, index: number) => {
       // backgroundColor: '#463F36',
     },
     onClick: async (event: Event) => {
-      // ethers.utils.parseEther("0");
-
-      // const { ethereum } = window;
-
-      // let provider = new ethers.providers.Web3Provider(ethereum);
-      // let abi = YAML.parse(contractInfo?.ConvertLib.abiInfo);
       contractAddress.value = record.address;
       // let contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
-
-
+      // console.log(record, 'record.address')
+      selectedRow.value = index;
 
       // let privateKey = '0x2752d11d9fa6459a66bb66d1a0ef8f4bddf27b09';
       // let wallet = new ethers.Wallet(privateKey, provider);k
@@ -133,25 +136,25 @@ const customRowClick = (record: any, index: number) => {
       // 再次调用合约的 getValue()
       // let newValue = await contract['owner'].getValue();
 
-      console.log(contract, 'contract');
+      // console.log(contract, 'contract');
       // let exec = contract.setThawingTime(4)
 
       // exec.then((val: any) => {
       //   console.log(val, 'val')
       // });
-      let val = 3
-      const data = new FormData();
-      let exec;
-      if (val) {
-        let value = ethers.utils.parseEther("3");
-        exec = contract[contractName.value](...data.values(), { value });
-      } else {
-        exec = contract[contractName.value](...data.values());
-      }
+      // let val = 3
+      // const data = new FormData();
+      // let exec;
+      // if (val) {
+      //   let value = ethers.utils.parseEther("3");
+      //   exec = contract[contractName.value](...data.values(), { value });
+      // } else {
+      //   exec = contract[contractName.value](...data.values());
+      // }
 
-      exec.then((v: any) => {
-        console.log(v, 'vvvvvv')
-      })
+      // exec.then((v: any) => {
+      //   console.log(v, 'vvvvvv')
+      // })
 
       // contract.getValue().then((val: any) => {
       //   console.log(val, 'val')
@@ -166,20 +169,21 @@ const customRowClick = (record: any, index: number) => {
   }
 };
 
+const setRowClassName = (record: any, index: number) => {
+  // if (index === selectedRow.value && theme.themeValue === 'dark') {
+  //   return 'clickRowStyle-dark'
+  // } else {
+  //   return 'clickRowStyle'
+  // }
+  return index === selectedRow.value ? 'clickRowStyle' : '';
+}
+
 
 
 onMounted(() => {
   getVersion()
   getContractDeployDetail()
 })
-
-const customHeaderRowStyle = (record: any, index: number) => {
-  // return {
-  //   style: {
-  //     backGroundColor: '#E2B578',
-  //   }
-  // }
-}
 
 
 </script>
@@ -188,5 +192,17 @@ const customHeaderRowStyle = (record: any, index: number) => {
 
 :deep(.ant-select-selection-item) {
   color: @baseColor;
+}
+
+// .clickRowStyle-dark {
+//   background-color: #463F36;
+// }
+
+// :deep(.clickRowStyle-dark) {
+//   background-color: #463F36;
+// }
+
+:deep(.clickRowStyle) {
+  background-color: #463F36;
 }
 </style>

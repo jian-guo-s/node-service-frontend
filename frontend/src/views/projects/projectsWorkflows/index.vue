@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="'Contract Check_#1'"></Breadcrumb>
+      <Breadcrumb :currentName="currentName"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title"></WorkflowsInfo>
@@ -9,7 +9,7 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData" :id="queryJson.id">
+    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData">
     </ContractList>
   </div>
 </template>
@@ -35,6 +35,7 @@ const queryJson = reactive({
   type: router.currentRoute.value.params?.type
 })
 const title = ref('');
+const currentName = ref('');
 const inRunning = ref(false);
 const processData = reactive([])
 const contractListData = reactive([])
@@ -57,6 +58,7 @@ const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
   Object.assign(workflowsDetailsData, data)
   const stageInfo = YAML.parse(data.stageInfo)
+  console.log(stageInfo, 'stageInfo')
   Object.assign(processData, stageInfo)
   processData.unshift({ name: 'Start', status: 99, duration: 'none', })
 
@@ -98,8 +100,9 @@ const getProjectsDetailData = async () => {
 onMounted(() => {
   getWorkflowsDetails();
   getProjectsDetailData();
+  title.value = queryJson.type === '1' ? 'Check' : 'Build';
+  currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
   queryJson.type === '1' ? getCheckReport() : getContractList();
-  title.value = queryJson.type === '1' ? 'Check Result' : 'Build Result';
 })
 
 </script>

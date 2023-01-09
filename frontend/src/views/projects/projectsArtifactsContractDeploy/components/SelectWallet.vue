@@ -33,12 +33,8 @@ const cancelModal = () => {
 }
 
 const selectConnectWallet = (val: string) => {
-  console.log(val)
+  console.log('暂不支持选择', val)
   // 根据选择链接
-
-  // 链接成功跳转到详情页
-  // router.push({ name: 'projectsArtifactsContractDeploy', params: { id: 1, version: '#3' } })
-  router.push(`/projects/1/contracts-details/3`)
 } 
 </script>
 <style lang='less' scoped>

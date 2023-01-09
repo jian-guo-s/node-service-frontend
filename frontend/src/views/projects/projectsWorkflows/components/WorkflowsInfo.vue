@@ -8,13 +8,13 @@
           <div class="process-detail-info">
             <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
-            <span class="align-middle">master</span>
+            <span class="align-middle">main</span>
           </div>
         </div>
       </a-col>
       <a-col :span="8">
         <div class="process-detail-item">
-          <div class="process-detail-title">{{ title }}</div>
+          <div class="process-detail-title">{{ title + ' Result' }}</div>
           <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status]}`) }}</div>
           <!-- <div class="process-detail-info">Action succeed</div> -->
         </div>

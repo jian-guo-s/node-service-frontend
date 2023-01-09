@@ -21,7 +21,7 @@
     <a-button class="btn" @click="deployBtn">Deploy</a-button>
   </div>
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
-    :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle id="formState">
+    :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle id="formState">
     <div v-for="item in inputs">
 
       <a-form-item class="" name="" :rules="[{ required: true, message: 'Please input your Version!' }]">
@@ -61,7 +61,6 @@ const props = defineProps({
 })
 
 const formRef = ref(null)
-
 const formState = reactive({
   contractAddress: '',
   checkValue: '',
@@ -70,7 +69,7 @@ const formState = reactive({
 
 const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
-console.log(inputs, 'inputInfo')
+console.log(formState, 'formState')
 
 const copy = (text: string) => {
   // var inp = document.createElement("input");
@@ -83,18 +82,17 @@ const copy = (text: string) => {
   // inp.remove();
 }
 const deployBtn = async () => {
-  debugger
   const { ethereum } = window;
-  console.log(formRef.value, 'formRef')
+  console.log(formRef.value, contractAddress?.value, 'formRef')
 
 
   let provider = new ethers.providers.Web3Provider(ethereum);
   let abi = YAML.parse(formState.abiInfo);
-  let contract = await new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+  let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
   console.log(contract, 'contract')
   // const form = document.getElementById('formState');
 
-  const data = new FormData(formRef.value.Target);
+  const data = new FormData(formRef.value.target);
 
   let exec;
   if (data.get("__value")) {
@@ -105,24 +103,23 @@ const deployBtn = async () => {
     exec = contract[formState.checkValue](...data.values());
   }
 
-
-
-  exec.then((val: any) => {
-    console.log(val, 'val')
-  }).catch((err: any) => {
-    console.log(err, 'err')
-  })
+  // console.log(exec, 'exec')
+  // exec.then((val: any) => {
+  //   console.log(val, 'val')
+  // }).catch((err: any) => {
+  //   console.log(err, 'err')
+  // })
 
 }
 
-// watch(
-//   () => props.inputs,
-//   (oldV, newV) => {
-//     if (newV) {
-//       console.log(newV, 'new')
-//     }
-//   }, { deep: true }
-// );
+watch(
+  () => props,
+  (oldV, newV) => {
+    if (newV) {
+      console.log(newV, 'new')
+    }
+  }, { deep: true }
+);
 </script>
 <style lang='less' scoped>
 .btn {

@@ -62,14 +62,10 @@ const state = reactive({
 })
 
 const props = defineProps({
-  id: String,
   contractListData: Array,
 })
 
-
-
-const { contractListData, id } = toRefs(props)
-Object.assign(state, { id: id })
+const { contractListData } = toRefs(props)
 
 const toDeployUrl = (val: any) => {
   const contract = val.id || '00'

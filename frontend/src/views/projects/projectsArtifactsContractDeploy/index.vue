@@ -48,11 +48,11 @@
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
 import type { FormInstance } from 'ant-design-vue';
+import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
-// import Checkbox from "./components/Checkbox.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -77,6 +77,7 @@ const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: 5 }, { name: 'mainnet', id: 1 }]);
 const projectsContractData = reactive([]);
+const successContract = ref([]);
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -106,10 +107,8 @@ const getProjectsContract = async () => {
       formState.name.push(item.id)
     })
   } else {
-    formState.name.push(queryParams?.contract)
+    formState.name.push(Number(queryParams?.contract))
   }
-
-  // console.log(projectsContractData, data, 'data')
 }
 
 //  创建合约
@@ -132,14 +131,12 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   try {
     const contract = await factory.deploy();
     await contract.deployed();
-
-    setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
     console.log(contract, 'contract')
-
-
+    setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
-    console.log('失败了errorInfo')
+    message.info('该请求被拒绝');
+    loading.value = false;
   }
 
 
@@ -194,33 +191,37 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
     address: address,
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
-
-  return data.code
+  return data
 }
 
 const deployClick = async () => {
   // 有值说明已连接钱包
   const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-  console.log(isWalletAccount, 'isWalletAccount')
-  if (isWalletAccount) {
+  // console.log(isWalletAccount, 'isWalletAccount')
+  if (isWalletAccount == null || isWalletAccount === '[]') {
+    // visible.value = true
+    setWalletBtn(true)
+  } else {
+    // 连接钱包后再创建合约
     try {
-      // loading.value = true
+      loading.value = true
       const values = await formRef?.value.validateFields();
-      // console.log(formState, 'formState')
       const { name } = formState
+      // let promise = []
       name.map((item: number) => {
         let selectItem: any = projectsContractData.find(val => { return val.id === item });
         contractFactory(selectItem.abiInfoData, selectItem.byteCode, item)
+        // promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item))
       })
 
-      // promsise.all
+      // const res = await Promise.all(promise)
+      // console.log(res, 'res')
+
+
     } catch (errorInfo) {
+      loading.value = false
       console.log('Failed:', errorInfo);
     }
-  } else {
-    // 连接钱包后再创建合约
-    visible.value = true
-    setWalletBtn(true)
   }
 }
 

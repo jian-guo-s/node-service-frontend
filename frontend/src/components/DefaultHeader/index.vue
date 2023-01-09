@@ -181,6 +181,7 @@ const signOut = () => {
 onMounted(() => {
   changeTheme('dark');
 });
+
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   visibleDisconnect.value = false;

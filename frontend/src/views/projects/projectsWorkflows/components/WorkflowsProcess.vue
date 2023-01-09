@@ -55,7 +55,7 @@ const enum StatusEnum {
   "nonExecution",
   "running",
   "failed",
-  "passed",
+  "success",
   "stop",
 }
 
