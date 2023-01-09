@@ -57,8 +57,8 @@
             Success｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
           <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ setDays(viewInfo.recentCheck.startTime) }} day ago</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)" v-if="viewInfo.recentCheck.status === 0">Check Now</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.id)" v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.id)" v-else>View Result</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View Result</div>
         </div>
         <div>
           <div class="text-[16px] font-bold">Recent Build</div>
@@ -181,8 +181,8 @@ const loadView = async () => {
   //重新查询数据
   emit("loadProjects");
 };
-const goContractCheck = async (id: String, detailId: String) => {
-  router.push("/projects/"+id+"/workflows/"+detailId+"/1");
+const goContractCheck = async (id: String, workflowId: String, detailId: String) => {
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1");
 };
 const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
   router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2");
