@@ -43,9 +43,9 @@ export default {
           // 'editor.foreground': '#000000',
           "editor.background": "#272A34", //背景色
           // 'editorCursor.foreground': '#8B0000',
-          // 'editor.lineHighlightBackground': '#0000FF20',
+          'editor.lineHighlightBackground': '#FFFFFF', //选中行背景颜色
           // 'editorLineNumber.foreground': '#008800',
-          // 'editor.selectionBackground': '#88000030',
+          'editor.selectionBackground': '#e6f7ff', //选中文字背景颜色
           // 'editor.inactiveSelectionBackground': '#88000015'
         },
       });
@@ -90,6 +90,9 @@ export default {
 :deep(.overflow-guard) {
   border-radius: 14px;
 }
+// :deep(.monaco-editor .margin),:deep(.monaco-scrollable-element){
+//   padding-top: 10px;
+// }
 :deep(.monaco-editor .line-numbers.active-line-number){
   color: #E2B578;
 }
@@ -98,5 +101,8 @@ export default {
 }
 :deep(.mtk5){
   color: #E2B578;
+}
+:deep(.mtk22){
+  color: #6A9955;
 }
 </style>

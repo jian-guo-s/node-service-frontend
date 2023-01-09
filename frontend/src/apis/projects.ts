@@ -4,9 +4,11 @@ import httpRequest from "@/request/index";
 interface AddProjectsParams {
   name: string;
   type: number;
-  templateUrl: string;
+  templateOwner: string;
   frameType: string;
-  userId: string;
+  repoOwner: string;
+  templateRepo: string;
+  userId: number;
 }
 
 interface GetProjectsParams {
@@ -48,6 +50,11 @@ interface apiProjectsWorkflowsDetailStopParams {
 interface updateProjectparams {
   name: string,
   userId: number,
+}
+
+interface apiDupProjectNameParams {
+  owner: string;
+  name: string;
 }
 
 //创建项目
@@ -144,6 +151,55 @@ export function apiProjectsContractDeploy(params: GetProjectsContractDeployParam
 export function apiProjectsWorkflowsStop(params: apiProjectsWorkflowsDetailStopParams) {
   return httpRequest({
     url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/stop`,
+    method: "post",
+    data: params,
+  });
+}
+
+//获取已部署的版本列表
+export function apiProjectsVersion(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/versions`,
+    method: "get",
+  });
+}
+
+//查询合约名字列表 
+export function apiProjectsContractName(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/name`,
+    method: "get",
+  });
+}
+
+//查询network列表 
+export function apiProjectsContractNetwork(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/network`,
+    method: "get",
+  });
+}
+
+//删除项目  
+export function apiDeleteProjects(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}`,
+    method: "delete",
+  });
+}
+
+//删除workflows 
+export function apiDeleteWorkflows(id: String, workflowId: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/workflows/${workflowId}`,
+    method: "delete",
+  });
+}
+
+//校验仓库名称是否存在 
+export function apiDupProjectName(params: apiDupProjectNameParams) {
+  return httpRequest({
+    url: "/api/projects/check-name",
     method: "post",
     data: params,
   });

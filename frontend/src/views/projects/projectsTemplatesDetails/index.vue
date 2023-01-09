@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="mb-[32px] flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
@@ -26,7 +26,7 @@
       </div>
       <div>
        <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-       <a-button type="primary" class="ml-4">Creat by template</a-button>
+       <a-button type="primary" class="ml-4" @click="createProject">Creat by template</a-button>
       </div>
     </div>
     <div class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
@@ -59,11 +59,11 @@
           </div>
       </div>
     </div>
-    <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Functions">
           <div class="flex">
-            <div class="p-4 border-r-[#302D2D] border-r border">
+            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
               <div class=" flex items-center">
                 <img
                   src="@/assets/icons/send-w.svg"
@@ -87,7 +87,7 @@
               </div>
               <div class="text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]">DEFAULT_ADMIN_ROLE</div>
             </div>
-            <div class="p-4">
+            <div class="p-4  w-3/4">
               <div class="flex justify-between">
                 <div class="text-[16px] font-bold">approve</div>
                 <div class="text-[#E0DBD2]">inputs</div>
@@ -102,8 +102,38 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Events">
+          <div class="flex">
+            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+              <div class="text-[#73706E] dark:text-[#E0DBD2]" v-for="(item, index) in eventNameList" :key="index">{{ item }}</div>
+            </div>
+            <div class="p-4 w-3/4">
+              <div class="flex justify-between">
+                <div class="text-[16px] font-bold">Approval</div>
+                <div class="text-[#E0DBD2]">inputs</div>
+              </div>
+              <a-table
+                class="my-4"
+                :columns="tableColumns"
+                :dataSource="approvalList"
+                :pagination="false"
+              ></a-table>
+            </div>
+          </div>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Sources">
+          <div class="p-4">
+            <div class="flex justify-between">
+              <div>{{  setText(templatesDetail.codeSources) }}</div>
+              <img @click="copyInfo(sourceContent)"
+                src="@/assets/icons/copy.svg"
+                class="h-[19px] cursor-pointer"
+              />
+            </div>
+            <div class="cursor-pointer"></div>
+            <div class="h-[200px] mt-4">
+              <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
+            </div>
+          </div>
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -112,15 +142,22 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { apiProjectsContractVersion } from "@/apis/projects";
+import CodeEditor from "@/components/CodeEditor.vue"
+import { apiAddProjects } from "@/apis/projects";
 import { apiTemplatesDetail } from "@/apis/templates";
+import { message } from 'ant-design-vue';
+import { useThemeStore } from "@/stores/useTheme";
+import axios from "axios";
+const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
 const templateId = ref(params.templateId); 
-const isWhite = ref(false);
 const activeKey = ref("1");
 const approveList = ref([]);
+const eventNameList = ref([]);
+const approvalList = ref([])
+const sourceContent = ref("");
 const templatesDetail = ref([]);
 const extensionsList = ref([]);
 const checkboxList = ref([
@@ -153,15 +190,6 @@ const tableColumns = computed<any[]>(() => [
 ]);
 
 onMounted(() => {
-  window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
   getTemplatesDetail();
 })
 
@@ -179,9 +207,20 @@ const getTemplatesDetail = async () => {
       if (element.type === 'function' && element.name === 'approve') {
         approveList.value = element.inputs;
       }
+      if (element.type === 'event') {
+        eventNameList.value.push(element.name);
+        if (element.name === 'Approval') {
+          approvalList.value = element.inputs;
+        }
+      }
     });
-    console.log("abiinfo:",data.abiInfo);
-    console.log("abiinfo2:",JSON.parse(data.abiInfo));
+    axios
+      .get(data.codeSources)
+      .then(res => {
+        if (res.data) {
+          sourceContent.value = res.data;
+        }
+      });
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -190,18 +229,70 @@ const getTemplatesDetail = async () => {
 };
 
 const getProjectsContract = async () => {
+  // try {
+  //   const { data } = await apiProjectsContractVersion(templateId.value.toString(), templatesDetail.value.version);
+  //   console.log("data:",data);
+  // } catch (error: any) {
+  //   console.log("erro:",error)
+  // } finally {
+  //   // loading.value = false;
+  // }
+};
+
+const createProject = async () => {
   try {
-    const { data } = await apiProjectsContractVersion(templateId.value.toString(), templatesDetail.value.version);
-    console.log("data:",data);
+    const userInfo = localStorage.getItem('userInfo');
+    const createProjectTemp = localStorage.getItem('createProjectTemp');
+    const params = {
+      name: JSON.parse(createProjectTemp)?.name,
+      type: JSON.parse(createProjectTemp)?.type-0,
+      templateOwner: templatesDetail.value.author,
+      frameType: JSON.parse(createProjectTemp)?.frameType-0,
+      repoOwner: JSON.parse(userInfo)?.username,
+      templateRepo: templatesDetail.value.repositoryName,
+      userId: JSON.parse(userInfo)?.id,
+    }
+    const res = await apiAddProjects(params);
+    message.success(res.message);
+    router.push("/projects");
   } catch (error: any) {
     console.log("erro:",error)
+    message.error(error.response.data.message);
   } finally {
     // loading.value = false;
   }
-};
+}
+
+const setText = (str: String) => {
+  return str.slice(str.lastIndexOf('/')+1);
+}
 
 const goBack = () => {
    router.back();
+}
+const copyInfo = async (_items: any) => {
+  // 存储传递过来的数据
+  let OrderNumber = _items;
+  // 创建一个input 元素
+  // createElement() 方法通过指定名称创建一个元素
+  let newInput = document.createElement("input");
+  // 讲存储的数据赋值给input的value值
+  newInput.value = OrderNumber;
+  // appendChild() 方法向节点添加最后一个子节点。
+  document.body.appendChild(newInput);
+  // 选中input元素中的文本
+  // select() 方法用于选择该元素中的文本。
+  newInput.select();
+  // 执行浏览器复制命令
+  try {
+    //  execCommand方法是执行一个对当前文档，当前选择或者给出范围的命令
+    await document.execCommand('Copy') // 执行浏览器复制命令
+    // 清空输入框
+    newInput.remove();
+    message.success("copy success");
+  } catch {
+    message.error("copy failed");
+  }
 }
 </script>
 <style lang='less' scoped>

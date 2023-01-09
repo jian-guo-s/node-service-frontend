@@ -36,7 +36,7 @@ export function formatToDateTime(
   date: dayjs.Dayjs | undefined = undefined,
   formatter: string | ((f: typeof FORMATTERS) => string) = FORMATTERS.datetime,
 ) {
-  if (date == '0001-01-01T00:00:00Z') date = '';
+  // if (date == '0001-01-01T00:00:00Z') date = '';
   return formatDate(date, formatter);
 }
 
@@ -49,6 +49,49 @@ export function formatToDateTimeBy12HWithLocale(
   // En: 2022-05-29 03:44:52 PM
   const formatter = locale === 'zh_CN' ? 'YYYY-MM-DD A h:mm:ss' : 'YYYY-MM-DD hh:mm:ss A';
   return dayjs(date).format(formatter);
+}
+
+/**
+ * UTC时间转换
+ * @returns {string}
+ * @param datetime UTC时间
+ * @param dateSeprator 日期拼接符
+ * @param timeSeprator 时间拼接符
+ * @Eexample dateFormat("2021-09-03T22:42:05.659+00:00", "/", ":")
+ *           dateFormat("2021-09-03T22:42:05.659+00:00")
+ */
+export function transTimestamp(datetime: any, dateSeprator = '-', timeSeprator = ':') {
+  if (datetime === '0001-01-01T00:00:00Z') {
+    return '';
+  } else {
+    const date = new Date(datetime)
+    const year = `${date.getUTCFullYear()}`
+    let month = `${date.getUTCMonth() + 1}`
+    let day = `${date.getUTCDate()}`
+    let hour = `${date.getUTCHours()}`
+    let minute = `${date.getUTCMinutes()}`
+    let second = `${date.getUTCSeconds()}`
+
+    if (month.length === 1) {
+      month = `0${month}`
+    }
+    if (day.length === 1) {
+      day = `0${day}`
+    }
+    if (day.length === 1) {
+      day = `0${day}`
+    }
+    if (hour.length === 1) {
+      hour = `0${hour}`
+    }
+    if (minute.length === 1) {
+      minute = `0${minute}`
+    }
+    if (second.length === 1) {
+      second = `0${second}`
+    }
+    return `${year}${dateSeprator}${month}${dateSeprator}${day} ${hour}${timeSeprator}${minute}${timeSeprator}${second}`
+  }
 }
 
 export const formatToDate = formatDate;

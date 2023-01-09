@@ -12,7 +12,7 @@
     </div>
     <a-table
       :loading="loading"
-      :class="[ isWhite ? 'white-table' : 'dark-table']"
+      :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
       :columns="tableColumns"
       :dataSource="appsList"
       :pagination="pagination"
@@ -124,11 +124,12 @@
   import { apiGetApps } from "@/apis/apps";
   import Echarts from "@/components/Echarts.vue";
   import CreateApp from "./components/CreateApp.vue"
-  import CodeEditor from "./components/CodeEditor.vue"
+  import CodeEditor from "@/components/CodeEditor.vue"
   import { message } from 'ant-design-vue';
+  import { useThemeStore } from "@/stores/useTheme";
+  const theme = useThemeStore()
 
   const router = useRouter();
-  const isWhite = ref(false);
   const showCreate = ref(false);
   const appsList = ref([]); //app列表
   const appInfo = reactive({
@@ -227,16 +228,6 @@
 
   onMounted(async () => {
     getApps();
-
-    window.addEventListener('setItemEvent', event => {
-    if (event.key === 'themeValue') {
-      if (event.newValue === 'white') {
-        isWhite.value = true;
-      } else {
-        isWhite.value = false;
-      }
-    }
-  })
   });
 
   const setPage = async (val: number) => {
@@ -315,30 +306,14 @@
 :deep(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
   color: @baseColor;
 }
-:deep(.ant-input-affix-wrapper){
-  border-radius: 8px;
-  padding: 8px 11px;
-}
 :deep(.ant-input-affix-wrapper-disabled){
   background-color: transparent;
   border-color: #EBEBEB;
   color: #BBBAB9;
 }
-:deep(.ant-btn){
-  border-radius: 8px;
-}
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
-}
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @baseColor;
-  background: @baseColor;
-}
-
-:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
-  border-color: @baseColor;
-  color: @baseColor;
 }
 :deep(.ant-table){
   border-top-left-radius: 15px;

@@ -94,7 +94,7 @@
         emit("setPage", 1);
         emit("getApps");
       } else {
-        router.push({ path: '/Apps' });
+        router.push({ path: '/nodeService/Apps' });
       }
     }
   }
@@ -145,46 +145,18 @@
 <style scoped lang="less">
 @baseColor: #E2B578;
 :deep(.ant-input), :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  background-color: transparent;
-  border-radius: 8px;
-  // color: #BBBAB9;
-  border-color: #EBEBEB;
-}
-:deep(.ant-input){
-  padding: 4px 11px !important;
-}
-:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector){
-  padding: 4px 11px !important;
-  height: 40px;
-}
-:deep(.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover), 
-:deep(.ant-input-affix-wrapper-focused),
-:deep(.ant-input-affix-wrapper:focus) {
-  border-color: @baseColor;
-}
-:deep(.ant-input-affix-wrapper-focused),
-:deep(.ant-input-affix-wrapper:focus){
-  box-shadow: 0 0 0 2px rgb(226 181 120 / 20%);
+  border-color: #EBEBEB!important;
 }
 
 :deep(.ant-input-affix-wrapper){
-  border-radius: 8px;
   border-color: #EBEBEB;
-}
-:deep(.ant-btn){
-  border-radius: 8px;
 }
 :deep(.ant-btn-primary){
   width: 120px;
   height: 40px;
 }
-:deep(.ant-btn-primary), :deep(.ant-btn-primary:hover), :deep(.ant-btn-primary:focus){
-  border-color: @baseColor;
-  background: @baseColor;
+:deep(.ant-select-selection-item){
+  color: #8A8A8A !important;
 }
-
-:deep(.ant-btn-background-ghost.ant-btn-primary), :deep(.ant-btn-background-ghost.ant-btn-primary:hover), :deep(.ant-btn-background-ghost.ant-btn-primary:focus){
-  border-color: @baseColor;
-  color: @baseColor;
-}
+// 
 </style>
