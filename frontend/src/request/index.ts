@@ -22,8 +22,8 @@ const service = axios.create({
 service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
-    // HVjeN9DACUFWMj2rmNB8DADZ/8qhHo8x/IRJ2+dxIkU/mW4FKlucHHouI8K5dLnl
-    let token = localStorage.getItem("token") || ''
+    // mukIAStKGg7Rsx8/9AsCBF5jPymptkw8s3CL6890Qqmmb16YAtdzZ29acLDwfkUm
+    let token = localStorage.getItem("token") || '';
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       (config as Recordable).headers['Access-Token'] = token;
     }
@@ -32,7 +32,7 @@ service.interceptors.request.use(
   },
   function (error) {
     // 对请求错误做些什么
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );
@@ -52,7 +52,7 @@ service.interceptors.response.use(
   function (error: any) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );

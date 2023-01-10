@@ -6,8 +6,8 @@
     </a-select>
   </div>
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
-    <a-tabs v-model:activeKey="activeKey" class="dark:text-white text-[#121211]">
-      <a-tab-pane v-for="(item, key) in contractInfo" :key="key" :tab="key">
+    <a-tabs v-model:activeKey="activeKeyId" class="dark:text-white text-[#121211]" @change="changeActiveKey">
+      <a-tab-pane v-for="(item, key) in contractInfo" :key="item.id" :tab="key">
         <a-table :dataSource="item.deployInfo" :columns="columns" class="mb-[64px]" :pagination="false"
           :customRow="customRowClick" :rowClassName="setRowClassName">
           <template #bodyCell="{ record, column }">
@@ -92,8 +92,8 @@ const getContractDeployDetail = async () => {
   Object.assign(contractInfo, data.contractInfo)
 
   activeKey.value = Object.keys(contractInfo)[0];
-  activeKeyId.value = Object.values(contractInfo)[0].id;
-  contractAddress.value = Object.values(contractInfo)[0].deployInfo[0].address
+  activeKeyId.value = Object.values(contractInfo)[0]?.id;
+  contractAddress.value = Object.values(contractInfo)[0]?.deployInfo[0]?.address;
 }
 
 const getVersion = async () => {
@@ -103,6 +103,10 @@ const getVersion = async () => {
 
 const deploy = (val: any) => {
   router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
+}
+
+const changeActiveKey = (activeKey: any) => {
+  console.log(activeKey, 'activeKey')
 }
 
 const checkContract = (name: string) => {

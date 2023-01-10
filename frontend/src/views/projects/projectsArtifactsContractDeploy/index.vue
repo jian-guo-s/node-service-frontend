@@ -113,6 +113,7 @@ const getProjectsContract = async () => {
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
+  loading.value = true
   const { ethereum } = window;
   // console.log(ethereum, 'ethereum');
 
@@ -132,45 +133,12 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
     const contract = await factory.deploy();
     await contract.deployed();
     console.log(contract, 'contract')
-    setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+    return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
     message.info('该请求被拒绝');
-    loading.value = false;
+    // return 'err'
   }
-
-
-
-  // console.log(contract, 'contract')
-
-
-
-
-  // console.log(contract.setThawingTime('0'), '00')
-
-  // contract.setThawingTime().then((val: any) => {
-  //   console.log(val, 'val')
-  // })
-
-  // console.log(contract, 'contract')
-  // contract.setValue(9)
-
-
-  // let tx = await contractWithSigner.setValue("I like turtles.");
-  // 查看: https://ropsten.etherscan.io/tx/0xaf0068dcf728afa5accd02172867627da4e6f946dfb8174a7be31f01b11d5364
-  // console.log(tx.hash);
-  // "0xaf0068dcf728afa5accd02172867627da4e6f946dfb8174a7be31f01b11d5364"
-
-  // 操作还没完成，需要等待挖矿
-  // await tx.wait();
-
-  // 再次调用合约的 getValue()
-  // let currentValue = await contract['owner'].getValue();
-
-  // console.log(contract['owner']);
-  // loading.value = false contracts-details/0
-
-  // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
 const switchToChain = (chainId: number) => {
@@ -184,7 +152,7 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
   const queryJson = {
     id: queryParams.id,
     contractId: contractId,
-    projectId: Number(queryParams.id),
+    projectId: queryParams.id,
     version: formState.version,
     // network: formState.network,
     network: 'Testnet/Goerli',
@@ -198,31 +166,57 @@ const deployClick = async () => {
   // 有值说明已连接钱包
   const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
   // console.log(isWalletAccount, 'isWalletAccount')
+
+
   if (isWalletAccount == null || isWalletAccount === '[]') {
     // visible.value = true
-    setWalletBtn(true)
+
+    showWallets.value?.onClickConnect();
+    // setWalletBtn(true)
   } else {
     // 连接钱包后再创建合约
     try {
-      loading.value = true
       const values = await formRef?.value.validateFields();
-      const { name } = formState
-      // let promise = []
-      name.map((item: number) => {
-        let selectItem: any = projectsContractData.find(val => { return val.id === item });
-        contractFactory(selectItem.abiInfoData, selectItem.byteCode, item)
-        // promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item))
-      })
+      const { name } = formState;
+      setContractFactory(name)
+      // let promise: any = [];
+      // name.map(async (item: number) => {
+      //   let selectItem: any = projectsContractData.find(val => { return val.id === item });
+      //   const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
+      //   promise.push(contractFactory(selectItem.abiInfoData, byteCode, item))
+      // })
 
+      // console.log(promise, 'promise')
       // const res = await Promise.all(promise)
-      // console.log(res, 'res')
-
+      // console.log(res, '可以跳转了res')
+      // loading.value = false;
+      // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 
     } catch (errorInfo) {
-      loading.value = false
+      // 表单校验
+      // message.error('Failed');
       console.log('Failed:', errorInfo);
     }
   }
+}
+
+
+const setContractFactory = async (name: any) => {
+  console.log(name, 'name')
+  let promise: any = [];
+  name.map((item: number) => {
+    let selectItem: any = projectsContractData.find(val => { return val.id === item });
+    const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
+    promise.push(contractFactory(selectItem.abiInfoData, byteCode, item))
+  })
+  const res = await Promise.all(promise)
+  console.log(res, '可以跳转了res')
+  loading.value = false;
+  const result = res.some(it => {
+    return it !== undefined
+  })
+  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : null
+  // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
 const changeContractValue = (checkedValue: any) => {
@@ -246,8 +240,8 @@ const changeNetwork = (val: string) => {
 }
 
 onMounted(async () => {
-  await getProjectsContract()
   getVersion()
+  await getProjectsContract()
 })
 
 </script>

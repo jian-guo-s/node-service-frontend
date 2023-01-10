@@ -129,16 +129,16 @@ const router = createRouter({
       ]
     },
     {
-      path: "/nodeService",
-      redirect: "/nodeService/RPCs",
+      path: "/node-service",
+      redirect: "/node-service/RPCs",
       children: [
         {
-          path: "/nodeService/RPCs",
+          path: "/node-service/RPCs",
           name: "RPCs",
           component: RpcsIndex,
         },
         {
-          path: "/nodeService/Apps",
+          path: "/node-service/Apps",
           name: "AppsIndex",
           component: AppsIndex,
         }

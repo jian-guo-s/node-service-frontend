@@ -120,7 +120,7 @@ const userInfo = localStorage.getItem('userInfo');
 const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
 const username = JSON.parse(userInfo)?.username;
 const goHome = () => {
-  // router.push("/nodeService/RPCs");
+  // router.push("/node-service/RPCs");
   router.push("/projects");
   isProject.value = true;
 };
@@ -136,13 +136,13 @@ const goApps = () => {
   if (connectedWallets == null || connectedWallets === '[]') {
     showWallet();
   } else {
-    router.push("/nodeService/Apps");
+    router.push("/node-service/Apps");
 
     isProject.value = false;
   }
 }
 const goRPCs = () => {
-  router.push("/nodeService/RPCs");
+  router.push("/node-service/RPCs");
 
   isProject.value = false;
 }

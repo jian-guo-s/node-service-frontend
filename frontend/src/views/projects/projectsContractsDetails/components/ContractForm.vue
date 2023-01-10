@@ -35,12 +35,12 @@
     <div class="mb-[24px]">
       <div class="flex justify-between  mb-[12px]">
         <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
-        <span class="text-[#E2B578] text-[16px] cursor-pointer">
+        <span class="text-[#E2B578] text-[16px] cursor-pointer" @click="copy">
           <img src="@/assets/icons/copy.svg" />
           copy</span>
       </div>
-      <a-textarea class="dark:text-white text-[121211]" placeholder="请输入" :rows="4"
-        :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
+      <a-textarea class="dark:text-white text-[121211]" placeholder="请输入" :rows="4" v-model:value="hashValue"
+        :class="theme.themeValue === 'dark' ? 'dark-css' : ''" ref="textareaRef" />
     </div>
   </a-form>
 
@@ -50,6 +50,7 @@ import { reactive, toRefs, watch, ref } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 import * as ethers from "ethers";
 import YAML from "yaml";
+import { message } from 'ant-design-vue';
 const theme = useThemeStore()
 
 const props = defineProps({
@@ -60,7 +61,9 @@ const props = defineProps({
 
 })
 
-const formRef = ref(null)
+const hashValue = ref('')
+const formRef = ref(null);
+const textareaRef = ref();
 const formState = reactive({
   contractAddress: '',
   checkValue: '',
@@ -71,28 +74,19 @@ const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
 console.log(formState, 'formState')
 
-const copy = (text: string) => {
-  // var inp = document.createElement("input");
-  // inp.style.position = "absolute";
-  // inp.style.opacity = 0;
-  // document.body.appendChild(inp);
-  // inp.value = text;
-  // inp.select();
-  // document.execCommand("copy", false);
-  // inp.remove();
-}
+
 const deployBtn = async () => {
   const { ethereum } = window;
-  console.log(formRef.value, contractAddress?.value, 'formRef')
-
 
   let provider = new ethers.providers.Web3Provider(ethereum);
   let abi = YAML.parse(formState.abiInfo);
   let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
   console.log(contract, 'contract')
-  // const form = document.getElementById('formState');
 
-  const data = new FormData(formRef.value.target);
+  const data = new FormData(formRef.value?.target);
+
+
+  // let currentValue = await contract.getValue();
 
   let exec;
   if (data.get("__value")) {
@@ -110,16 +104,27 @@ const deployBtn = async () => {
   //   console.log(err, 'err')
   // })
 
+
 }
 
-watch(
-  () => props,
-  (oldV, newV) => {
-    if (newV) {
-      console.log(newV, 'new')
-    }
-  }, { deep: true }
-);
+const copy = () => {
+  let inp = document.createElement("input");
+  document.body.appendChild(inp);
+  inp.value = hashValue.value;
+  inp.select();
+  document.execCommand("copy", false);
+  inp.remove();
+  message.success('复制成功')
+}
+
+// watch(
+//   () => props,
+//   (oldV, newV) => {
+//     if (newV) {
+//       console.log(newV, 'new')
+//     }
+//   }, { deep: true }
+// );
 </script>
 <style lang='less' scoped>
 .btn {
