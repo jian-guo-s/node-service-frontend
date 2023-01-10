@@ -24,7 +24,7 @@ export default defineConfig({
       },
       "/nodeService": {
         target:
-          "http://175.24.179.2:9911",
+          "http://34.232.105.81/nodeService",
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/nodeService/, ""),
       },
