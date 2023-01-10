@@ -113,13 +113,9 @@
       data.result.forEach((item: { networks: any[]; name: string; }, key: any) => {
         const networkInfo: string[] = [];
         item.networks.forEach((ele: any, index: any) => {
-          if (index > 0) {
-            networkInfo.push("Testnet - " + ele.Testnet);
-          } else {
-            networkInfo.push(ele);
-          }
+          networkInfo.push(ele.name);
           if (key === 0 && index === 0) {
-            formData.network = ele;
+            formData.network = ele.name;
           }
         })
         if (key === 0) {
