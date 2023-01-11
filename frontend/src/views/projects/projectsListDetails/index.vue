@@ -170,7 +170,7 @@
   </a-modal>
 </template>
 <script lang='ts' setup>
-import { reactive, ref, computed, onMounted } from "vue";
+import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
@@ -184,6 +184,7 @@ const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
+const timer = ref(0)
 const detailId = ref(params.id);
 const viewType = ref("detail");
 const isWhite = ref(false);
@@ -437,6 +438,16 @@ onMounted(() => {
   getProjectsContractName();
   getProjectsContractNetwork();
   getProjectsCheckTools();
+
+  timer.value = window.setInterval(() => {
+      // 其他定时执行的方法
+    getProjectsDetail();
+    getProjectsWorkflows();
+  }, 5000);
+})
+
+onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
+    window.clearInterval(timer.value);
 })
 
 const getProjectsDetail = async () => {
