@@ -24,7 +24,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { onBeforeUnmount, onDeactivated, onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import { apiGetProjects } from "@/apis/projects";
