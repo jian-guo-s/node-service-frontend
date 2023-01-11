@@ -38,7 +38,7 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-button class="btn" @click="deployClick" :loading="loading">{{ loading ? 'Deploying' : 'Deploy' }}</a-button>
+      <a-button class="btn" @click="deployClick" :loading="loading">{{ loading? 'Deploying': 'Deploy' }}</a-button>
     </a-form>
   </div>
 
@@ -60,8 +60,8 @@ import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows
 import { apiProjectsContractDeploy } from "@/apis/projects";
 
 const formRef = ref<FormInstance>();
-const theme = useThemeStore()
-const router = useRouter()
+const theme = useThemeStore();
+const router = useRouter();
 
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -75,9 +75,8 @@ const showWallets = ref();
 const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
-const networkData = reactive([{ name: 'Testnet/Goerli', id: 5 }, { name: 'mainnet', id: 1 }]);
+const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
 const projectsContractData = reactive([]);
-const successContract = ref([]);
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -85,8 +84,6 @@ const formState = reactive({
   chain: '',
   network: '',
 });
-
-
 
 // 查询版本号
 const getVersion = async () => {
@@ -115,12 +112,10 @@ const getProjectsContract = async () => {
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   loading.value = true
   const { ethereum } = window;
-  // console.log(ethereum, 'ethereum');
 
-  if (ethereum.chainId === "0x1") {
-    switchToChain(5)
-  }
-
+  // if (ethereum.chainId === "0x1") {
+  //   switchToChain(5)
+  // }
 
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
@@ -141,21 +136,21 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   }
 }
 
-const switchToChain = (chainId: number) => {
+const switchToChain = (chainId: string) => {
   window.ethereum.request({
     method: "wallet_switchEthereumChain",
-    params: [{ chainId: `0x${chainId.toString()}` }],
+    params: [{ chainId: `0x${chainId}` }],
   });
 }
 
 const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
+  const network = networkData.find(item => { return item.id === formState.network })
   const queryJson = {
     id: queryParams.id,
     contractId: contractId,
     projectId: queryParams.id,
     version: formState.version,
-    // network: formState.network,
-    network: 'Testnet/Goerli',
+    network: network.name,
     address: address,
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
@@ -165,12 +160,8 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
 const deployClick = async () => {
   // 有值说明已连接钱包
   const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-  // console.log(isWalletAccount, 'isWalletAccount')
-
-
   if (isWalletAccount == null || isWalletAccount === '[]') {
     // visible.value = true
-
     showWallets.value?.onClickConnect();
     // setWalletBtn(true)
   } else {
@@ -178,23 +169,15 @@ const deployClick = async () => {
     try {
       const values = await formRef?.value.validateFields();
       const { name } = formState;
-      setContractFactory(name)
-      // let promise: any = [];
-      // name.map(async (item: number) => {
-      //   let selectItem: any = projectsContractData.find(val => { return val.id === item });
-      //   const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
-      //   promise.push(contractFactory(selectItem.abiInfoData, byteCode, item))
-      // })
-
-      // console.log(promise, 'promise')
-      // const res = await Promise.all(promise)
-      // console.log(res, '可以跳转了res')
-      // loading.value = false;
-      // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
-
+      const { ethereum } = window;
+      const network = `0x${formState.network}`
+      if (ethereum.chainId !== network) {
+        switchToChain(formState.network)
+      } else {
+        setContractFactory(name)
+      }
     } catch (errorInfo) {
       // 表单校验
-      // message.error('Failed');
       console.log('Failed:', errorInfo);
     }
   }
@@ -206,22 +189,16 @@ const setContractFactory = async (name: any) => {
   let promise: any = [];
   name.map((item: number) => {
     let selectItem: any = projectsContractData.find(val => { return val.id === item });
-    const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
-    promise.push(contractFactory(selectItem.abiInfoData, byteCode, item))
+    // const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
+    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item))
   })
   const res = await Promise.all(promise)
-  console.log(res, '可以跳转了res')
+  // console.log(res, '可以跳转了res')
   loading.value = false;
   const result = res.some(it => {
     return it !== undefined
   })
-  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : null
-  // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
-}
-
-const changeContractValue = (checkedValue: any) => {
-  // formState.contractId = checkedValue.id
-  console.log(checkedValue, 'checkedValue')
+  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
 }
 
 const cancelModal = (val: boolean) => {
@@ -230,13 +207,11 @@ const cancelModal = (val: boolean) => {
 
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
-  // const account = window.localStorage.getItem("walletAccount");
-  // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 
 
 const changeNetwork = (val: string) => {
-  console.log(val, 'val')
+  // console.log(val, 'val')
 }
 
 onMounted(async () => {
