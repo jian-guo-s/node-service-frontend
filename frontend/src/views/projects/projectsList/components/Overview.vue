@@ -12,7 +12,7 @@
         <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
         <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">Build</a-button>
         <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentBuild.version)">Ops</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button>
       </div>
     </div>  
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">

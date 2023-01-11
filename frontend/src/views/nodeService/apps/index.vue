@@ -222,7 +222,7 @@
     const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
     // 如果 local storage 里没有保存的钱包，直接返回
     if (connectedWallets == null || connectedWallets === '[]') {
-      router.push("/RPCs");
+      router.push("/node-service/RPCs");
     } 
   });
 

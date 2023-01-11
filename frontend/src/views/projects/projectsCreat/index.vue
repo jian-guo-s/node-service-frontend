@@ -80,33 +80,43 @@ const formData = reactive({
 
 // Form rules
 const formRules = computed(() => {
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const userInfo = localStorage.getItem('userInfo');
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      const res = await apiDupProjectName(params);
+      if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:",error)
+      return Promise.reject("Project Name check failure");
+    }
+  }
 
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
   
   return {
-    name: [requiredRule('projectName')],
+    name: [requiredRule('Please enter Project Name'),{ validator: checkDupName, trigger: "change" }],
   };
 });
-
 const goNext = async () => {
   await formRef.value.validate();
+  
   try {
-    //校验仓库名称是否存在
-    const userInfo = localStorage.getItem('userInfo');
-    const params = {
-      owner: JSON.parse(userInfo)?.username,
+    const createProjectTemp = {
       name: formData.name,
+      type: formData.type,
+      frameType: formData.frameType,
     }
-    const res = await apiDupProjectName(params);
-    if (res.code === 200) {
-      const createProjectTemp = {
-        name: formData.name,
-        type: formData.type,
-        frameType: formData.frameType,
-      }
-      window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
-      router.push("/projects/template");
-    }
+    window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
+    router.push("/projects/template");
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);

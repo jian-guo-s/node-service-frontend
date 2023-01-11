@@ -94,7 +94,7 @@
         emit("setPage", 1);
         emit("getApps");
       } else {
-        router.push({ path: '/nodeService/Apps' });
+        router.push({ path: '/node-service/Apps' });
       }
     }
   }
@@ -135,6 +135,8 @@
       currNetworkList.value = [];
     } else {
       currNetworkList.value = networkList.value[val];
+      formData.network = currNetworkList.value[0];
+      formRef.value.clearValidate("network");
     }
   }
 </script>
