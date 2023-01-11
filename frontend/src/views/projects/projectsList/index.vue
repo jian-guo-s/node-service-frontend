@@ -24,7 +24,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import { apiGetProjects } from "@/apis/projects";
@@ -38,6 +38,7 @@ const current = ref(1);
 const total = ref(0);
 const pageSize = ref(10);
 const projectsList = ref([]); //projects列表
+const timer = ref(0)
 
 const onChange = (pageNumber: number) => {
   console.log("onchange...", pageNumber);
@@ -57,6 +58,14 @@ const goCreateProject = () => {
     
 onMounted(() => {
   getProjects();
+  timer.value = window.setInterval(() => {
+      // 其他定时执行的方法
+    getProjects();
+  }, 5000);
+})
+
+onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
+    window.clearInterval(timer.value);
 })
 
 const goSearch = async () => {

@@ -21,19 +21,19 @@
         <div class="flex items-center mb-[32px]">
           <div class="w-1/3 font-bold dark:font-normal">HTTPS</div>
           <div class="hidden w-full dark-input dark:inline-block">
-            <a-input v-model:value="item.http_address" placeholder="HTTPS" />
+            <a-input v-model:value="item.http_address"  />
           </div>
           <div class="w-full white-input dark:hidden">
-            <a-input v-model:value="item.http_address" placeholder="HTTPS" />
+            <a-input v-model:value="item.http_address"  />
           </div>
         </div>
         <div class="flex items-center mb-[32px]">
           <div class="w-1/3 font-bold dark:font-normal">WEBSOCKETS</div>
           <div class="hidden w-full dark-input dark:inline-block">
-            <a-input v-model:value="item.websocket_address" placeholder="WEBSOCKETS" />
+            <a-input v-model:value="item.websocket_address" />
           </div>
           <div class="w-full white-input dark:hidden">
-            <a-input v-model:value="item.websocket_address" placeholder="WEBSOCKETS" />
+            <a-input v-model:value="item.websocket_address" />
           </div>
         </div>
         <div class="text-center">
@@ -56,12 +56,7 @@ const showCreate = ref(false);
 const isRPCs = ref(true);
 const defaultChain = ref('');
 const defaultNetwork = ref('');
-const chainList = reactive([{
-  websocket_address: "",
-  http_address: "",
-  name: "",
-  networks: [],
-}]); //链列表
+const chainList = ref([]); //链列表
 
 onMounted(async () => {
   getChains();
@@ -70,7 +65,17 @@ onMounted(async () => {
 const getChains = async () => {
   try {
     const data = await apiGetChains();
-    Object.assign(chainList, data.result); //赋值
+    chainList.value = data.result;
+    data.result.forEach((item: { networks: any[]; name: string; }, key: any) => {
+      
+      item.networks.forEach((ele: any, index: any) => {
+        if (ele.name === 'Mainnet') {
+          chainList.value[key].http_address = ele.http_address;
+          chainList.value[key].websocket_address = ele.websocket_address;
+        }
+      })
+    });
+    // Object.assign(chainList, data.result); //赋值
     
   } catch (error: any) {
     console.log("erro:",error)
@@ -85,7 +90,7 @@ const userNow = async (chain: any, networks: any) => {
   } else {
     showCreate.value = true;
     defaultChain.value = chain;
-    defaultNetwork.value = networks[0];
+    defaultNetwork.value = networks[0]['name'];
   }
 }
 </script>
