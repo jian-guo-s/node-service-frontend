@@ -24,7 +24,9 @@
           <div class="process-detail-title">{{ $t('workFlows.time') }}</div>
           <div class="process-detail-info">{{ fromNowexecutionTime(workflowsDetailsData.startTime, "noThing") }}
           </div>
-          <div class="process-detail-info">{{ formatDurationTime(workflowsDetailsData.duration, "elapsedTime") }}</div>
+          <div class="process-detail-info">
+            {{ inRunning ? '-' : formatDurationTime(workflowsDetailsData.duration, "elapsedTime") }}
+          </div>
         </div>
       </a-col>
     </a-row>
@@ -34,6 +36,7 @@
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 const props = defineProps({
   title: String,
+  inRunning: Boolean,
   workflowsDetailsData: { type: Object }
 });
 
@@ -44,6 +47,8 @@ const enum StatusEnum {
   "passed",
   "stop",
 }
+
+
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
@@ -87,6 +92,8 @@ html[data-theme='dark'] {
 .process-detail-info {
   color: #151210;
   margin-bottom: 16px;
+  word-break: break-all;
+  padding-right: 16px;
 }
 
 .process-detail-info:last-child {

@@ -12,7 +12,7 @@
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="checkValue === val.name ? 'checked' : ''" v-for="val in sendAbis" :key="val.name"
-            @click="checkContract(val.name, val)">
+            @click="checkContract(val.name, val, 'Transact')">
             {{ val.name }}</div>
         </div>
       </div>
@@ -26,20 +26,16 @@
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="checkValue === val.name ? 'checked' : ''" v-for="val in callAbis" :key="val.name"
-            @click="checkContract(val.name, val)">
+            @click="checkContract(val.name, val, 'Call')">
             {{ val.name }}</div>
         </div>
       </div>
 
     </div>
     <div class="col-span-2 p-[32px]">
-      <!-- <div class="flex justify-between mb-[32px]">
-        <span class="text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
-        <a-button class="btn" @click="deployBtn">Deploy</a-button>
-      </div> -->
       <div>
         <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :abiInfo="abiInfo"
-          ref="contractForm">
+          :buttonInfo="buttonInfo" ref="contractForm">
         </ContractForm>
       </div>
       <div v-if="!checkValue">noData</div>
@@ -63,6 +59,7 @@ const { contractAddress, abiInfo } = toRefs(props);
 
 const sendAbis = reactive([])
 const callAbis = reactive([])
+const buttonInfo = ref('');
 const checkValue = ref('');
 const inputs = ref([]);
 const contractForm = ref();
@@ -70,7 +67,7 @@ const contractForm = ref();
 const abiInfoData = YAML.parse(abiInfo.value)
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
-    if (item.constant) {
+    if (!item.constant) {
       sendAbis.push(item)
     } else {
       callAbis.push(item)
@@ -78,58 +75,29 @@ abiInfoData.map((item: any) => {
   }
 
   if (sendAbis.length > 0) {
-    checkValue.value = sendAbis[0]?.name
+    checkValue.value = sendAbis[0]?.name;
+    inputs.value = sendAbis[0]?.inputs;
+    buttonInfo.value = 'Transact'
   } else if (sendAbis.length <= 0 && callAbis.length > 0) {
-    checkValue.value = callAbis[0]?.name
+    checkValue.value = callAbis[0]?.name;
+    inputs.value = callAbis[0]?.inputs;
+    buttonInfo.value = 'Call'
   } else {
     checkValue.value = ''
   }
-
-
 })
 
 
 const emit = defineEmits(["checkContract"])
 
-
-
-
-const deployBtn = (e: Event) => {
-  // const data = new FormData(e.target);
-  console.log(contractForm.value, 'formRef')
-}
-
-const Submit = () => {
-
-}
-
-// console.log(abis, 'abis')
-const initData = () => {
-  // abis.map((item: any) => {
-  //   if (item.name === 'multiply' || item.name === 'get') {
-  //     sendAbis.push(item)
-  //   } else {
-  //     callAbis.push(item)
-  //   }
-  // })
-}
-
-const checkContract = (name: string, val: any) => {
+const checkContract = (name: string, val: any, text: string) => {
+  console.log(buttonInfo, 'buttonInfo')
   checkValue.value = name
   inputs.value = val.inputs
-  // Object.assign(inputs, val.inputs)
-  // Object.assign(outputs, val.outputs)
+  buttonInfo.value = text
 
   emit("checkContract", inputs, name);
 }
-
-// const setYamlValue = async (item: string, val: string) => {
-//   emit("setYamlCode", true, stage?.value, index?.value, item, val);
-// }
-
-onMounted(() => {
-  initData()
-})
 
 </script>
 <style lang='less' scoped>

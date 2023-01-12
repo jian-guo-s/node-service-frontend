@@ -2,7 +2,9 @@
   <div class="contractSetails flex justify-between mb-[24px]">
     <Breadcrumb :currentName="'Hamster'"></Breadcrumb>
     <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px">
-      <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
+      <a-select-option :value="item" v-for="item in versionData" :key="item" @change="changeVersion">{{
+        item
+      }}</a-select-option>
     </a-select>
   </div>
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
@@ -78,16 +80,16 @@ const columns = [
     key: 'action',
   }];
 
-const tabList = reactive([]);
+// const tabList = reactive([]);
 const contractDeployDetail = reactive({})
 const contractInfo = reactive({})
 
 const getContractDeployDetail = async () => {
   const { data } = await apiGetContractDeployDetail(queryJson)
-  console.log(data, 'data')
-  for (let key in data.contractInfo) {
-    tabList.push(key)
-  }
+  // console.log(data, 'data')
+  // for (let key in data.contractInfo) {
+  //   tabList.push(key)
+  // }
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 
@@ -104,6 +106,11 @@ const getVersion = async () => {
 const deploy = (val: any) => {
   router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
 }
+const changeVersion = (val: any) => {
+  queryJson.version = val
+  // tabList = []
+  getContractDeployDetail()
+}
 
 const changeActiveKey = (activeKey: any) => {
   console.log(activeKey, 'activeKey')
@@ -111,7 +118,6 @@ const changeActiveKey = (activeKey: any) => {
 
 const checkContract = (name: string) => {
   contractName.value = name
-  console.log(name, 'name')
 }
 
 
@@ -119,76 +125,27 @@ const customRowClick = (record: any, index: number) => {
   return {
     style: {
       cursor: 'pointer',
-      // backgroundColor: '#463F36',
     },
     onClick: async (event: Event) => {
       contractAddress.value = record.address;
-      // let contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
-      // console.log(record, 'record.address')
       selectedRow.value = index;
-
-      // let privateKey = '0x2752d11d9fa6459a66bb66d1a0ef8f4bddf27b09';
-      // let wallet = new ethers.Wallet(privateKey, provider);k
-
-      // let contractWithSigner = contract.connect(wallet);
-      // let provider = new ethers.providers.Web3Provider(ethereum);
-      // let tx = await contractWithSigner.setValue("I like turtles.");
-
-
-      // await tx.wait();
-
-      // 再次调用合约的 getValue()
-      // let newValue = await contract['owner'].getValue();
-
-      // console.log(contract, 'contract');
-      // let exec = contract.setThawingTime(4)
-
-      // exec.then((val: any) => {
-      //   console.log(val, 'val')
-      // });
-      // let val = 3
-      // const data = new FormData();
-      // let exec;
-      // if (val) {
-      //   let value = ethers.utils.parseEther("3");
-      //   exec = contract[contractName.value](...data.values(), { value });
-      // } else {
-      //   exec = contract[contractName.value](...data.values());
-      // }
-
-      // exec.then((v: any) => {
-      //   console.log(v, 'vvvvvv')
-      // })
-
-      // contract.getValue().then((val: any) => {
-      //   console.log(val, 'val')
-      // })
-      // console.log(contract)
-      // console.log(contract.getValue(), 'contract')
-      // let currentValue = await contract.setThawingTime.getValue();
-
-      // console.log(currentValue);
-      // console.log(record.address, '99')
     }
   }
 };
 
 const setRowClassName = (record: any, index: number) => {
-  // if (index === selectedRow.value && theme.themeValue === 'dark') {
-  //   return 'clickRowStyle-dark'
-  // } else {
-  //   return 'clickRowStyle'
-  // }
-  return index === selectedRow.value ? 'clickRowStyle' : '';
+  if (index === selectedRow.value && theme.themeValue === 'dark') {
+    return 'clickRowStyle-dark'
+  }
+  if (index === selectedRow.value && theme.themeValue === 'white') {
+    return 'clickRowStyle'
+  }
 }
-
-
 
 onMounted(() => {
   getVersion()
   getContractDeployDetail()
 })
-
 
 </script>
 <style lang='less' scoped>
@@ -198,15 +155,12 @@ onMounted(() => {
   color: @baseColor;
 }
 
-// .clickRowStyle-dark {
-//   background-color: #463F36;
-// }
+:deep(.clickRowStyle-dark) {
+  background-color: #463F36;
+}
 
-// :deep(.clickRowStyle-dark) {
-//   background-color: #463F36;
-// }
 
 :deep(.clickRowStyle) {
-  background-color: #463F36;
+  background-color: #FFFAF3;
 }
 </style>

@@ -4,17 +4,16 @@
       <Breadcrumb :currentName="currentName"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title"></WorkflowsInfo>
+    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData">
-    </ContractList>
+    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import YAML from "yaml";
 import dayJs from "dayjs";
@@ -32,18 +31,19 @@ const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
   workflowDetailId: router.currentRoute.value.params?.workflowDetailId,
   workflowsId: router.currentRoute.value.params?.workflowsId,
-  type: router.currentRoute.value.params?.type
+  type: router.currentRoute.value.params?.type,
 })
+const detailTimer = ref(null);
 const title = ref('');
 const currentName = ref('');
 const inRunning = ref(false);
-const processData = reactive([])
-const contractListData = reactive([])
+const processData = ref([]);
+const contractListData = reactive([]);
 const workflowsDetailsData = reactive({
   startTime: '',
   endTime: '',
   RepositoryUrl: '',
-})
+});
 
 const checkReportData = reactive({
   id: 1,
@@ -52,26 +52,25 @@ const checkReportData = reactive({
   name: 'contract-one',
   checkTool: '',
   result: "",
-})
+});
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  Object.assign(workflowsDetailsData, data)
-  const stageInfo = YAML.parse(data.stageInfo)
-  console.log(stageInfo, 'stageInfo')
-  Object.assign(processData, stageInfo)
-  processData.unshift({ name: 'Start', status: 99, duration: 'none', })
+  Object.assign(workflowsDetailsData, data);
+  const stageInfo = YAML.parse(data.stageInfo);
+  processData.value = stageInfo;
+  processData.value.unshift({ name: 'Start', status: 99, duration: 'none' })
 
-  // data.type === 1 ? getCheckReport() : getContractList();
-  // inRunning.value = processData.some((val: any) => val.status === 1);
-  // let detailTimer = null
-  // if (inRunning.value) {
-  //   detailTimer = setTimeout(() => {
-  //     getWorkflowsDetails();
-  //   }, 3000);
-  // } else {
-  //   clearTimeout(detailTimer);
-  // } 
+  // 打印查看转换后的stageInfo
+  console.log(stageInfo, 'stageInfo');
+  inRunning.value = processData.value.some((val: any) => val.status === 1);
+  if (inRunning.value) {
+    detailTimer.value = setTimeout(() => {
+      getWorkflowsDetails();
+    }, 5000);
+  } else {
+    clearTimeout(detailTimer.value);
+  }
 }
 
 const getContractList = async () => {
@@ -104,6 +103,11 @@ onMounted(() => {
   currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
   queryJson.type === '1' ? getCheckReport() : getContractList();
 })
+
+
+onUnmounted(() => {
+  clearTimeout(detailTimer.value);
+});
 
 </script>
 <style lang='less' scoped>
