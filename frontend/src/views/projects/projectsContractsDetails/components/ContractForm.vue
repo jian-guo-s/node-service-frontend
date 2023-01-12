@@ -1,35 +1,22 @@
 <template>
-  <!-- <div class="mb-[24px]" v-for="item in inputs">
-    <div class="mb-[12px]">
-      <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
-    </div>
-    <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-      placeholder="请输入" allowClear></a-input>
-  </div>
-  <div class="mb-[24px]">
-    <div class="flex justify-between  mb-[12px]">
-      <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
-      <span class="text-[#E2B578] text-[16px] cursor-pointer">
-        <img src="@/assets/icons/copy.svg" />
-        copy</span>
-    </div>
-    <a-textarea class="dark:text-white text-[121211]" placeholder="请输入" :rows="4"
-      :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
-  </div> -->
-  <div class="flex justify-between mb-[32px]">
-    <span class="text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
-    <a-button class="btn" @click="deployBtn">Deploy</a-button>
-  </div>
-  <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
-    :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle id="formState">
+  <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
+    :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
+    <a-form-item>
+      <div class="flex justify-between mb-[32px]">
+        <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
+        <a-button class="btn" :disabled="isSend" type="primary" html-type="submit">{{
+          isSend? buttonInfo + 'ing': buttonInfo
+        }}</a-button>
+      </div>
+    </a-form-item>
     <div v-for="item in inputs">
-
-      <a-form-item class="" name="" :rules="[{ required: true, message: 'Please input your Version!' }]">
+      <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          placeholder="请输入" allowClear></a-input>
+          :placeholder="'Enter a value for ' + item.internalType" allowClear
+          v-model:value="formData[item.name]"></a-input>
       </a-form-item>
     </div>
     <div class="mb-[24px]">
@@ -39,7 +26,7 @@
           <img src="@/assets/icons/copy.svg" />
           copy</span>
       </div>
-      <a-textarea class="dark:text-white text-[121211]" placeholder="请输入" :rows="4" v-model:value="hashValue"
+      <a-textarea class="dark:text-white text-[121211]" placeholder="" disabled :rows="4" v-model:value="hashValue"
         :class="theme.themeValue === 'dark' ? 'dark-css' : ''" ref="textareaRef" />
     </div>
   </a-form>
@@ -57,12 +44,13 @@ const props = defineProps({
   contractAddress: String,
   checkValue: String,
   abiInfo: String,
+  buttonInfo: String,
   inputs: { type: Array, default: () => { return [] } },
 
 })
-
+const isSend = ref(false);
 const hashValue = ref('')
-const formRef = ref(null);
+const formRef = ref();
 const textareaRef = ref();
 const formState = reactive({
   contractAddress: '',
@@ -70,41 +58,40 @@ const formState = reactive({
   abiInfo: '',
 });
 
+const formData = reactive({});
+
 const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
-console.log(formState, 'formState')
+// console.log(formState, 'formState')
 
 
-const deployBtn = async () => {
+const submit = async () => {
+  isSend.value = true
   const { ethereum } = window;
 
   let provider = new ethers.providers.Web3Provider(ethereum);
   let abi = YAML.parse(formState.abiInfo);
-  let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
-  console.log(contract, 'contract')
+  // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
 
-  const data = new FormData(formRef.value?.target);
-
-
-  // let currentValue = await contract.getValue();
-
-  let exec;
-  if (data.get("__value")) {
-    const value = ethers.utils.parseEther(data.get("__value") || "0");
-    data.delete("__value");
-    exec = contract[formState.checkValue](...data.values(), { value });
-  } else {
-    exec = contract[formState.checkValue](...data.values());
+  // console.log(contract, ...(Object.values(formData)), 'contract')
+  try {
+    let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+    contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+      console.log(tx, tx.hash, 'tx')
+      hashValue.value = tx.hash;
+      tx.wait().then((result: any) => {
+        isSend.value = false;
+        console.log(result, 'tx send success!')
+      })
+    }).catch((err: any) => {
+      isSend.value = false;
+      console.log(err, 'err')
+    })
+  } catch (errorInfo) {
+    isSend.value = false;
+    message.error('调用失败')
+    console.log(errorInfo, 'errorInfo')
   }
-
-  // console.log(exec, 'exec')
-  // exec.then((val: any) => {
-  //   console.log(val, 'val')
-  // }).catch((err: any) => {
-  //   console.log(err, 'err')
-  // })
-
-
 }
 
 const copy = () => {
@@ -132,6 +119,18 @@ const copy = () => {
   height: 43px;
 }
 
+:deep(.ant-btn-primary[disabled]) {
+  background-color: #E2B578;
+  color: #ffffff;
+  border-color: #E2B578;
+}
+
+:deep(.ant-btn-primary[disabled]:hover) {
+  background-color: #E2B578;
+  color: #ffffff;
+  border-color: #E2B578;
+}
+
 .ant-input-affix-wrapper {
   background: transparent;
   border-radius: 8px;
@@ -142,6 +141,16 @@ const copy = () => {
   height: 32px;
   background: transparent;
   color: #121211;
+}
+
+:deep(.ant-input.ant-input-disabled) {
+  height: unset;
+  background: transparent;
+  color: #ffffff;
+}
+
+:deep(.ant-input[disabled]:hover) {
+  border-color: #E2B578;
 }
 
 html[data-theme="dark"] {
@@ -156,9 +165,9 @@ html[data-theme="dark"] {
     color: #ffffff;
   }
 
-  :deep(.anticon.ant-input-clear-icon) {
-    color: #E0DBD2;
-  }
+  // :deep(.anticon.ant-input-clear-icon) {
+  //   color: #E0DBD2;
+  // }
 }
 
 input::-webkit-input-placeholder,

@@ -32,7 +32,7 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
-  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user,repo&state=${state}`;
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user,repo,delete_repo&state=${state}`;
   const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
   myWindow?.focus()
 }
@@ -58,7 +58,10 @@ onMounted(() => {
   .login-content {
     font-size: 16px;
     width: 400px;
-    margin: 164px auto;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
     .login-btn {
       border-radius: 8px;

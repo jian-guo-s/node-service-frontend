@@ -3,7 +3,9 @@
     <div class="process-content">
       <div class="flex justify-between">
         <span class="process-content-title">{{ $t('workFlows.executionProcess') }}</span>
-        <span class="text-[14px] cursor-pointer" @click="checkAllLogs">{{ $t('workFlows.viewFullLogs') }}</span>
+        <span class="text-[14px] text-[#E2B578] cursor-pointer" @click="checkAllLogs">
+          {{ $t('workFlows.viewFullLogs') }}
+        </span>
       </div>
       <div class="process-scroll-box wrapper" ref="wrapper">
         <div class="process-scroll content">

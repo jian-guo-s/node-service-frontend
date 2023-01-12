@@ -1,12 +1,14 @@
 <template>
   <div class="default-header bg-[#FFFFFF] dark:bg-[#1D1C1A] flex justify-between">
-    <div class="flex items-center cursor-pointer" @click="goHome">
-      <img src="@/assets/images/logo.png" class="h-[46px]" />
-      <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
+    <div class="flex items-center cursor-pointer">
+      <div class="flex items-center cursor-pointer" @click="goHome">
+        <img src="@/assets/images/logo.png" class="h-[46px]" />
+        <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
+      </div>
       <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
           NodeService 
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
