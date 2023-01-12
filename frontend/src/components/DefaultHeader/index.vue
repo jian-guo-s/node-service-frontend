@@ -8,19 +8,11 @@
       <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
-<<<<<<< HEAD
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
           NodeService 
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
           <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px]" />
-=======
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer"
-          @click.stop>
-          NodeService
-          <img src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
-          <img src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
->>>>>>> 755e989aa6a239e7b6f6394788b6f94f049da671
         </div>
         <template #overlay>
           <a-menu>
