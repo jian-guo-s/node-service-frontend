@@ -16,15 +16,13 @@
         </div>
         <template #overlay>
           <a-menu>
-            <a-menu-item>
-              <a @click="goRPCs">
-                <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
-                RPCs</a>
+            <a-menu-item @click="goRPCs">
+              <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
+                RPCs
             </a-menu-item>
-            <a-menu-item>
-              <a @click="goApps">
-                <img src="@/assets/icons/Apps.svg" class="h-[24px]" />
-                Apps</a>
+            <a-menu-item @click="goApps">
+              <img src="@/assets/icons/Apps.svg" class="h-[24px]" />
+                Apps
             </a-menu-item>
           </a-menu>
         </template>

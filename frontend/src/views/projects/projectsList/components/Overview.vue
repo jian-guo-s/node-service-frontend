@@ -103,7 +103,7 @@
             />
             {{ viewInfo.recentDeploy.version }}｜{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</div>
           <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-          <div class="text-[#E2B578]" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-else>View Contract</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-else>View Contract</div>
         </div>
       </div>
     </div>

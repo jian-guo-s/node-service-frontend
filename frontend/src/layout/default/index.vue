@@ -1,4 +1,12 @@
 <template>
+  <a-config-provider>
+    <template #renderEmpty>
+      <div style="text-align: center">
+        <img src="@/assets/images/cl-noData-block.png" alt="" class="w-[128px] hidden dark:inline-block" />
+        <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] dark:hidden" />
+        <p>No Data</p>
+      </div>
+    </template>
   <div class="">
     <!-- Default Layout -->
     <a-layout class="layout-default" id="layout-default" :class="layoutClass">
@@ -22,13 +30,15 @@
     </a-layout>
     <!-- / Dashboard Layout -->
   </div>
+  </a-config-provider>
 </template>
 <script lang="ts" setup>
 import DefaultHeader from "../../components/DefaultHeader/index.vue";
 import Support from "../../components/Support.vue";
 import { RouterView, useRoute } from "vue-router";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 const routes = useRoute();
+
 const layoutClass = computed(() => {
   return routes.meta.layoutClass;
 });

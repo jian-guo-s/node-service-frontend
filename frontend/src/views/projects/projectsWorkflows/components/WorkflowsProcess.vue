@@ -10,7 +10,7 @@
       <div class="process-scroll-box wrapper" ref="wrapper">
         <div class="process-scroll content">
           <div class="inline-block execution_process_item" v-for="item in processData" :key="item.name">
-            <div class="inline-block border border-solid border-[#EFEFEF] p-[11px] rounded-[5px]"
+            <div class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px]"
               :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
               <img src="@/assets/icons/start.svg" class="mr-[24px]" v-if="item.status === 99" />
               <img :src="getImageUrl(item.status)" class="w-[28px] mr-[24px] align-middle"

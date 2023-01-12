@@ -64,7 +64,7 @@
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="JavaScript">
           <div class="flex justify-between text-[#000000] font-bold mb-2">
-            <div>HTTPS Example</div>
+            <div class="font-bold">HTTPS Example</div>
             <img @click="copyInfo(appInfo.code_examples.js)"
               src="@/assets/icons/copy.svg"
               class="h-[19px] cursor-pointer"
@@ -76,7 +76,7 @@
         </a-tab-pane>
         <a-tab-pane key="2" tab="CLI">
           <div class="flex justify-between text-[#000000] font-bold mb-2">
-            <div>HTTPS Example</div>
+            <div class="font-bold">HTTPS Example</div>
             <img @click="copyInfo(appInfo.code_examples.cli)"
               src="@/assets/icons/copy.svg"
               class="h-[19px] cursor-pointer"
@@ -88,7 +88,7 @@
         </a-tab-pane>
         <a-tab-pane key="3" tab="Python">
           <div class="flex justify-between text-[#000000] font-bold mb-2">
-            <div>HTTPS Example</div>
+            <div class="font-bold">HTTPS Example</div>
             <img @click="copyInfo(appInfo.code_examples.python)"
               src="@/assets/icons/copy.svg"
               class="h-[19px] cursor-pointer"
@@ -100,7 +100,7 @@
         </a-tab-pane>
         <a-tab-pane key="4" tab="Go">
           <div class="flex justify-between text-[#000000] font-bold mb-2">
-            <div>HTTPS Example</div>
+            <div class="font-bold">HTTPS Example</div>
             <img @click="copyInfo(appInfo.code_examples.go)"
               src="@/assets/icons/copy.svg"
               class="h-[19px] cursor-pointer"
@@ -297,14 +297,8 @@
   display: flex;
   justify-content: center;
 }
-:deep(.ant-tabs-tab-btn:hover),:deep(.ant-tabs-tab:hover){
-  color: @baseColor;
-}
-:deep(.ant-tabs-ink-bar) {
-  background: @baseColor;
-}
-:deep(.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
-  color: @baseColor;
+:deep(.ant-tabs-top>.ant-tabs-nav:before){
+  border-color: #F4F4F4 !important;
 }
 :deep(.ant-input-affix-wrapper-disabled){
   background-color: transparent;

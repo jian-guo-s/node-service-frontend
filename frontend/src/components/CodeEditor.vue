@@ -43,7 +43,7 @@ export default {
           // 'editor.foreground': '#000000',
           "editor.background": "#272A34", //背景色
           // 'editorCursor.foreground': '#8B0000',
-          'editor.lineHighlightBackground': '#FFFFFF', //选中行背景颜色
+          // 'editor.lineHighlightBackground': '#FFFFFF', //选中行背景颜色
           // 'editorLineNumber.foreground': '#008800',
           'editor.selectionBackground': '#e6f7ff', //选中文字背景颜色
           // 'editor.inactiveSelectionBackground': '#88000015'

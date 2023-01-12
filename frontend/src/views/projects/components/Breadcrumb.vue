@@ -6,7 +6,7 @@
       <span class="font-bold align-middle">{{ $t("workFlows.back") }}</span>
     </span>
     <span class="font-bold align-middle">
-      <span>{{ currentName }}</span>
+      <span class="font-bold">{{ currentName }}</span>
       <slot name="tags"></slot>
     </span>
 
