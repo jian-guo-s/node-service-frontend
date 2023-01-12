@@ -7,9 +7,10 @@
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer">
-          NodeService
-          <img src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
-          <img src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
+          NodeService 
+          <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
+          <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
+          <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px]" />
         </div>
         <template #overlay>
           <a-menu>
@@ -30,13 +31,13 @@
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
         <div @click="changeTheme('dark')"
-          class="w-[36px] border border-solid border-[#E2B578] dark:border-[#FFFFFF] flex items-center justify-center rounded-tl-[6px] rounded-bl-[6px]">
+          class="w-[44px] border border-solid border-[#E2B578] flex items-center justify-center rounded-tl-[6px] rounded-bl-[6px]">
           <img src="@/assets/icons/dark.svg" class="h-[20px]" />
         </div>
         <div @click="changeTheme('white')"
-          class="bg-[#E2B578] dark:bg-transparent w-[36px] dark:border dark:border-solid dark:border-[#8A8A8A] flex items-center justify-center rounded-tr-[6px] rounded-br-[6px]">
-          <img src="@/assets/icons/white-h.svg" class="h-[20px] hidden dark:inline-block" />
-          <img src="@/assets/icons/white.svg" class="h-[20px] dark:hidden" />
+          class="bg-[#E2B578] w-[44px] flex items-center justify-center rounded-tr-[6px] rounded-br-[6px]">
+          <!-- <img src="@/assets/icons/white-h.svg" class="h-[20px] hidden dark:inline-block" /> -->
+          <img src="@/assets/icons/white.svg" class="h-[20px]" />
         </div>
       </div>
       <div>

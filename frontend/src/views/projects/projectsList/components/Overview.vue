@@ -16,10 +16,10 @@
       </div>
     </div>  
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <div class="grid grid-cols-5 gap-4">
-        <div class="col-span-2">
+      <div class="grid grid-cols-4 gap-4">
+        <div >
           <div class="text-[16px] font-bold">Code Repository</div>
-          <div class="my-2">
+          <div class="my-2 text-ellipsis">
             <a target="_blank" :href="viewInfo.repositoryUrl">{{ viewInfo.repositoryUrl }}</a>
           </div>
           <div>
@@ -41,21 +41,24 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
+            <div class="text-ellipsis">Running｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
+          </div>
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
-          <div class="my-2 flex items-center" v-else-if="viewInfo.recentCheck.status === 3">
+            <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
+          </div>
+          <div class="my-2 flex items-center " v-else-if="viewInfo.recentCheck.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            Success｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
-          <div class="my-2" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
+            <div class="text-ellipsis">Success｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
+          </div>
+          <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)" v-if="viewInfo.recentCheck.status === 0">Check Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View Result</div>
@@ -68,21 +71,23 @@
               src="@/assets/icons/running.svg"
               class="h-[16px] mr-1"
             />
-            Running｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
+            <div class="text-ellipsis">Running｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
           </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 2">
             <img
               src="@/assets/icons/failed.svg"
               class="h-[16px] mr-1"
             />
-            Failed｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
+            <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
+          </div>
           <div class="my-2 flex items-center" v-else-if="viewInfo.recentBuild.status === 3">
             <img
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            Success｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
-          <div class="my-2" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
+            <div class="text-ellipsis">Success｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
+          </div>
+          <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}</div>
           <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)" v-if="viewInfo.recentBuild.status === 0">Build Now</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer" @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
@@ -109,7 +114,6 @@ import { toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { transTimestamp } from '@/utils/dateUtil';
 import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
@@ -122,10 +126,6 @@ const props = defineProps({
 });
 const { viewType, viewInfo } = toRefs(props); 
 const emit = defineEmits(["loadProjects"]);
-
-const setDays = (startTime: any) => {
-  return Math.floor((new Date() - new Date(transTimestamp(startTime))) / (60 * 60 * 24 * 1000));
-}
 
 const goDetail = (id: string) => {
   router.push("/projects/"+id+"/details");
@@ -224,5 +224,11 @@ html[data-theme='dark'] {
 // }
 a, a:hover{
   color: #151210;
+}
+
+.text-ellipsis{
+  text-overflow:ellipsis;/*文字溢出的部分隐藏并用省略号代替*/
+  white-space:nowrap;/*文本不自动换行*/
+  overflow: hidden;
 }
 </style>
