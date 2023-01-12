@@ -12,14 +12,14 @@
       Support Chain</div>
     <div class="grid grid-cols-2 gap-4">
       <div v-for="(item, index) in chainList" :key="index" class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
-        <div class="text-[24px] dark:font-bold font-normal mb-[32px] flex items-center">
+        <div class="text-[24px] font-bold mb-[32px] flex items-center">
           <img :src="getImageURL(`${item.name}.png`)"
             class="h-[32px] rounded-full mr-2"
           />
           {{ item.name }}
         </div>
         <div class="flex items-center mb-[32px]">
-          <div class="w-1/3 font-bold dark:font-normal">HTTPS</div>
+          <div class="w-1/3 font-normal">HTTPS</div>
           <div class="hidden w-full dark-input dark:inline-block">
             <a-input v-model:value="item.http_address"  />
           </div>
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="flex items-center mb-[32px]">
-          <div class="w-1/3 font-bold dark:font-normal">WEBSOCKETS</div>
+          <div class="w-1/3 font-normal">WEBSOCKETS</div>
           <div class="hidden w-full dark-input dark:inline-block">
             <a-input v-model:value="item.websocket_address" />
           </div>

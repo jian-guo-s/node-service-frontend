@@ -29,6 +29,7 @@ import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
+import { message } from 'ant-design-vue';
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -59,7 +60,7 @@ const goCreateProject = () => {
 onMounted(() => {
   getProjects();
   timer.value = window.setInterval(() => {
-      // 其他定时执行的方法
+    // 其他定时执行的方法
     getProjects();
   }, 5000);
 })
