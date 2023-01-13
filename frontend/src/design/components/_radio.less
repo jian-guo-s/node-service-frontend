@@ -1,15 +1,21 @@
 
 html[data-theme='dark'] {
   .ant-radio-wrapper{
-    color: #E0DBD2;
+    color: #FFFFFF;
   }
   .ant-radio-inner{
     border-color: #434343;
   }
+  .ant-radio-disabled+span{
+    color: #6B6B6B;
+  }
+  .ant-radio-disabled .ant-radio-inner{
+    border-color: #434343 !important;
+  }
 }
 
 .ant-radio-wrapper {
-  color: #BBBAB9;
+  color: #151210;
 }
 .ant-radio-inner{
   border-color: #EBEBEB;
@@ -18,9 +24,19 @@ html[data-theme='dark'] {
   height: 20px;
   width: 20px;
 }
+.ant-radio-disabled .ant-radio-inner{
+  border-color: #EBEBEB !important;
+  background-color: transparent;
+}
 .ant-radio-inner::after{
   border-radius: 2px;
 }
 .ant-radio-input:focus + .ant-radio-inner{
   box-shadow: 0 0 0 1px #E2B578;
+}
+.ant-radio-wrapper-checked span{
+  color: #E2B578;
+}
+.ant-radio-disabled+span{
+  color: #BBBAB9;
 }

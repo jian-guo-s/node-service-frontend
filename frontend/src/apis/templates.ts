@@ -25,3 +25,15 @@ export function apiTemplatesDetail(id: String) {
     method: "get",
   });
 }
+
+//Popular Template
+export function apiTemplatesShow(type: String) {
+  return httpRequest({
+    url: "/api/templates/show",
+    method: "get",
+    params: {
+      type: type
+    },
+  });
+}
+
