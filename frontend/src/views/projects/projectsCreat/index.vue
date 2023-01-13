@@ -2,22 +2,22 @@
   <div>
     <div class="mb-[32px]">
       <div class="text-[24px] font-bold">Let‘s create your project.</div>
-      <div class="text-[#E0DBD2]">Ready to start building? Get started with one of our Templates or  use an existing repository.</div>
+      <div class="dark:text-[#E0DBD2] text-[#73706E]">Ready to start building? Get started with one of our Templates or  use an existing repository.</div>
     </div>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="grid grid-cols-2 gap-8">
         <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item label="Project Name" name="name" >
             <a-input v-model:value="formData.name" placeholder="Project Name" allow-clear autocomplete="off" />
-            <div class="text-[#E0DBD2]">Great project names are short and memorable.</div>
+            <div class="dark:text-[#E0DBD2] text-[#73706E]">Great project names are short and memorable.</div>
           </a-form-item>
           <a-form-item class="new-label" label="Project Type" name="type" >
-            <a-radio-group v-model:value="formData.type" name="type">
+            <a-radio-group v-model:value="formData.type" name="type" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">Contract
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Contract code.</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2">FrontEnd
-                <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
+              <a-radio :style="radioStyle" value="2" disabled="true">FrontEnd
+                <div>Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
                 <div>Please pay attention to Hamster</div>
@@ -50,12 +50,12 @@
         </a-form>
         <div>
           <div class="font-bold text-[16px]">Popular Template</div>
-          <div class="text-[#E0DBD2] mb-[32px]">A collection of our most deployed contracts.</div>
-          <div class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" class="bg-[#36322D] border border-solid border-[#434343] rounded-[12px] py-[32px] px-[24px]">
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]">A collection of our most deployed contracts.</div>
+          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
+            <div v-for="(item, index) in showList" :key="index" class="bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[12px] py-[32px] px-[24px]">
               <img :src="item.logo" class="h-[40px] w-[40px]" />
               <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-              <div class="text-[#BBBAB9]">{{ item.description }}</div>
+              <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
               <div class="flex mt-4">
                 <div class="flex items-center">
                   <img
