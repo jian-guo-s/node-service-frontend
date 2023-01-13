@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :currentName="'Contract Deploy'">
+  <Breadcrumb :currentName="'Contract Deploy'" :isClick="loading">
     <template v-slot:tags>
       <span
         class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
@@ -43,7 +43,7 @@
   </div>
 
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
-  <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
+  <Wallets ref="showWallets"></Wallets>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
@@ -72,7 +72,6 @@ const queryParams = reactive({
 const loading = ref(false);
 const visible = ref(false)
 const showWallets = ref();
-const isConnectedWallet = ref(false);
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
@@ -112,11 +111,6 @@ const getProjectsContract = async () => {
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   loading.value = true
   const { ethereum } = window;
-
-  // if (ethereum.chainId === "0x1") {
-  //   switchToChain(5)
-  // }
-
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
@@ -127,12 +121,11 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   try {
     const contract = await factory.deploy();
     await contract.deployed();
-    console.log(contract, 'contract')
+    // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
-    message.info('该请求被拒绝');
-    // return 'err'
+    message.error('请求失败');
   }
 }
 
@@ -140,7 +133,11 @@ const switchToChain = (chainId: string) => {
   window.ethereum.request({
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
-  });
+  }).then((res: any) => {
+    console.log(res, '成功')
+  }).catch((err: any) => {
+    console.log(err, 'err')
+  })
 }
 
 const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
@@ -163,6 +160,7 @@ const deployClick = async () => {
   if (isWalletAccount == null || isWalletAccount === '[]') {
     // visible.value = true
     showWallets.value?.onClickConnect();
+
     // setWalletBtn(true)
   } else {
     // 连接钱包后再创建合约
@@ -193,7 +191,6 @@ const setContractFactory = async (name: any) => {
     promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item))
   })
   const res = await Promise.all(promise)
-  // console.log(res, '可以跳转了res')
   loading.value = false;
   const result = res.some(it => {
     return it !== undefined
@@ -204,11 +201,6 @@ const setContractFactory = async (name: any) => {
 const cancelModal = (val: boolean) => {
   visible.value = val
 }
-
-const setWalletBtn = (val: boolean) => {
-  isConnectedWallet.value = val;
-}
-
 
 const changeNetwork = (val: string) => {
   // console.log(val, 'val')

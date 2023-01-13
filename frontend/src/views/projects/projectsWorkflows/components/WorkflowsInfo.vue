@@ -15,8 +15,10 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
-          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status]}`) }}</div>
-          <!-- <div class="process-detail-info">Action succeed</div> -->
+          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status] }`) }}</div>
+          <div class="process-detail-info error-info" v-show="title === 'Check'">
+            {{ workflowsDetailsData.errorNumber + ' issues found' }}
+          </div>
         </div>
       </a-col>
       <a-col :span="8">
@@ -61,6 +63,10 @@ html[data-theme='dark'] {
   .process-detail-info {
     color: #FFFFFF;
   }
+
+  .error-info {
+    color: #FD0505;
+  }
 }
 
 .workFlows {
@@ -98,5 +104,9 @@ html[data-theme='dark'] {
 
 .process-detail-info:last-child {
   margin-bottom: 0px;
+}
+
+.error-info {
+  color: #FD0505;
 }
 </style>

@@ -30,22 +30,25 @@ html[data-theme='dark'] {
   }
 }
 
+.ant-table {
+  background-color: transparent;
+}
 .ant-table,
 .ant-table:hover{
   border-radius: 12px;
 }
 .ant-table-content,
 .ant-table-content:hover {
-  background-color: transparent!important;
+  background-color: transparent;
 }
 .ant-table-thead>tr>th {
-  background-color: #E2B578 !important;
+  background-color: #E2B578;
   border-bottom: 1px solid #E2B578;
-  color: #ffffff!important;
+  color: #ffffff;
 }
 
 .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan]):before {
-  width: 0!important;
+  width: 0;
 }
 
 .ant-table-tbody .ant-table-cell {
@@ -71,3 +74,17 @@ html[data-theme='dark'] {
 .ant-table-empty .ant-table-tbody>tr.ant-table-placeholder {
   border-radius: 12px;
 }
+
+.ant-table-row:last-child .ant-table-cell:first-child {
+  border-radius: 0 0 0 12px;
+}
+
+.ant-table-row:last-child .ant-table-cell:last-child {
+  border-radius: 0 0 12px 0;
+}
+
+.no-table-data .ant-table-tbody tr>.ant-table-cell:first-child {
+  border-radius: 0 0 12px 12px;
+}
+
+

@@ -16,7 +16,6 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import YAML from "yaml";
-import dayJs from "dayjs";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
@@ -38,20 +37,13 @@ const title = ref('');
 const currentName = ref('');
 const inRunning = ref(false);
 const processData = ref([]);
+const checkReportData = reactive([]);
 const contractListData = reactive([]);
 const workflowsDetailsData = reactive({
   startTime: '',
   endTime: '',
   RepositoryUrl: '',
-});
-
-const checkReportData = reactive({
-  id: 1,
-  workflowId: 1,
-  workflowDetailsId: 1,
-  name: 'contract-one',
-  checkTool: '',
-  result: "",
+  errorNumber: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -79,7 +71,19 @@ const getContractList = async () => {
 }
 
 const getCheckReport = async () => {
+  let issue = 0
   const { data } = await apiGetWorkFlowsReport(queryJson);
+  data.map((item: any) => {
+    item.reportFileData = YAML.parse(item.reportFile);
+    item.reportFileData.map(val => {
+      issue += val.issue
+    })
+  })
+
+  // console.log(errop, 'errop')
+  workflowsDetailsData.errorNumber = issue;
+  // Object.assign(workflowsDetailsData, { errorNumber, issue })
+  Object.assign(checkReportData, data)
 }
 
 const stopBtn = async () => {
