@@ -45,7 +45,6 @@
 <script lang='ts' setup>
 import { ref, reactive, onMounted, toRefs } from "vue";
 import YAML from "yaml";
-import * as ethers from "ethers";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();

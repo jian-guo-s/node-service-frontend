@@ -46,6 +46,7 @@
           <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
             <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
             <div class="text-[#E2B578] dark:text-[#FFFFFF]">{{ walletAccount }}</div>
+
           </div>
           <template #overlay>
             <a-menu>
@@ -100,12 +101,15 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
+import { watch } from "vue";
 import { useRouter } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { useWalletAddress } from "@/stores/useWalletAddress";
 const theme = useThemeStore()
+const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
 const router = useRouter();
 
@@ -183,8 +187,19 @@ onMounted(() => {
   changeTheme('dark');
 });
 
+watch(
+  () => walletAddress.walletAddress,
+  (value, newV) => {
+    if (value) {
+      // console.log(walletAccount.value, 'kkkk')
+      isConnectedWallet.value = true
+      walletAccount.value = walletAddress.walletAddress?.substring(0, 5) + "..." + walletAddress.walletAddress?.substring(walletAddress.walletAddress.length - 4);
+    }
+  }, { deep: true, immediate: true }
+);
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
+  walletAddress.setWalletAddress('');
   visibleDisconnect.value = false;
 }
 const showWallet = () => {
@@ -194,7 +209,7 @@ const showWallet = () => {
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
   const account = window.localStorage.getItem("walletAccount");
-  walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
+  // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 </script>
 

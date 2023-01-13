@@ -3,6 +3,8 @@ import { onBeforeMount, onMounted, watch } from 'vue';
 import Onboard, { type WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
 import { useOnboard } from '@web3-onboard/vue'
+import { useWalletAddress } from "@/stores/useWalletAddress";
+const walletAddress = useWalletAddress()
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
 const emit = defineEmits(["setWalletBtn"]);
@@ -91,7 +93,6 @@ onBeforeMount(async () => {
   if (walletStates[0]) {
     setWalletAccount(walletStates[0]);
   }
-
 });
 
 const onClickConnect = async () => {
@@ -112,6 +113,7 @@ const setWalletAccount = async (walletState: { accounts: any; }) => {
     //记录钱包地址
     const { accounts } = walletState;
     window.localStorage.setItem("walletAccount", accounts[0].address);
+    walletAddress.setWalletAddress(accounts[0].address);
     emit("setWalletBtn", true);
   } else {
     emit("setWalletBtn", false);

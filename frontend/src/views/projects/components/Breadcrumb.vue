@@ -1,6 +1,6 @@
 <template>
   <div class="dark:text-white text-[#121211] text-[24px]">
-    <span @click="backRoute" class="cursor-pointer backInfo">
+    <span @click="backRoute($event)" class="backInfo" :class="isClick? '':'isclick'">
       <img src="@/assets/icons/back-dark.svg" class="svg-img w-[24px] mr-[8px] hidden dark:inline-block" />
       <img src="@/assets/icons/back-white.svg" class="svg-img w-[24px] mr-[8px] dark:hidden" />
       <span class="font-bold align-middle">{{ $t("workFlows.back") }}</span>
@@ -21,12 +21,16 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  isClick: {
+    type: Boolean,
+    default: true,
+  }
 });
 const router = useRouter();
-const { currentName } = toRefs(props);
+const { currentName, isClick } = toRefs(props);
 
-const backRoute = () => {
-  router.go(-1)
+const backRoute = (e: Event) => {
+  isClick.value ? e.stopPropagation() : router.go(-1)
 }
 </script>
 <style lang='less' scoped>
@@ -45,6 +49,11 @@ const backRoute = () => {
     border-radius: 1px;
   }
 }
+
+.isclick {
+  cursor: pointer;
+}
+
 
 html[data-theme='dark'] {
   .backInfo::before {

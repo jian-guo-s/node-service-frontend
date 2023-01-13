@@ -4,10 +4,11 @@
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">{{ $t("workFlows.contractList") }}</span>
       <a-button class="btn" @click="toDeployUrl(contractListData[0])" :disabled="contractListData?.length <= 0">{{
-    $t('common.deploy')
-}}</a-button>
+        $t('common.deploy')
+      }}</a-button>
     </div>
-    <a-table :dataSource="contractListData" :columns="columns" :pagination="false">
+    <a-table :dataSource="contractListData" :columns="columns" :pagination="false"
+      :class="contractListData.length <= 0 ? 'no-table-data' : ''">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDeployUrl(record)">{{ $t('common.deploy') }}</a>
