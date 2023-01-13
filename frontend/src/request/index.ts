@@ -23,7 +23,7 @@ service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
     // mukIAStKGg7Rsx8/9AsCBF5jPymptkw8s3CL6890Qqmmb16YAtdzZ29acLDwfkUm
-    let token = localStorage.getItem("token") || 'mukIAStKGg7Rsx8/9AsCBF5jPymptkw8s3CL6890Qqmmb16YAtdzZ29acLDwfkUm';
+    let token = localStorage.getItem("token") || '';
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       (config as Recordable).headers['Access-Token'] = token;
     }
