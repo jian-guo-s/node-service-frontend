@@ -29,7 +29,7 @@
         <div class="text-[#73706E] dark:text-[#E0DBD2] mb-2">{{ items.description }}</div>
         <div class="grid grid-cols-3 gap-4">
           <div v-for="(item, index2) in items.templatesList" :key="index2" class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] rounded-[12px] border border-solid p-4 cursor-pointer" @click="goDetail(item.id)">
-            <div class="font-bold">{{ item.name }}</div>
+            <div class="font-bold text-ellipsis">{{ item.name }}</div>
             <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
             <div class="flex mt-4">
               <div class="flex items-center">
@@ -109,5 +109,10 @@ const goBack = () => {
 }
 .white-css .border-box-checked{
   border-color: #E2B578;
+}
+.text-ellipsis{
+  text-overflow:ellipsis;/*文字溢出的部分隐藏并用省略号代替*/
+  white-space:nowrap;/*文本不自动换行*/
+  overflow: hidden;
 }
 </style>

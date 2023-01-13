@@ -83,9 +83,12 @@ const getProjects = async () => {
       size: pageSize.value,
     }
     const { data } = await apiGetProjects(params);
-    projectsList.value = data.data;
-    total.value = data.total;
-    
+    if (data.data === null || data.data === "[]") {
+      goCreateProject();
+    } else {
+      projectsList.value = data.data;
+      total.value = data.total;
+    }
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
