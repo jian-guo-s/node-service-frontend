@@ -87,7 +87,7 @@
 </template>
 <script lang='ts' setup>
 import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from "vue-router";
+import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { message } from 'ant-design-vue';
@@ -134,26 +134,27 @@ const formRules = computed(() => {
   };
 });
 const goNext = async () => {
+  setCreateProjectValue("/projects/template")
+}
+const setCreateProjectValue = async (path: RouteLocationRaw) => {
+
   await formRef.value.validate();
   
-  try {
+   try {
     const createProjectTemp = {
       name: formData.name,
       type: formData.type,
       frameType: formData.frameType,
     }
     window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
-    router.push("/projects/template");
+    router.push(path);
   } catch (error: any) {
     console.log("erro:",error)
-    message.error(error.response.data.message);
-  } finally {
-    // visibleModal.value = false;
   }
 }
 const goDetail = async (id: string) => {
-  await formRef.value.validate();
-  router.push("/projects/templates/"+id+"/details");
+
+  setCreateProjectValue("/projects/templates/" + id + "/details")
 }
 
 const getTemplatesShow = async () => {
