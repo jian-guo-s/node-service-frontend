@@ -2,8 +2,9 @@
   <div class="default-header bg-[#FFFFFF] dark:bg-[#1D1C1A] flex justify-between">
     <div class="flex items-center cursor-pointer">
       <div class="flex items-center cursor-pointer" @click="goHome">
-        <img src="@/assets/images/logo.png" class="h-[46px]" />
-        <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div>
+        <img src="@/assets/icons/logo-dark.svg" class="h-[46px] hidden dark:inline-block" />
+        <img src="@/assets/icons/logo-white.svg" class="h-[46px] dark:hidden" />
+        <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
       <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
@@ -31,13 +32,14 @@
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
         <div @click="changeTheme('dark')"
-          class="w-[44px] border border-solid border-[#E2B578] flex items-center justify-center rounded-tl-[6px] rounded-bl-[6px]">
-          <img src="@/assets/icons/dark.svg" class="h-[20px]" />
+          class="dark:bg-[#E2B578] w-[44px] border border-solid border-[#E2B578] flex items-center justify-center rounded-tl-[6px] rounded-bl-[6px]">
+          <img src="@/assets/icons/dark-b.svg" class="h-[20px] hidden dark:inline-block" />
+          <img src="@/assets/icons/dark.svg" class="h-[20px] dark:hidden" />
         </div>
         <div @click="changeTheme('white')"
-          class="bg-[#E2B578] w-[44px] flex items-center justify-center rounded-tr-[6px] rounded-br-[6px]">
-          <!-- <img src="@/assets/icons/white-h.svg" class="h-[20px] hidden dark:inline-block" /> -->
-          <img src="@/assets/icons/white.svg" class="h-[20px]" />
+          class="dark:bg-transparent bg-[#E2B578] w-[44px] border border-solid border-[#E2B578] flex items-center justify-center rounded-tr-[6px] rounded-br-[6px]">
+          <img src="@/assets/icons/white-b.svg" class="h-[20px] hidden dark:inline-block" />
+          <img src="@/assets/icons/white.svg" class="h-[20px] dark:hidden" />
         </div>
       </div>
       <div>

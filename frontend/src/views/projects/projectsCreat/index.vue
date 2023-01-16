@@ -52,7 +52,7 @@
           <div class="font-bold text-[16px]">Popular Template</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]">A collection of our most deployed contracts.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" class="bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[12px] py-[32px] px-[24px]">
+            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)" class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[12px] py-[32px] px-[24px]">
               <img :src="item.logo" class="h-[40px] w-[40px]" />
               <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
               <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
@@ -150,6 +150,10 @@ const goNext = async () => {
   } finally {
     // visibleModal.value = false;
   }
+}
+const goDetail = async (id: string) => {
+  await formRef.value.validate();
+  router.push("/projects/templates/"+id+"/details");
 }
 
 const getTemplatesShow = async () => {

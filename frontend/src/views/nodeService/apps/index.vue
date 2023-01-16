@@ -330,6 +330,7 @@
 :deep(.white-css .ant-table-tbody > tr > td){
   border-bottom: 1px solid #F4F4F4;
   color: #BBBAB9;
+  background-color: #FFFFFF;
 }
 :deep(.dark-css .ant-table-tbody > tr > td){
   border-bottom: 1px solid #302D2D;
@@ -345,6 +346,10 @@
 }
 :deep(.ant-table-container table > thead > tr:first-child th:last-child){
   border-top-right-radius: 12px;
+}
+:deep(.ant-table-row:last-child .ant-table-cell:last-child),
+:deep(.ant-table-row:last-child .ant-table-cell:first-child){
+  border-radius: 0;
 }
 :deep(.ant-pagination-prev button),:deep(.ant-pagination-next button){
   color: #8A8A8A;
