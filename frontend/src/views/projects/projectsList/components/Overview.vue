@@ -9,10 +9,36 @@
         </div>
       </div>
       <div>
-        <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
+        <label class="cursor-pointer" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">
+          <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block" />
+          Check
+        </label>
+        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+        <label class="cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">
+          <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block" />
+          Build
+        </label>
+        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+        <label class="cursor-pointer" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
+          <img src="@/assets/icons/deploy.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/deploy-b.svg" class="h-[16px] hidden dark:inline-block" />
+          Deploy
+        </label>
+        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+        <label class="cursor-pointer" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
+          <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block" />
+          Ops
+        </label>
+        <!-- <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
         <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">Build</a-button>
         <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button>
+        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button> -->
       </div>
     </div>  
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">

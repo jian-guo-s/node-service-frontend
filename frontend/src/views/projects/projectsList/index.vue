@@ -15,7 +15,7 @@
             </template>
           </a-input>
         </div>
-      <a-button type="primary" @click="goCreateProject">Creat Project</a-button>
+      <a-button type="primary" @click="goCreateProject">Creat by template</a-button>
     </div>
     <div v-for="(item, index) in projectsList" :key="index">
       <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
@@ -119,7 +119,7 @@ html[data-theme='dark'] {
   border-color: #EBEBEB;
 }
 :deep(.ant-btn-primary){
-  width: 120px;
+  // width: 120px;
   height: 40px;
 }
 :deep(.ant-pagination){
