@@ -107,7 +107,7 @@
                 <label class="text-[#E2B578]">{{ record.version }}</label>
               </template>
               <template v-if="column.dataIndex === 'network'">
-                <label v-if="record.network.String !== '' " class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ record.network.String }}</label>
+                <label v-if="record.network.String !== '' " v-for="(item, indexF) in record.network.String.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
@@ -290,6 +290,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'stageInfo',
+    width: '200px'
   },
   {
     title: 'Time',
@@ -297,6 +298,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
+    width: '150px'
   },
   {
     title: '操作',
