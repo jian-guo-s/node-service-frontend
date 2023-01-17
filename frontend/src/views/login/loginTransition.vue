@@ -15,7 +15,7 @@ import { apiLogin } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
-const clientId = ref('67f15ceaf935341e04df');
+const clientId = ref('a782e08a53e86517dcc5');
 
 const login = async () => {
   try {
