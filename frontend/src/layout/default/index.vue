@@ -1,11 +1,12 @@
 <template>
   <a-config-provider>
     <template #renderEmpty>
-      <div style="text-align: center">
+      <!-- <div style="text-align: center">
         <img src="@/assets/images/cl-noData-block.png" alt="" class="w-[128px] hidden dark:inline-block" />
         <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] dark:hidden" />
         <p>No Data</p>
-      </div>
+      </div> -->
+      <NoData />
     </template>
   <div class="">
     <!-- Default Layout -->
@@ -35,6 +36,7 @@
 <script lang="ts" setup>
 import DefaultHeader from "../../components/DefaultHeader/index.vue";
 import Support from "../../components/Support.vue";
+import NoData from "@/components/NoData.vue"
 import { RouterView, useRoute } from "vue-router";
 import { computed, ref } from "vue";
 const routes = useRoute();

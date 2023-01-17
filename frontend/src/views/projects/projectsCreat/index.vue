@@ -9,7 +9,7 @@
         <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item label="Project Name" name="name" >
             <a-input v-model:value="formData.name" placeholder="Project Name" allow-clear autocomplete="off" />
-            <div class="dark:text-[#E0DBD2] text-[#73706E]">Great project names are short and memorable.</div>
+            <div class="dark:text-[#E0DBD2] text-[#73706E] mt-[8px]">Great project names are short and memorable.</div>
           </a-form-item>
           <a-form-item class="new-label" label="Project Type" name="type" >
             <a-radio-group v-model:value="formData.type" name="type" @change="getTemplatesShow">
@@ -52,7 +52,7 @@
           <div class="font-bold text-[16px]">Popular Template</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]">A collection of our most deployed contracts.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)" class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[12px] py-[32px] px-[24px]">
+            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)" class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <img :src="item.logo" class="h-[40px] w-[40px]" />
               <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
               <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
@@ -176,6 +176,9 @@ onMounted(() => {
 :deep(.new-label .ant-form-item-label > label) {
   font-size: 16px;
   font-weight: bold;
+}
+:deep(.new-label .ant-form-item-label) {
+  padding-bottom: 16px;
 }
 :deep(.white-css .ant-form-item-label > label) {
   color: #151210;

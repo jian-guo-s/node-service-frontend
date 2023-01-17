@@ -115,6 +115,7 @@ const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
 const router = useRouter();
 
+const defaultTheme = ref("dark");
 const showWallets = ref();
 const visibleWallet = ref(false);
 const visibleDisconnect = ref(false);
@@ -186,7 +187,10 @@ const signOut = () => {
 };
 
 onMounted(() => {
-  changeTheme('dark');
+  if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
+    defaultTheme.value = window.localStorage.getItem("themeValue");
+  }
+  changeTheme(defaultTheme.value);
 });
 
 watch(
