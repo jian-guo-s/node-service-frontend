@@ -1,7 +1,17 @@
 /**
  * Independent time operation tool to facilitate subsequent switch to dayjs
  */
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import relativeTime from'dayjs/plugin/relativeTime'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(relativeTime)
+dayjs.extend(duration)
+
 import { format } from 'date-fns';
 
 const DATE_TIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
@@ -92,6 +102,16 @@ export function transTimestamp(datetime: any, dateSeprator = '-', timeSeprator =
     }
     return `${year}${dateSeprator}${month}${dateSeprator}${day} ${hour}${timeSeprator}${minute}${timeSeprator}${second}`
   }
+}
+
+export function getDuration(start: any, end: any) {
+  let millisecond = dayjs(end).diff(dayjs(start))
+  return dayjs.duration(millisecond)
+}
+
+
+export function formatDateToLocale(datetime: any){
+  return dayjs(datetime).tz(dayjs.tz.guess())
 }
 
 export const formatToDate = formatDate;

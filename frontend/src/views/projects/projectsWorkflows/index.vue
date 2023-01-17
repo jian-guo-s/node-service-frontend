@@ -62,6 +62,7 @@ const getWorkflowsDetails = async () => {
     }, 5000);
   } else {
     clearTimeout(detailTimer.value);
+    queryJson.type === '1' ? getCheckReport() : getContractList();
   }
 }
 
@@ -97,7 +98,6 @@ const stopBtn = async () => {
   } else {
     message.info('该构建已结束')
   }
-
 }
 
 const getProjectsDetailData = async () => {
