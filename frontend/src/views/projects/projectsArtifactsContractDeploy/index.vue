@@ -109,6 +109,7 @@ const getProjectsContract = async () => {
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
+  debugger
   loading.value = true
   const { ethereum } = window;
   const provider = new ethers.providers.Web3Provider(ethereum);
@@ -125,6 +126,7 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
+    // console.log(errorInfo, 'errorInfo')
     message.error('请求失败');
   }
 }
