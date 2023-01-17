@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName"></Breadcrumb>
+      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
@@ -87,12 +87,17 @@ const getCheckReport = async () => {
 }
 
 const stopBtn = async () => {
-  try {
-    const { data } = await apiProjectsWorkflowsStop(queryJson);
-    getWorkflowsDetails()
-  } catch (err: any) {
-    message.error(err.message)
+  if (inRunning.value) {
+    try {
+      const { data } = await apiProjectsWorkflowsStop(queryJson);
+      getWorkflowsDetails()
+    } catch (err: any) {
+      message.error(err.message)
+    }
+  } else {
+    message.info('该构建已结束')
   }
+
 }
 
 const getProjectsDetailData = async () => {

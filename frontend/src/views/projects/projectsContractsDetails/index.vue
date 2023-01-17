@@ -1,6 +1,6 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
-    <Breadcrumb :currentName="'Hamster'"></Breadcrumb>
+    <Breadcrumb :currentName="'Hamster'" :isClick="false"></Breadcrumb>
     <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px">
       <a-select-option :value="item" v-for="item in versionData" :key="item" @change="changeVersion">{{
         item
