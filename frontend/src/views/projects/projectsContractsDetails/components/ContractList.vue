@@ -38,7 +38,7 @@
           :buttonInfo="buttonInfo" ref="contractForm">
         </ContractForm>
       </div>
-      <div v-if="!checkValue">noData</div>
+      <!-- <div v-if="!checkValue">noData</div> -->
     </div>
   </div>
 </template>
@@ -64,11 +64,12 @@ const inputs = ref([]);
 const contractForm = ref();
 
 const abiInfoData = YAML.parse(abiInfo.value)
+console.log(abiInfoData, 'abiInfoData')
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
-    if (!item.constant) {
+    if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
       sendAbis.push(item)
-    } else {
+    } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
       callAbis.push(item)
     }
   }
@@ -90,7 +91,7 @@ abiInfoData.map((item: any) => {
 const emit = defineEmits(["checkContract"])
 
 const checkContract = (name: string, val: any, text: string) => {
-  console.log(buttonInfo, 'buttonInfo')
+  // console.log(buttonInfo, 'buttonInfo')
   checkValue.value = name
   inputs.value = val.inputs
   buttonInfo.value = text

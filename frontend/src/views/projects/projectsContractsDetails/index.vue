@@ -108,7 +108,6 @@ const deploy = (val: any) => {
 }
 const changeVersion = (val: any) => {
   queryJson.version = val
-  // tabList = []
   getContractDeployDetail()
 }
 
@@ -157,7 +156,7 @@ onMounted(() => {
 
 :deep(.clickRowStyle-dark) {
   background-color: #463F36;
-}
+} 
 
 
 :deep(.clickRowStyle) {
