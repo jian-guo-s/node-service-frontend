@@ -9,7 +9,7 @@
     class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px] mt-[24px]">
     <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
       :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
-      <div class="text-[16px] font-bold mb-[20px]">Contract</div>
+      <div class="text-[16px] font-bold mb-[16px]">Contract</div>
       <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
         <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
@@ -23,7 +23,7 @@
         </a-checkbox-group>
         <!-- <Checkbox></Checkbox> -->
       </a-form-item>
-      <div class="text-[16px] font-bold mb-[20px]">Network / Chain</div>
+      <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
       <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
         <a-select v-model:value="formState.chain" style="width: 100%" placeholder="请选择">
@@ -229,6 +229,7 @@ onMounted(async () => {
 
 :deep(.ant-form label) {
   color: #121211;
+  margin-bottom: 16px;
 }
 
 .btn {
