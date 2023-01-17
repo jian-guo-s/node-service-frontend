@@ -173,7 +173,7 @@
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useRouter, useRoute } from "vue-router";
-import { transTimestamp } from '@/utils/dateUtil';
+import { formatDateToLocale  } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
 import StageVue from "./components/Stage.vue";
 import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiProjectsCheckTools,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
@@ -323,7 +323,7 @@ const contractTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'buildTime',
-    customRender: ({ text: date }) => transTimestamp(date, "/"),
+    customRender: ({ text: date }) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Action',
@@ -394,7 +394,7 @@ const reportTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'checkTime',
-    customRender: ({ text: date }) => transTimestamp(date, "/"),
+    customRender: ({ text: date }) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Action',

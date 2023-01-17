@@ -55,7 +55,7 @@ const columns = [{
   dataIndex: 'buildTime',
   align: "center",
   customRender: ({ text }) => {
-    return dayjs(text).format('YYYY/MM/DD ss:hh:mm')
+    return dayjs(text).format('YYYY/MM/DD HH:mm:ss')
   },
   key: 'buildTime'
 },
