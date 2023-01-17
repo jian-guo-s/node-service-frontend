@@ -21,6 +21,13 @@
         <template v-if="column.dataIndex === 'daylyRequests'">
           <Echarts :echartsId="`darkcharts${record.id}`" :echartsData="record.dayly_requests_7days" />
         </template>
+        <template v-if="column.dataIndex === 'network'">
+          {{ record.chain }}-{{ record.network }}
+        </template>
+        <template v-if="column.dataIndex === 'DaysOnHamster'">
+          {{ dayjs( record.DaysOnHamster).diff(new Date(),'day') }}
+          {{ dayjs( record.DaysOnHamster).diff(new Date(),'day') > 1 ? 'Days' : 'Day' }}
+        </template>
         <template v-if="column.dataIndex === 'action'">
           <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
         </template>
@@ -127,6 +134,7 @@
   import CodeEditor from "@/components/CodeEditor.vue"
   import { message } from 'ant-design-vue';
   import { useThemeStore } from "@/stores/useTheme";
+import dayjs from 'dayjs';
   const theme = useThemeStore()
 
   const router = useRouter();
@@ -179,11 +187,12 @@
     },
     {
       title: 'Days on Hamster',
-      dataIndex: 'created_at',
+      dataIndex: 'DaysOnHamster',
       align: 'center',
       ellipsis: 'fixed',
       key: 'DaysOnHamster',
-      customRender: ({ text }) => Math.floor((new Date()-new Date(text))/(60*60*24*1000))+' Days',
+      customRender: ({ text }) => dayjs(text).diff(new Date(),'day')+' Days',
+      // customRender: ({ text }) => Math.floor((new Date()-new Date(text))/(60*60*24*1000))+' Days',
     },
     {
       title: 'Action',

@@ -99,7 +99,7 @@ export default {
 :deep(.monaco-editor .line-numbers){
   color: #BBBAB9;
 }
-:deep(.mtk5){
+:deep(.mtk5),:deep(.mtk1){
   color: #E2B578;
 }
 :deep(.mtk22){

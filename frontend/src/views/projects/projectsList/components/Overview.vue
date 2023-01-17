@@ -9,31 +9,35 @@
         </div>
       </div>
       <div>
-        <label class="cursor-pointer" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">
-          <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block" />
-          Check
+        <label class="cursor-pointer group" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">
+          <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
+          <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+          <img src="@/assets/icons/check-color.svg" class="h-[16px] hidden group-hover:inline-block" />
+          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Check</label>
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">
-          <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block" />
-          Build
+        <label class="cursor-pointer group" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">
+          <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden group-hover:hidden" />
+          <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+          <img src="@/assets/icons/build-color.svg" class="h-[16px] hidden group-hover:inline-block" />
+          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Build</label>
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
-          <img src="@/assets/icons/deploy.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/deploy-b.svg" class="h-[16px] hidden dark:inline-block" />
-          Deploy
+        <label class="cursor-pointer group " @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
+          <img src="@/assets/icons/deploy.svg" class="h-[16px] dark:hidden group-hover:hidden" />
+          <img src="@/assets/icons/deploy-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+          <img src="@/assets/icons/deploy-color.svg" class="h-[16px] hidden group-hover:inline-block" />
+          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Deploy</label>
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
-          <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block" />
-          Ops
+        <label class="cursor-pointer group" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
+          <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden group-hover:hidden" />
+          <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+          <img src="@/assets/icons/ops-color.svg" class="h-[16px] hidden group-hover:inline-block" />
+          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Ops</label>
         </label>
         <!-- <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
         <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">Build</a-button>

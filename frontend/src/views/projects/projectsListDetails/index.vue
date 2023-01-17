@@ -70,7 +70,7 @@
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
               <div>{{ fromNowexecutionTime(record.startTime, "noThing") }} action</div>
-              <div>{{ record.duration }}m spend</div>
+              <div>{{ formatDurationTime(record.duration, "elapsedTime") }}</div>
             </div>
             <div v-else></div>
           </template>
@@ -122,7 +122,7 @@
                 <label class="text-[#E2B578]">{{ record.version }}</label>
               </template>
               <template v-if="column.dataIndex === 'network'">
-                <label v-if="record.network != ''" v-for="(item, indexF) in record.network.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+                <label v-if="record.network.String !== '' " class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ record.network.String }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
                 <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
@@ -171,7 +171,7 @@
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
+import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useRouter, useRoute } from "vue-router";
 import { transTimestamp } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
@@ -348,12 +348,12 @@ const contractPagination = reactive({
     // 改变 pageSize时的回调
     contractPagination.current = current;
     contractPagination.pageSize = pagesize;
-    // getApps();
+    getProjectsContract();
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     contractPagination.current = current;
-    // getApps();
+    getProjectsContract();
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
@@ -419,12 +419,12 @@ const reportPagination = reactive({
     // 改变 pageSize时的回调
     reportPagination.current = current;
     reportPagination.pageSize = pagesize;
-    // getApps();
+    getProjectsReports();
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     reportPagination.current = current;
-    // getApps();
+    getProjectsReports();
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });

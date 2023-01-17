@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="text-[32px] font-bold mb-4">
       <img
         src="@/assets/icons/chain.svg"
@@ -20,20 +20,25 @@
         </div>
         <div class="flex items-center mb-[32px]">
           <div class="w-1/3 font-normal">HTTPS</div>
-          <div class="hidden w-full dark-input dark:inline-block">
-            <a-input v-model:value="item.http_address"  />
+          <div class="w-full">
+            <a-input v-model:value="item.http_address" disabled="true" />
+          </div>
+          <!-- <div class="hidden w-full dark-input dark:inline-block">
+            <a-input v-model:value="item.http_address" disabled="true" />
           </div>
           <div class="w-full white-input dark:hidden">
-            <a-input v-model:value="item.http_address"  />
-          </div>
+            <a-input v-model:value="item.http_address" disabled="true"  />
+          </div> -->
         </div>
         <div class="flex items-center mb-[32px]">
           <div class="w-1/3 font-normal">WEBSOCKETS</div>
-          <div class="hidden w-full dark-input dark:inline-block">
-            <a-input v-model:value="item.websocket_address" />
-          </div>
-          <div class="w-full white-input dark:hidden">
-            <a-input v-model:value="item.websocket_address" />
+          <div class="w-full">
+            <a-tooltip>
+              <template #title v-if="item.websocket_address === ''">This chain has no websockets rpc address</template>
+              <div class="w-full">
+                <a-input v-model:value="item.websocket_address" disabled="true" />
+              </div>
+            </a-tooltip>
           </div>
         </div>
         <div class="text-center">
@@ -50,6 +55,8 @@ import { apiGetChains } from "@/apis/rpcs";
 import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
 import { message } from 'ant-design-vue';
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore()
 
 const { getImageURL } = useAssets()
 const showCreate = ref(false);
@@ -96,16 +103,16 @@ const userNow = async (chain: any, networks: any) => {
 </script>
 <style scoped lang="less">
 @btnColor: #E2B578;
-:deep(.ant-input){
+:deep(.ant-input[disabled]){
   background-color: transparent;
   border-radius: 8px;
   height: 40px;
 }
-:deep(.dark-input .ant-input){
+:deep(.dark-css .ant-input){
   color: #8A8A8A;
   border-color: #434343;
 }
-:deep(.white-input .ant-input){
+:deep(.white-css .ant-input){
   color: #BBBAB9;
   border-color: #EBEBEB;
 }
