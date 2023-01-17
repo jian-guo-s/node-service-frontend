@@ -176,7 +176,21 @@ import { useRouter, useRoute } from "vue-router";
 import { formatDateToLocale  } from '@/utils/dateUtil';
 import Overview from "../projectsList/components/Overview.vue";
 import StageVue from "./components/Stage.vue";
-import { apiGetProjectsDetail, apiGetProjectsWorkflows, apiGetProjectsContract, apiGetProjectsReports, apiUpdateProjectsName,apiProjectsVersion,apiProjectsContractName,apiProjectsContractNetwork,apiProjectsCheckTools,apiDeleteProjects,apiProjectsWorkflowsStop,apiDeleteWorkflows } from "@/apis/projects";
+import {
+  apiGetProjectsDetail,
+  apiGetProjectsWorkflows,
+  apiGetProjectsContract,
+  apiGetProjectsReports,
+  apiUpdateProjectsName,
+  apiProjectsVersion,
+  apiProjectsContractName,
+  apiProjectsContractNetwork,
+  apiProjectsCheckTools,
+  apiDeleteProjects,
+  apiProjectsWorkflowsStop,
+  apiDeleteWorkflows,
+  apiDupProjectName
+} from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import dayjs from "dayjs";
@@ -217,10 +231,30 @@ const statusList = reactive(["Notrun","Running","Fail","Success","Stop"]);
 
 const formRules = computed(() => {
 
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const userInfo = localStorage.getItem('userInfo');
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      const res = await apiDupProjectName(params);
+      if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:",error)
+      return Promise.reject("Project Name check failure");
+    }
+  }
+
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
-    name: [requiredRule('Name')],
+    name: [requiredRule('Name'),{ validator: checkDupName, trigger: "change" }],
   };
 });
 
