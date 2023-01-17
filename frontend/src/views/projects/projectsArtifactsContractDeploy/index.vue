@@ -109,7 +109,6 @@ const getProjectsContract = async () => {
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
-  debugger
   loading.value = true
   const { ethereum } = window;
   const provider = new ethers.providers.Web3Provider(ethereum);
