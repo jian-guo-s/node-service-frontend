@@ -30,28 +30,28 @@
       </div>
     </div>
     <div class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
-      <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-4">
+      <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
         <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
         <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
       </div>
-      <div class="p-4">
+      <div class="p-[32px]">
         <div class="text-[24px] font-bold">Extensions</div>
         <div class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
           <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index" v-model:checked="items.checked">{{ items.label }}</a-checkbox>
         </div>
-        <div class="mt-4 text-[24px] font-bold flex items-center">
+        <div class="mt-[32px] text-[24px] font-bold flex items-center">
           <img
             src="@/assets/icons/example.svg"
-            class="h-[32px]"
+            class="h-[32px] mr-[8px]"
           />
           Use Cases & Examples</div>
         <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
           <pre>{{ templatesDetail.examples }}</pre>
         </div>
-        <div class="mt-4 text-[24px] font-bold flex items-center">
+        <div class="mt-[32px] text-[24px] font-bold flex items-center">
           <img
             src="@/assets/icons/resource.svg"
-            class="h-[32px]"
+            class="h-[32px] mr-[8px]"
           />
           Resources</div>
           <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
@@ -90,7 +90,7 @@
             <div class="p-4  w-3/4">
               <div class="flex justify-between">
                 <div class="text-[16px] font-bold">approve</div>
-                <div class="text-[#E0DBD2]">inputs</div>
+                <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
               </div>
               <a-table
                 class="my-4"
@@ -104,12 +104,12 @@
         <a-tab-pane key="2" tab="Events">
           <div class="flex">
             <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
-              <div class="text-[#73706E] dark:text-[#E0DBD2]" v-for="(item, index) in eventNameList" :key="index">{{ item }}</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[24px]" v-for="(item, index) in eventNameList" :key="index">{{ item }}</div>
             </div>
             <div class="p-4 w-3/4">
               <div class="flex justify-between">
                 <div class="text-[16px] font-bold">Approval</div>
-                <div class="text-[#E0DBD2]">inputs</div>
+                <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
               </div>
               <a-table
                 class="my-4"
