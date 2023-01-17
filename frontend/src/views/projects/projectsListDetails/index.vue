@@ -48,7 +48,7 @@
           :options="actionList.map(item => ({ value: item.value, label: item.label }))">
           </a-select>
         </div>
-      </div>  
+      </div>
       <a-table
         class="my-4"
         :columns="tableColumns"
@@ -76,8 +76,8 @@
           </template>
           <template v-if="column.dataIndex === 'action'">
             <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
-            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId)">Stop</label>
-            
+            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId,record.id, record.detailId)">Stop</label>
+
             <a-popconfirm  v-else
               title="Are you sure delete this workflows?"
               ok-text="Yes"
@@ -91,7 +91,7 @@
       </a-table>
     </div>
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
-      <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div> 
+      <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Contract">
           <div class="flex">
@@ -154,7 +154,7 @@
             </template>
           </a-table>
         </a-tab-pane>
-      </a-tabs> 
+      </a-tabs>
     </div>
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null">
@@ -218,7 +218,7 @@ const statusList = reactive(["Notrun","Running","Fail","Success","Stop"]);
 const formRules = computed(() => {
 
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
-  
+
   return {
     name: [requiredRule('Name')],
   };
@@ -428,7 +428,7 @@ const reportPagination = reactive({
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
-  
+
 onMounted(() => {
   getProjectsDetail();
   getProjectsWorkflows();
@@ -454,13 +454,13 @@ const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
     // loading.value = false;
   }
-}; 
+};
 const changeAction = async () => {
   pagination.current = 1;
   getProjectsWorkflows();
@@ -475,7 +475,7 @@ const getProjectsWorkflows = async () => {
     const { data } = await apiGetProjectsWorkflows(detailId.value.toString(), params);
     workflowList.value = data.data;
     pagination.total = data.total
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -497,7 +497,7 @@ const getProjectsReports = async () => {
     const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
     reportTableList.value = data.data;
     reportPagination.total = data.total
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -510,7 +510,7 @@ const getProjectsVersion = async () => {
     const { data } = await apiProjectsVersion(detailId.value.toString());
     versionList.value.length = 1;
     versionList.value = versionList.value.concat(data);
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -523,7 +523,7 @@ const getProjectsContractName = async () => {
     const { data } = await apiProjectsContractName(detailId.value.toString());
     contractList.value.length = 1;
     contractList.value = contractList.value.concat(data);
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -536,7 +536,7 @@ const getProjectsContractNetwork = async () => {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
     networkList.value.length = 1;
     networkList.value = networkList.value.concat(data);
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -549,7 +549,7 @@ const getProjectsCheckTools = async () => {
     const { data } = await apiProjectsCheckTools(detailId.value.toString());
     checkToolList.value.length = 1;
     checkToolList.value = checkToolList.value.concat(data);
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -573,7 +573,7 @@ const getProjectsContract = async () => {
     const { data } = await apiGetProjectsContract(detailId.value.toString(), params);
     contractTableList.value = data.data;
     contractPagination.total = data.total
-    
+
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -608,17 +608,17 @@ const deleteProjects = async () => {
     visibleModal.value = false;
   }
 }
-const stopWorkflow = async (workflowId: String, detailId: String) => {
+const stopWorkflow = async (projectId: String,workflowId: number, detailId: number) => {
   try {
     const params = reactive({
-      id: detailId.value,
-      workflowId: workflowId,
-      detailId: detailId,
+      id: projectId,
+      workflowsId: workflowId,
+      workflowDetailId: detailId,
     })
     const data = await apiProjectsWorkflowsStop(params);
     message.success(data.message);
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("error:",error)
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
@@ -627,7 +627,7 @@ const stopWorkflow = async (workflowId: String, detailId: String) => {
 }
 const deleteWorkflow = async (workflowId: String) => {
   try {
-    
+
     const data = await apiDeleteWorkflows(detailId.value.toString(), workflowId);
     message.success(data.message);
     getProjectsWorkflows();
