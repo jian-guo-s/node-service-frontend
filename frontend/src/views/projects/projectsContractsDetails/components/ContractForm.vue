@@ -66,7 +66,6 @@ Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: 
 
 
 const submit = async () => {
-  debugger
   isSend.value = true
   const { ethereum } = window;
 
