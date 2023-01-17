@@ -1,8 +1,9 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
     <Breadcrumb :currentName="'Hamster'" :isClick="false"></Breadcrumb>
-    <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px">
-      <a-select-option :value="item" v-for="item in versionData" :key="item" @change="changeVersion">{{
+    <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px"
+      @change="changeVersion">
+      <a-select-option :value="item" v-for="item in versionData" :key="item">{{
         item
       }}</a-select-option>
     </a-select>
@@ -42,7 +43,7 @@ import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workF
 const router = useRouter();
 const theme = useThemeStore();
 
-console.log(theme.themeValue, 'theme')
+// console.log(theme.themeValue, 'theme')
 
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
@@ -156,7 +157,7 @@ onMounted(() => {
 
 :deep(.clickRowStyle-dark) {
   background-color: #463F36;
-} 
+}
 
 
 :deep(.clickRowStyle) {

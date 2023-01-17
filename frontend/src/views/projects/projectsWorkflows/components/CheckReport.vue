@@ -38,7 +38,7 @@
             </div>
           </template>
         </a-collapse-panel>
-        <div class="text-[#73706E] ml-[12px]">{{ item.checkTool }}</div>
+        <div class="text-[#73706E] ml-[12px]">{{ 'Support by '+ item.checkTool }}</div>
       </a-collapse>
 
     </div>
