@@ -66,6 +66,7 @@ Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: 
 
 
 const submit = async () => {
+  debugger
   isSend.value = true
   const { ethereum } = window;
 
@@ -73,24 +74,25 @@ const submit = async () => {
   let abi = YAML.parse(formState.abiInfo);
   // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
 
-  // console.log(contract, ...(Object.values(formData)), 'contract')
+  console.log(formData, ...(Object.values(formData)), 'formData')
   try {
     let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+    // contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
     contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-      console.log(tx, tx.hash, 'tx')
+      // console.log(tx, tx.hash, 'tx')
       hashValue.value = tx.hash;
       tx.wait().then((result: any) => {
         isSend.value = false;
-        console.log(result, 'tx send success!')
+        // console.log(result, 'tx send success!')
       })
     }).catch((err: any) => {
       isSend.value = false;
-      console.log(err, 'err')
     })
+
   } catch (errorInfo) {
     isSend.value = false;
     message.error('调用失败')
-    console.log(errorInfo, 'errorInfo')
+    // console.log(errorInfo, 'errorInfo')
   }
 }
 
@@ -104,14 +106,17 @@ const copy = () => {
   message.success('复制成功')
 }
 
-// watch(
-//   () => props,
-//   (oldV, newV) => {
-//     if (newV) {
-//       console.log(newV, 'new')
-//     }
-//   }, { deep: true }
-// );
+watch(
+  () => props,
+  (oldV, newV) => {
+    if (newV) {
+      let name = [...(Object.keys(formData))]
+      name.forEach((it: any) => {
+        delete formData[it]
+      })
+    }
+  }, { deep: true }
+);
 </script>
 <style lang='less' scoped>
 .btn {

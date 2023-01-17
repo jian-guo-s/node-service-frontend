@@ -12,7 +12,7 @@
       <div class="text-[16px] font-bold mb-[20px]">Contract</div>
       <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择">
+        <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -130,7 +130,7 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
 }
 
 const switchToChain = (chainId: string) => {
-  window.ethereum.request({
+  window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
   }).then((res: any) => {
@@ -202,8 +202,9 @@ const cancelModal = (val: boolean) => {
   visible.value = val
 }
 
-const changeNetwork = (val: string) => {
+const changeVersion = (val: string) => {
   // console.log(val, 'val')
+  getProjectsContract()
 }
 
 onMounted(async () => {
@@ -281,9 +282,5 @@ input:-ms-input-placeholder {
 
 :deep(.ant-form-item-has-error .ant-select:not(.ant-select-disabled):not(.ant-select-customize-input) .ant-select-selector) {
   background-color: transparent;
-}
-
-:deep(.ant-select-clear) {
-  // background-color: #00000040;
 }
 </style>
