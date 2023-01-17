@@ -62,6 +62,7 @@ const getWorkflowsDetails = async () => {
     }, 5000);
   } else {
     clearTimeout(detailTimer.value);
+    queryJson.type === '1' ? getCheckReport() : getContractList();
   }
 }
 
