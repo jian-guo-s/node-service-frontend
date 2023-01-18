@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :currentName="'Contract Deploy'" :isClick="loading">
+  <Breadcrumb :currentName="projectName" :isClick="loading">
     <template v-slot:tags>
       <span
         class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
@@ -76,6 +76,7 @@ const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
 const projectsContractData = reactive([]);
+const projectName = ref('')
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -210,6 +211,7 @@ const changeVersion = (val: string) => {
 }
 
 onMounted(async () => {
+  projectName.value = localStorage.getItem("projectName")
   getVersion()
   await getProjectsContract()
 })

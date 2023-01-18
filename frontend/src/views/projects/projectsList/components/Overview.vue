@@ -44,7 +44,7 @@
         <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
         <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button> -->
       </div>
-    </div>  
+    </div>
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="grid grid-cols-4 gap-4">
         <div >
@@ -154,7 +154,7 @@ const props = defineProps({
   viewType: String,
   viewInfo: Object,
 });
-const { viewType, viewInfo } = toRefs(props); 
+const { viewType, viewInfo } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
 
 const goDetail = (id: string) => {
@@ -226,6 +226,8 @@ const goContractDeploy = async (id: String, version: String) => {
   }
 };
 const goContractDetail = async (id: String, version: String) => {
+  localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/contracts-details/"+version);
 }
 </script>
