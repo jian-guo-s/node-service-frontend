@@ -16,7 +16,7 @@
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="name" class="mb-[32px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
+      <a-form-item name="name" class="mb-[16px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData">
@@ -230,6 +230,10 @@ onMounted(async () => {
 
 :deep(.ant-form label) {
   color: #121211;
+  margin-bottom: 16px;
+}
+
+:deep(.ant-form-item) {
   margin-bottom: 16px;
 }
 
