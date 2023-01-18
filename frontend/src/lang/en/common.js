@@ -3,4 +3,5 @@ export default {
   detail: "Detail",
   delete: "Delete",
   stop: "Stop",
+  operateFail: "Operation Failed"
 };
