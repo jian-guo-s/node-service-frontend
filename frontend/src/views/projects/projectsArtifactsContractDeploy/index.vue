@@ -62,6 +62,9 @@ import { apiProjectsContractDeploy } from "@/apis/projects";
 const formRef = ref<FormInstance>();
 const theme = useThemeStore();
 const router = useRouter();
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -127,7 +130,7 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   } catch (errorInfo) {
     // 失败的处理
     // console.log(errorInfo, 'errorInfo')
-    message.error('请求失败');
+    message.error(t('common.operateFail'));
   }
 }
 
