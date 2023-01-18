@@ -46,7 +46,7 @@
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
-          <a-button type="primary" @click="goNext">Explore all template</a-button>
+          <a-button type="primary" :loading="loading" @click="goNext">Explore all template</a-button>
         </a-form>
         <div>
           <div class="font-bold text-[16px]">Popular Template</div>
@@ -95,6 +95,7 @@ import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
 const router = useRouter();
+const loading = ref(false);
 const showList = ref([])
 const formRef = ref();
 const formData = reactive({
@@ -109,6 +110,7 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 const formRules = computed(() => {
   const checkDupName = async () => {
     try {
+      loading.value = true;
       //校验仓库名称是否存在
       const userInfo = localStorage.getItem('userInfo');
       const params = {
@@ -124,6 +126,8 @@ const formRules = computed(() => {
     } catch (error: any) {
       console.log("erro:",error)
       return Promise.reject("Project Name check failure");
+    } finally {
+      loading.value = false;
     }
   }
 
@@ -140,7 +144,8 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
 
   await formRef.value.validate();
   
-   try {
+  try {
+    loading.value = true;
     const createProjectTemp = {
       name: formData.name,
       type: formData.type,
@@ -150,6 +155,8 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
     router.push(path);
   } catch (error: any) {
     console.log("erro:",error)
+  } finally {
+    loading.value = false;
   }
 }
 const goDetail = async (id: string) => {

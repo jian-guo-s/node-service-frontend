@@ -26,7 +26,7 @@
       </div>
       <div>
        <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-       <a-button type="primary" class="ml-4" @click="createProject">Creat by template</a-button>
+       <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Creat by template</a-button>
       </div>
     </div>
     <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
@@ -109,13 +109,13 @@
         </a-tab-pane>
         <a-tab-pane key="2" tab="Events">
           <div class="flex">
-            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+            <div class="p-4 border-r-[#302D2D] border-r border w-1/4 h-[300px] overflow-auto">
               <div @click="setEventList(item)" :class="{'!text-[#E2B578]' : item.name === eventName }" class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer" 
               v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
             </div>
             <div class="p-4 w-3/4">
               <div class="flex justify-between">
-                <div class="text-[16px] font-bold">{{ inputsName }}</div>
+                <div class="text-[16px] font-bold">{{ eventName }}</div>
                 <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
               </div>
               <a-table
@@ -159,6 +159,7 @@ const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
+const loading = ref(false);
 const templateId = ref(params.templateId); 
 const activeKey = ref("1");
 const functionList = ref([]);
@@ -271,6 +272,7 @@ const getProjectsContract = async () => {
 };
 
 const createProject = async () => {
+  loading.value = true;
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
@@ -290,7 +292,7 @@ const createProject = async () => {
     console.log("erro:",error)
     message.error(error.response.data.message);
   } finally {
-    // loading.value = false;
+    loading.value = false;
   }
 }
 
