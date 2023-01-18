@@ -24,6 +24,8 @@ import ContractList from './components/ContractList.vue';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
 import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const router = useRouter();
 const queryJson = reactive({
@@ -96,7 +98,7 @@ const stopBtn = async () => {
       message.error(err.message)
     }
   } else {
-    message.info('该构建已结束')
+    message.info(t('workFlows.workflowStopped'))
   }
 }
 
