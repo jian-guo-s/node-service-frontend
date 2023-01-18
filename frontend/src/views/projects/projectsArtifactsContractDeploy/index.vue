@@ -204,7 +204,8 @@ const cancelModal = (val: boolean) => {
 }
 
 const changeVersion = (val: string) => {
-  // console.log(val, 'val')
+  console.log(val, 'val')
+  queryParams.version = val
   getProjectsContract()
 }
 
