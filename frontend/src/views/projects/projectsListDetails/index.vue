@@ -50,15 +50,15 @@
       >
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.dataIndex === 'type'">
-            <label v-if="record.type === 1">Contract Check_#{{ record.id}}</label>
-            <label v-if="record.type === 2">Contract Build_#{{ record.id}}</label>
+            <label v-if="record.type === 1">Contract Check_#{{ record.execNumber}}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.execNumber}}</label>
           </template>
           <template v-if="column.dataIndex === 'triggerMode'">
             <div v-if="record.triggerMode === 1">manual trigger</div>
             <div>{{ record.codeInfo }}</div>
           </template>
           <template v-if="column.key === 'stageInfo'">
-            <StageVue v-if="record.stageInfo != ''" :stages="JSON.parse(record.stageInfo)" />
+            <StageVue v-if="record.stageInfo !== ''" :stages="JSON.parse(record.stageInfo)" />
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
@@ -508,6 +508,8 @@ const getProjectsDetail = async () => {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
 
+    localStorage.setItem("projectName", data.name)
+    localStorage.setItem("projectId", data.id)
   } catch (error: any) {
     console.log("erro:",error)
   } finally {

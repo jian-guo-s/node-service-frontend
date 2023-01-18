@@ -1,6 +1,6 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
-    <Breadcrumb :currentName="'Hamster'" :isClick="false"></Breadcrumb>
+    <Breadcrumb :currentName="projectName" :isClick="false"></Breadcrumb>
     <a-select class="select-dark" ref="select" v-model:value="contractDeployDetail.version" style="width: 180px"
       @change="changeVersion">
       <a-select-option :value="item" v-for="item in versionData" :key="item">{{
@@ -142,7 +142,10 @@ const setRowClassName = (record: any, index: number) => {
   }
 }
 
+const projectName = ref('')
+
 onMounted(() => {
+  projectName.value = localStorage.getItem("projectName")
   getVersion()
   getContractDeployDetail()
 })
