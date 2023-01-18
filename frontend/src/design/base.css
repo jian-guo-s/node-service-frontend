@@ -74,3 +74,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+::-webkit-scrollbar {
+  /* 设置竖向滚动条的宽度 */
+  width: 5px;
+  /* 设置横向滚动条的高度 */
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  /* //滑块部分 */
+  border-radius: 35px;
+  background-color: rgba(144,147,153,.3);
+}
+::-webkit-scrollbar-track {
+  /* //轨道部分 */
+  background-color: rgba(144,147,153,.3);
+  border-radius: 35px;
+}

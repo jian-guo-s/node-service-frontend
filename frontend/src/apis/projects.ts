@@ -44,7 +44,7 @@ interface GetProjectsContractDeployParams {
 interface apiProjectsWorkflowsDetailStopParams {
   id: string,
   workflowsId: string,
-  detailId: string,
+  workflowDetailId: string,
 }
 
 interface updateProjectparams {

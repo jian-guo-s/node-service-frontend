@@ -1,7 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
-      <div class="mb-[32px] flex items-center">
+      <div class="flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
           <img
             src="@/assets/icons/back-white.svg"
@@ -29,7 +29,7 @@
        <a-button type="primary" class="ml-4" @click="createProject">Creat by template</a-button>
       </div>
     </div>
-    <div class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
+    <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
       <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
         <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
         <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
@@ -74,7 +74,10 @@
                   class="h-[20px] hidden dark:inline-block mr-[5px]"
                 />Send
               </div>
-              <div class=" text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4">approve</div>
+              <div class="h-[120px] overflow-auto pb-4">
+                <div @click="setFunctionList(item)" :class="{'!text-[#E2B578]' : item.name === functionName }" class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
+                v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
+               </div>
               <div class="mt-4 flex items-center">
                 <img
                   src="@/assets/icons/send-w.svg"
@@ -85,17 +88,20 @@
                   class="h-[20px] hidden dark:inline-block mr-[5px]"
                 />Call
               </div>
-              <div class="text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]">DEFAULT_ADMIN_ROLE</div>
+              <div class="h-[130px] overflow-auto pb-4">
+                <div @click="setFunctionList(item)" :class="{'!bg-[#E2B578] !text-white' : item.name === functionName }" class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
+                v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
+              </div>
             </div>
             <div class="p-4  w-3/4">
               <div class="flex justify-between">
-                <div class="text-[16px] font-bold">approve</div>
+                <div class="text-[16px] font-bold">{{ functionName }}</div>
                 <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
               </div>
               <a-table
                 class="my-4"
                 :columns="tableColumns"
-                :dataSource="approveList"
+                :dataSource="functionList"
                 :pagination="false"
               ></a-table>
             </div>
@@ -104,17 +110,18 @@
         <a-tab-pane key="2" tab="Events">
           <div class="flex">
             <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
-              <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[24px]" v-for="(item, index) in eventNameList" :key="index">{{ item }}</div>
+              <div @click="setEventList(item)" :class="{'!text-[#E2B578]' : item.name === eventName }" class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer" 
+              v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
             </div>
             <div class="p-4 w-3/4">
               <div class="flex justify-between">
-                <div class="text-[16px] font-bold">Approval</div>
+                <div class="text-[16px] font-bold">{{ inputsName }}</div>
                 <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
               </div>
               <a-table
                 class="my-4"
                 :columns="tableColumns"
-                :dataSource="approvalList"
+                :dataSource="eventList"
                 :pagination="false"
               ></a-table>
             </div>
@@ -154,9 +161,13 @@ const router = useRouter();
 const { params } = useRoute();
 const templateId = ref(params.templateId); 
 const activeKey = ref("1");
-const approveList = ref([]);
-const eventNameList = ref([]);
-const approvalList = ref([])
+const functionList = ref([]);
+const functionName = ref();
+const callList = ref([]);
+const sendList = ref([]);
+const eventAllList = ref([]);
+const eventName = ref();
+const eventList = ref([]);
 const sourceContent = ref("");
 const templatesDetail = ref([]);
 const extensionsList = ref([]);
@@ -193,6 +204,16 @@ onMounted(() => {
   getTemplatesDetail();
 })
 
+const setFunctionList = (element: { inputs: never[]; name: any; }) => {
+  functionList.value = element.inputs;
+  functionName.value = element.name;
+}
+
+const setEventList = (element: { inputs: never[]; name: any; }) => {
+  eventList.value = element.inputs;
+  eventName.value = element.name;
+}
+
 const getTemplatesDetail = async () => {
   try {
     const { data } = await apiTemplatesDetail(templateId.value.toString());
@@ -203,14 +224,24 @@ const getTemplatesDetail = async () => {
         checkboxList.value[index].checked = true;
       }
     });
+    console.log(JSON.parse(data.abiInfo))
     JSON.parse(data.abiInfo).forEach((element: any) => {
-      if (element.type === 'function' && element.name === 'approve') {
-        approveList.value = element.inputs;
+      if (element.type === 'function') {
+        if (element.name === 'approve') {
+          functionList.value = element.inputs;
+          functionName.value = element.name;
+        }
+        if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
+          sendList.value.push(element)
+        } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
+          callList.value.push(element)
+        }
       }
       if (element.type === 'event') {
-        eventNameList.value.push(element.name);
+        eventAllList.value.push(element);
         if (element.name === 'Approval') {
-          approvalList.value = element.inputs;
+          eventList.value = element.inputs;
+          eventName.value = element.name;
         }
       }
     });
@@ -320,11 +351,4 @@ ul{
   width: 100px;
   text-align: center;
 } 
-// :deep(.ant-table-thead > tr > th){
-//   background-color: #36322D !important;
-//   border-bottom: 1px solid #36322D;
-// }
-// :deep(.ant-table-tbody .ant-table-cell){
-//   background-color: transparent;
-// }
 </style>
