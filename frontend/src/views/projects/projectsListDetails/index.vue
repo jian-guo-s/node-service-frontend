@@ -150,7 +150,7 @@
       </a-form-item>
     </a-form>
     <div class="text-center mt-4">
-      <a-button class="ml-4" type="primary" @click="updateName">Done</a-button>
+      <a-button class="ml-4" type="primary" :loading="loading" @click="updateName">Done</a-button>
     </div>
   </a-modal>
   <a-modal v-model:visible="deleteModal" :footer="null">
@@ -158,7 +158,7 @@
     <div>Are you sure delete this projects?</div>
     <div class="text-center mt-8">
       <a-button type="primary" @click="deleteModal = false">NO</a-button>
-      <a-button class="ml-[24px]" type="primary" @click="deleteProjects">YES</a-button>
+      <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
     </div>
   </a-modal>
   <a-modal v-model:visible="delWorkflowModal" :footer="null">
@@ -166,7 +166,7 @@
     <div>Are you sure delete this workflows?</div>
     <div class="text-center mt-8">
       <a-button type="primary" @click="delWorkflowModal = false">NO</a-button>
-      <a-button class="ml-[24px]" type="primary" @click="deleteWorkflowContent">YES</a-button>
+      <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteWorkflowContent">YES</a-button>
     </div>
   </a-modal>
 </template>
@@ -200,6 +200,7 @@ const theme = useThemeStore()
 const router = useRouter();
 const { params } = useRoute();
 const timer = ref(0)
+const loading = ref(false)
 const detailId = ref(params.id);
 const viewType = ref("detail");
 const visibleModal = ref(false);
@@ -207,9 +208,10 @@ const deleteModal = ref(false);
 const delWorkflowModal = ref(false);
 const delWorkflowId = ref("");
 const formRef = ref();
+const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
-  userId: 53070354,
+  userId: JSON.parse(userInfo)?.id,
 });
 const projectsDetail = ref({});
 const activeKey = ref("1");
@@ -237,7 +239,6 @@ const formRules = computed(() => {
   const checkDupName = async () => {
     try {
       //校验仓库名称是否存在
-      const userInfo = localStorage.getItem('userInfo');
       const params = {
         owner: JSON.parse(userInfo)?.username,
         name: formData.name,
@@ -491,8 +492,6 @@ onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
 
 const loadProjects = () => {
   getProjectsDetail();
-  getProjectsContract();
-  getProjectsReports();
 }
 
 const handleTabClick = (tab: any) => {
@@ -508,6 +507,20 @@ const getProjectsDetail = async () => {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
 
+    const recentStatusOld = localStorage.getItem('recentStatus'+data.name);
+    if (recentStatusOld !== null && recentStatusOld !== undefined) {
+      // running - success
+      if (JSON.parse(recentStatusOld)?.checkStatus === 1 && data.recentCheck.status === 3
+        || JSON.parse(recentStatusOld)?.buildStatus === 1 && data.recentBuild.status === 3) {
+        getProjectsContract();
+        getProjectsReports();
+      }
+    }
+    const recentStatus = {
+      checkStatus: data.recentCheck.status,
+      buildStatus: data.recentBuild.status,
+    }
+    window.localStorage.setItem("recentStatus"+data.name, JSON.stringify(recentStatus));
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -638,6 +651,7 @@ const updateName = async () => {
   await formRef.value.validate();
 
   try {
+    loading.value = true;
     const data = await apiUpdateProjectsName(detailId.value.toString(), formData);
     message.success(data.message);
     projectsDetail.value.name = formData.name;
@@ -646,11 +660,13 @@ const updateName = async () => {
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
+    loading.value = false;
   }
 }
 const deleteProjects = async () => {
 
   try {
+    loading.value = true;
     const data = await apiDeleteProjects(detailId.value.toString());
     message.success(data.message);
     router.push("/projects");
@@ -659,6 +675,7 @@ const deleteProjects = async () => {
     message.error(error.response.data.message);
   } finally {
     deleteModal.value = false;
+    loading.value = false;
   }
 }
 const stopWorkflow = async (projectId: String,workflowId: number, detailId: number) => {
@@ -684,6 +701,7 @@ const deleteWorkflow = (workflowId: string) => {
 }
 const deleteWorkflowContent = async () => {
   try {
+    loading.value = true;
     const data = await apiDeleteWorkflows(detailId.value.toString(), delWorkflowId.value);
     message.success(data.message);
     getProjectsWorkflows();
@@ -692,6 +710,7 @@ const deleteWorkflowContent = async () => {
     message.error(error.response.data.message);
   } finally {
     delWorkflowModal.value = false;
+    loading.value = false;
   }
 }
 const goContractDetail = async (version: String) => {
