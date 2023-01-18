@@ -31,7 +31,7 @@
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length!==0">
-      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="getProjectsDetail" />
+      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="loadProjects" />
     </div>
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex justify-between">
@@ -69,7 +69,7 @@
           </template>
           <template v-if="column.dataIndex === 'action'">
             <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
-            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.id, record.detailId, record.detailId)">Stop</label>
+            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
             <label @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
           </template>
         </template>
@@ -77,7 +77,7 @@
     </div>
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
-      <a-tabs v-model:activeKey="activeKey">
+      <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
           <div class="flex">
             <div>
@@ -110,7 +110,7 @@
                 <label v-if="record.network.String !== '' " v-for="(item, indexF) in record.network.String.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
+                <label class="cursor-pointer" v-if="record.network.String !== '' " @click="goContractDetail(record.version)">Details</label>
                 <label class="text-[#E2B578] ml-2 cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>
               </template>
             </template>
@@ -488,6 +488,20 @@ onMounted(() => {
 onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
     window.clearInterval(timer.value);
 })
+
+const loadProjects = () => {
+  getProjectsDetail();
+  getProjectsContract();
+  getProjectsReports();
+}
+
+const handleTabClick = (tab: any) => {
+  if (tab === "1") {
+    getProjectsContract();
+  } else if (tab === "2") {
+    getProjectsReports();
+  }
+}
 
 const getProjectsDetail = async () => {
   try {
