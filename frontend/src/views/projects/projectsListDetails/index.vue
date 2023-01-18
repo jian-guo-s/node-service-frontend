@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ isWhite ? 'white-css' : 'dark-css']">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
@@ -26,24 +26,17 @@
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
       </div>
       <div>
-        <a-popconfirm
-          title="Are you sure delete this projects?"
-          ok-text="Yes"
-          cancel-text="No"
-          @confirm="deleteProjects"
-        >
-       <a-button type="primary" ghost>Delete</a-button>
-       </a-popconfirm>
+       <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
        <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length!==0">
-      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="getProjectsDetail" />
+      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="loadProjects" />
     </div>
-    <div :class="[ isWhite ? 'white-css' : 'dark-css']" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex justify-between">
         <div class="mb-2 items-center text-[24px] font-bold">Workflows</div>
-        <div>
+        <div class="select-color">
           <a-select @change="changeAction" v-model:value="action" placeholder="Please enter Network"
           :options="actionList.map(item => ({ value: item.value, label: item.label }))">
           </a-select>
@@ -57,15 +50,15 @@
       >
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.dataIndex === 'type'">
-            <label v-if="record.type === 1">Contract Check_#{{ record.id}}</label>
-            <label v-if="record.type === 2">Contract Build_#{{ record.id}}</label>
+            <label v-if="record.type === 1">Contract Check_#{{ record.execNumber}}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.execNumber}}</label>
           </template>
           <template v-if="column.dataIndex === 'triggerMode'">
             <div v-if="record.triggerMode === 1">manual trigger</div>
             <div>{{ record.codeInfo }}</div>
           </template>
           <template v-if="column.key === 'stageInfo'">
-            <StageVue v-if="record.stageInfo != ''" :stages="JSON.parse(record.stageInfo)" />
+            <StageVue v-if="record.stageInfo !== ''" :stages="JSON.parse(record.stageInfo)" />
           </template>
           <template v-if="column.dataIndex === 'startTime'">
             <div v-if="record.startTime != '0001-01-01T00:00:00Z'">
@@ -76,23 +69,15 @@
           </template>
           <template v-if="column.dataIndex === 'action'">
             <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
-            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId,record.id, record.detailId)">Stop</label>
-
-            <a-popconfirm  v-else
-              title="Are you sure delete this workflows?"
-              ok-text="Yes"
-              cancel-text="No"
-              @confirm="deleteWorkflow(record.id)"
-            >
-              <label class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
-            </a-popconfirm>
+            <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
+            <label @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
           </template>
         </template>
       </a-table>
     </div>
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
-      <a-tabs v-model:activeKey="activeKey">
+      <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
           <div class="flex">
             <div>
@@ -122,10 +107,10 @@
                 <label class="text-[#E2B578]">{{ record.version }}</label>
               </template>
               <template v-if="column.dataIndex === 'network'">
-                <label v-if="record.network.String !== '' " class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ record.network.String }}</label>
+                <label v-if="record.network.String !== '' " v-for="(item, indexF) in record.network.String.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
               </template>
               <template v-if="column.dataIndex === 'action'">
-                <label class="cursor-pointer" @click="goContractDetail(record.version)">Details</label>
+                <label class="cursor-pointer" v-if="record.network.String !== '' " @click="goContractDetail(record.version)">Details</label>
                 <label class="text-[#E2B578] ml-2 cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>
               </template>
             </template>
@@ -165,7 +150,23 @@
       </a-form-item>
     </a-form>
     <div class="text-center mt-4">
-      <a-button class="ml-4" type="primary" @click="updateName">Done</a-button>
+      <a-button class="ml-4" type="primary" :loading="loading" @click="updateName">Done</a-button>
+    </div>
+  </a-modal>
+  <a-modal v-model:visible="deleteModal" :footer="null">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Delete</div>
+    <div>Are you sure delete this projects?</div>
+    <div class="text-center mt-8">
+      <a-button type="primary" @click="deleteModal = false">NO</a-button>
+      <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
+    </div>
+  </a-modal>
+  <a-modal v-model:visible="delWorkflowModal" :footer="null">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Delete</div>
+    <div>Are you sure delete this workflows?</div>
+    <div class="text-center mt-8">
+      <a-button type="primary" @click="delWorkflowModal = false">NO</a-button>
+      <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteWorkflowContent">YES</a-button>
     </div>
   </a-modal>
 </template>
@@ -199,14 +200,18 @@ const theme = useThemeStore()
 const router = useRouter();
 const { params } = useRoute();
 const timer = ref(0)
+const loading = ref(false)
 const detailId = ref(params.id);
 const viewType = ref("detail");
-const isWhite = ref(false);
 const visibleModal = ref(false);
+const deleteModal = ref(false);
+const delWorkflowModal = ref(false);
+const delWorkflowId = ref("");
 const formRef = ref();
+const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
-  userId: 53070354,
+  userId: JSON.parse(userInfo)?.id,
 });
 const projectsDetail = ref({});
 const activeKey = ref("1");
@@ -234,7 +239,6 @@ const formRules = computed(() => {
   const checkDupName = async () => {
     try {
       //校验仓库名称是否存在
-      const userInfo = localStorage.getItem('userInfo');
       const params = {
         owner: JSON.parse(userInfo)?.username,
         name: formData.name,
@@ -287,6 +291,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'stageInfo',
+    width: '200px'
   },
   {
     title: 'Time',
@@ -294,6 +299,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
+    width: '150px'
   },
   {
     title: '操作',
@@ -484,11 +490,41 @@ onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
     window.clearInterval(timer.value);
 })
 
+const loadProjects = () => {
+  getProjectsDetail();
+}
+
+const handleTabClick = (tab: any) => {
+  if (tab === "1") {
+    getProjectsContract();
+  } else if (tab === "2") {
+    getProjectsReports();
+  }
+}
+
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
 
+    const recentStatusOld = localStorage.getItem('recentStatus'+data.name);
+    if (recentStatusOld !== null && recentStatusOld !== undefined) {
+      // running - success
+      if (JSON.parse(recentStatusOld)?.checkStatus === 1 && data.recentCheck.status === 3
+        || JSON.parse(recentStatusOld)?.buildStatus === 1 && data.recentBuild.status === 3) {
+        getProjectsContract();
+        getProjectsReports();
+      }
+    }
+    const recentStatus = {
+      checkStatus: data.recentCheck.status,
+      buildStatus: data.recentBuild.status,
+    }
+    window.localStorage.setItem("recentStatus"+data.name, JSON.stringify(recentStatus));
+
+    localStorage.setItem("projectName", data.name)
+    localStorage.setItem("projectId", data.id)
+    
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -619,6 +655,7 @@ const updateName = async () => {
   await formRef.value.validate();
 
   try {
+    loading.value = true;
     const data = await apiUpdateProjectsName(detailId.value.toString(), formData);
     message.success(data.message);
     projectsDetail.value.name = formData.name;
@@ -627,11 +664,13 @@ const updateName = async () => {
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
+    loading.value = false;
   }
 }
 const deleteProjects = async () => {
 
   try {
+    loading.value = true;
     const data = await apiDeleteProjects(detailId.value.toString());
     message.success(data.message);
     router.push("/projects");
@@ -639,7 +678,8 @@ const deleteProjects = async () => {
     console.log("erro:",error)
     message.error(error.response.data.message);
   } finally {
-    visibleModal.value = false;
+    deleteModal.value = false;
+    loading.value = false;
   }
 }
 const stopWorkflow = async (projectId: String,workflowId: number, detailId: number) => {
@@ -659,17 +699,22 @@ const stopWorkflow = async (projectId: String,workflowId: number, detailId: numb
   }
 
 }
-const deleteWorkflow = async (workflowId: String) => {
+const deleteWorkflow = (workflowId: string) => {
+  delWorkflowId.value = workflowId;
+  delWorkflowModal.value = true;
+}
+const deleteWorkflowContent = async () => {
   try {
-
-    const data = await apiDeleteWorkflows(detailId.value.toString(), workflowId);
+    loading.value = true;
+    const data = await apiDeleteWorkflows(detailId.value.toString(), delWorkflowId.value);
     message.success(data.message);
     getProjectsWorkflows();
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
   } finally {
-    visibleModal.value = false;
+    delWorkflowModal.value = false;
+    loading.value = false;
   }
 }
 const goContractDetail = async (version: String) => {
@@ -696,5 +741,8 @@ const goBack = () => {
 }
 :deep(.ant-input-affix-wrapper){
   border-color: #EBEBEB;
+}
+:deep(.white-css .select-color .ant-select-selection-item){
+  color: var(--ant-primary-color);
 }
 </style>

@@ -74,7 +74,7 @@ export default {
         const currenValue = monacoEditor?.getValue();
         emit("update:value", currenValue);
         emit("getYamlValue", currenValue);
-      });
+      })
     });
     return {};
   },
@@ -99,7 +99,7 @@ export default {
 :deep(.monaco-editor .line-numbers){
   color: #BBBAB9;
 }
-:deep(.mtk5),:deep(.mtk1){
+:deep(.mtk5){
   color: #E2B578;
 }
 :deep(.mtk22){

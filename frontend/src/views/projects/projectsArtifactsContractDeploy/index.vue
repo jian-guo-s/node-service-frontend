@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :currentName="'Contract Deploy'" :isClick="loading">
+  <Breadcrumb :currentName="projectName" :isClick="loading">
     <template v-slot:tags>
       <span
         class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
@@ -62,6 +62,9 @@ import { apiProjectsContractDeploy } from "@/apis/projects";
 const formRef = ref<FormInstance>();
 const theme = useThemeStore();
 const router = useRouter();
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -76,6 +79,7 @@ const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
 const projectsContractData = reactive([]);
+const projectName = ref('')
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -126,7 +130,7 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
   } catch (errorInfo) {
     // 失败的处理
     // console.log(errorInfo, 'errorInfo')
-    message.error('请求失败');
+    message.error(t('common.operateFail'));
   }
 }
 
@@ -204,11 +208,13 @@ const cancelModal = (val: boolean) => {
 }
 
 const changeVersion = (val: string) => {
-  // console.log(val, 'val')
+  console.log(val, 'val')
+  queryParams.version = val
   getProjectsContract()
 }
 
 onMounted(async () => {
+  projectName.value = localStorage.getItem("projectName")
   getVersion()
   await getProjectsContract()
 })

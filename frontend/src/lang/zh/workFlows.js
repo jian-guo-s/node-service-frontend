@@ -20,4 +20,5 @@ export default {
   failed: "失败",
   passed: "成功",
   stop: "终止",
+  workflowStopped: '该构建已结束',
 };

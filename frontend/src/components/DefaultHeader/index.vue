@@ -2,8 +2,8 @@
   <div class="default-header bg-[#FFFFFF] dark:bg-[#1D1C1A] flex justify-between">
     <div class="flex items-center cursor-pointer">
       <div class="flex items-center cursor-pointer" @click="goHome">
-        <img src="@/assets/icons/logo-dark.svg" class="h-[40px] hidden dark:inline-block" />
-        <img src="@/assets/icons/logo-white.svg" class="h-[40px] dark:hidden" />
+        <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
+        <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
         <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
       <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
@@ -115,6 +115,7 @@ const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
 const router = useRouter();
 
+const defaultTheme = ref("dark");
 const showWallets = ref();
 const visibleWallet = ref(false);
 const visibleDisconnect = ref(false);
@@ -186,7 +187,10 @@ const signOut = () => {
 };
 
 onMounted(() => {
-  changeTheme('dark');
+  if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
+    defaultTheme.value = window.localStorage.getItem("themeValue");
+  }
+  changeTheme(defaultTheme.value);
 });
 
 watch(

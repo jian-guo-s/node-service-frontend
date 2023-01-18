@@ -16,11 +16,11 @@ const onboard = Onboard({
   wallets: [injected],
   chains: [
     {
-      id: '0x1',
+      id: '0x501',
       token: 'Hamster Moonbeam',
       label: 'Hamster Moonbeam',
       rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
-    },
+    }
   ],
   notify: {
     desktop: {
@@ -90,7 +90,7 @@ onBeforeMount(async () => {
   if (walletStatesOrNull !== null) {
     walletStates = walletStatesOrNull
   }
-  if (walletStates[0]) {
+  if (walletStates !== undefined && walletStates[0]) {
     setWalletAccount(walletStates[0]);
   }
 });
@@ -156,4 +156,4 @@ button {
   font-size: 16px;
   cursor: pointer;
 }--> */
-</style> 
+</style>

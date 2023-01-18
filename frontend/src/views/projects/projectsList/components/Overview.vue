@@ -4,12 +4,12 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer" @click="goDetail(viewInfo.id)">{{ viewInfo.name }}</div>
+          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id)">{{ viewInfo.name }}</div>
           <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
         </div>
       </div>
       <div>
-        <label class="cursor-pointer group" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">
+        <label class="cursor-pointer group text-center w-[100px]" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">
           <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/check-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -17,7 +17,7 @@
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">
+        <label class="cursor-pointer group text-center w-[100px]" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">
           <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/build-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -25,7 +25,7 @@
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group " @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
+        <label class="cursor-pointer group" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
           <img src="@/assets/icons/deploy.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/deploy-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/deploy-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -33,7 +33,7 @@
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
+        <label class="cursor-pointer group text-center w-[100px]" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
           <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/ops-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -44,7 +44,7 @@
         <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
         <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button> -->
       </div>
-    </div>  
+    </div>
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="grid grid-cols-4 gap-4">
         <div >
@@ -154,7 +154,7 @@ const props = defineProps({
   viewType: String,
   viewInfo: Object,
 });
-const { viewType, viewInfo } = toRefs(props); 
+const { viewType, viewInfo } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
 
 const goDetail = (id: string) => {
@@ -226,6 +226,8 @@ const goContractDeploy = async (id: String, version: String) => {
   }
 };
 const goContractDetail = async (id: String, version: String) => {
+  localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/contracts-details/"+version);
 }
 </script>
@@ -261,4 +263,5 @@ a, a:hover{
   white-space:nowrap;/*文本不自动换行*/
   overflow: hidden;
 }
+
 </style>
