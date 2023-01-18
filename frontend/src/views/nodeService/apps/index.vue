@@ -71,56 +71,56 @@
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="JavaScript">
           <div v-for="(item, index) in appInfo.code_examples.js" :key="index">
-            <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div class="flex justify-between text-[#000000] font-bold" :class="index === 0 ? 'mb-2' : 'my-2'">
               <div class="font-bold">{{ item.title }}</div>
               <img @click="copyInfo(item.code)"
                 src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer"
               />
             </div>
-            <div class="codeScrollHeight">
+            <div :style="item.style">
               <CodeEditor :readOnly="true" :value="item.code"></CodeEditor>
             </div>
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="CLI">
           <div v-for="(item, index) in appInfo.code_examples.cli" :key="index">
-            <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div class="flex justify-between text-[#000000] font-bold" :class="index === 0 ? 'mb-2' : 'my-2'">
               <div class="font-bold">{{ item.title }}</div>
               <img @click="copyInfo(item.code)"
                 src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer"
               />
             </div>
-            <div class="codeScrollHeight">
+            <div :style="item.style">
               <CodeEditor :readOnly="true" :value="item.code"></CodeEditor>
             </div>
           </div>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Python">
           <div v-for="(item, index) in appInfo.code_examples.python" :key="index">
-            <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div class="flex justify-between text-[#000000] font-bold" :class="index === 0 ? 'mb-2' : 'my-2'">
               <div class="font-bold">{{ item.title }}</div>
               <img @click="copyInfo(item.code)"
                 src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer"
               />
             </div>
-            <div class="codeScrollHeight">
+            <div :style="item.style">
               <CodeEditor :readOnly="true" :value="item.code"></CodeEditor>
             </div>
           </div>
         </a-tab-pane>
         <a-tab-pane key="4" tab="Go">
           <div v-for="(item, index) in appInfo.code_examples.go" :key="index">
-            <div class="flex justify-between text-[#000000] font-bold mb-2">
+            <div class="flex justify-between text-[#000000] font-bold" :class="index === 0 ? 'mb-2' : 'my-2'">
               <div class="font-bold">{{ item.title }}</div>
               <img @click="copyInfo(item.code)"
                 src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer"
               />
             </div>
-            <div class="codeScrollHeight">
+            <div :style="item.style">
               <CodeEditor :readOnly="true" :value="item.code"></CodeEditor>
             </div>
           </div>
@@ -269,8 +269,23 @@ import dayjs from 'dayjs';
   };
   const showView = async (_items: any) => {
     visibleView.value = true;
+    setCodeHeight(_items.code_examples.js);
+    setCodeHeight(_items.code_examples.cli);
+    setCodeHeight(_items.code_examples.go);
+    setCodeHeight(_items.code_examples.python);
     Object.assign(appInfo, _items); //赋值
+  } 
+const setCodeHeight = (codeList: any[]) => {
+    codeList.forEach((element,index) => {
+      let style = 'height: 220px';
+      let codeIndex = element.code.split('\n').length;
+      if (codeIndex < 9) {
+        style = 'height: ' + codeIndex * 22 + 'px';
+      }
+      codeList[index]['style'] = style;
+    });
   }
+  
   const copyInfo = async (_items: any) => {
     // 存储传递过来的数据
       let OrderNumber = _items;
@@ -302,7 +317,7 @@ import dayjs from 'dayjs';
   color: #BBBAB9;
 }
 .codeScrollHeight {
-  height: 200px;
+  height: 220px;
 }
 :deep(.ant-tabs-nav-list){
   width: 100%;
