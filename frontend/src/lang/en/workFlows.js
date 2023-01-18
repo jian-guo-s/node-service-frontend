@@ -15,9 +15,10 @@ export default {
   buildRecords: "Build history",
   back: "Back",
   start: "Start",
-  nonExecution: "Waiting for execution", 
+  nonExecution: "Waiting for execution",
   running: "Running",
   failed: "Failed",
   passed: "Successful",
   stop: "Stop",
+  workflowStopped: 'Workflow Stopped',
 };

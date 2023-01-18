@@ -100,7 +100,7 @@ export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
   });
 }
 
-// 查看所有日志   /workflows/:id/detail/:workflowDetailId/logs 
+// 查看所有日志   /workflows/:id/detail/:workflowDetailId/logs
 export function apiGetDetailLogs(params: GetDetailLogsParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/logs`,

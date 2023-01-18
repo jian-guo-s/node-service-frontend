@@ -12,15 +12,17 @@ const emit = defineEmits(["setWalletBtn"]);
 const injected = injectedModule()
 let walletStates: WalletState[]
 
+const MAINNET_RPC_URL = 'https://mainnet.infura.io/v3/bab2a1a435b04c07a488d847cf6788f7'
+
 const onboard = Onboard({
   wallets: [injected],
   chains: [
     {
       id: '0x1',
-      token: 'Hamster Moonbeam',
-      label: 'Hamster Moonbeam',
-      rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
-    },
+      token: 'ETH',
+      label: 'Ethereum Mainnet',
+      rpcUrl: MAINNET_RPC_URL
+    }
   ],
   notify: {
     desktop: {
@@ -156,4 +158,4 @@ button {
   font-size: 16px;
   cursor: pointer;
 }--> */
-</style> 
+</style>
