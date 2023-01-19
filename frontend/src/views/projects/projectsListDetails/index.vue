@@ -70,7 +70,7 @@
           <template v-if="column.dataIndex === 'action'">
             <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
             <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
-            <label @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
+            <label v-if="record.status !== 1" @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
           </template>
         </template>
       </a-table>
