@@ -74,9 +74,15 @@ const getContractList = async () => {
 }
 
 const getCheckReport = async () => {
-  let issue = 0
+  let issue = 0;
+  let list = []
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data.map((item: any) => {
+    if (item.checkTool !== 'sol-profiler') {
+      list.push(item)
+    }
+  })
+  list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
     item.reportFileData.map(val => {
       issue += val.issue
@@ -86,7 +92,7 @@ const getCheckReport = async () => {
   // console.log(errop, 'errop')
   workflowsDetailsData.errorNumber = issue;
   // Object.assign(workflowsDetailsData, { errorNumber, issue })
-  Object.assign(checkReportData, data)
+  Object.assign(checkReportData, list)
 }
 
 const stopBtn = async () => {

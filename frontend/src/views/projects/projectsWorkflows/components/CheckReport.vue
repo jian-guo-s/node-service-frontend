@@ -1,6 +1,6 @@
 <template>
   <div class=" dark:text-white text-[#121211]">
-    <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[32px] p-[32px] rounded-[12px]"
+    <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]"
       v-for="item in checkReportData" :key="item.id">
       <img class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
@@ -40,7 +40,6 @@
         </a-collapse-panel>
         <div class="text-[#73706E] ml-[12px]">{{ 'Support by '+ item.checkTool }}</div>
       </a-collapse>
-
     </div>
   </div>
 </template>
