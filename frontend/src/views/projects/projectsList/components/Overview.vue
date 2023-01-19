@@ -158,6 +158,8 @@ const { viewType, viewInfo } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
 
 const goDetail = (id: string) => {
+  localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/details");
 }
 
@@ -213,15 +215,21 @@ const loadView = async () => {
   emit("loadProjects");
 };
 const goContractCheck = async (id: String, workflowId: String, detailId: String) => {
+  localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1");
 };
 const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
+  localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2");
 };
 const goContractDeploy = async (id: String, version: String) => {
   if (version === "") {
     message.error("version is empty.");
   } else {
+    localStorage.setItem("projectName", viewInfo.value.name)
+    localStorage.setItem("projectId", id)
     router.push("/projects/"+id+"/artifacts-contract/"+version+"/deploy/00");
   }
 };
