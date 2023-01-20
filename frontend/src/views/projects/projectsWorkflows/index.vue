@@ -55,7 +55,7 @@ const getWorkflowsDetails = async () => {
   processData.value = stageInfo;
   processData.value.unshift({ name: 'Start', status: 99, duration: 'none' })
 
-  // 打印查看转换后的stageInfo
+  // 打印查看转换后的 stageInfo
   console.log(stageInfo, 'stageInfo');
   inRunning.value = processData.value.some((val: any) => val.status === 1);
   if (inRunning.value) {
@@ -78,10 +78,11 @@ const getCheckReport = async () => {
   let list = []
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler') {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool !== '') {
       list.push(item)
     }
   })
+
   list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
     item.reportFileData.map(val => {
