@@ -77,7 +77,7 @@ const router = createRouter({
           ],
         },
         {
-          path: "/projects/creat",
+          path: "/projects/create",
           name: "ProjectsCreat",
           component: ProjectsCreat,
         },

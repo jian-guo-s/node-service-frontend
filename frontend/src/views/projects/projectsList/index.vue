@@ -54,7 +54,7 @@ const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
 }
 
 const goCreateProject = () => {
-  router.push("/projects/creat");
+  router.push("/projects/create");
 }
     
 onMounted(() => {
