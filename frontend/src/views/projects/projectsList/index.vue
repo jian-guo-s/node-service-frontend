@@ -15,7 +15,7 @@
             </template>
           </a-input>
         </div>
-      <a-button type="primary" @click="goCreateProject">Creat by template</a-button>
+      <a-button type="primary" @click="goCreateProject">Create Project</a-button>
     </div>
     <div v-for="(item, index) in projectsList" :key="index">
       <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
