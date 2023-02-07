@@ -302,7 +302,7 @@ const tableColumns = computed<any[]>(() => [
     width: '150px'
   },
   {
-    title: '操作',
+    title: 'Action',
     dataIndex: 'action',
     align: 'center',
     width: '150px',
